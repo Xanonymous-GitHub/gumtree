@@ -1,10 +1,6 @@
-# This is a basic workflow to help you get started with Actions
+name: Gradle CI
 
-name: Build
-
-# Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the "main" branch
   push:
     branches: [ "main" ]
   pull_request:
@@ -26,3 +22,10 @@ jobs:
 
     - name: Run build
       run: ./gradlew build
+
+    - name: Generate and submit dependency graph
+      uses: gradle/actions/dependency-submission@v3
+      with:
+        build-scan-publish: true
+        build-scan-terms-of-use-url: "https://gradle.com/terms-of-service"
+        build-scan-terms-of-use-agree: "yes"
