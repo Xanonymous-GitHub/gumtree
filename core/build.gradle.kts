@@ -22,18 +22,14 @@ dependencies {
     testImplementation(libs.kotlin.test.junit5)
 }
 
-internal val projectRootLocation: String = layout.projectDirectory.toString()
-internal val forcedAntlrPackageName = "$group.model.lang"
-internal val antlrGenFilesLocation =
-    file(
-        "$projectRootLocation/src/main/java/" +
-            forcedAntlrPackageName.replace('.', '/')
-    )
-
 tasks {
     generateGrammarSource {
-        outputDirectory = antlrGenFilesLocation
-        arguments = listOf("-package", forcedAntlrPackageName)
+        // Since this project uses the ANTLR only for its interfaces, we don't need to generate the sources.
+        enabled = false
+    }
+    generateTestGrammarSource {
+        // Since this project uses the ANTLR only for its interfaces, we don't need to generate the sources.
+        enabled = false
     }
 
     test {
