@@ -6,6 +6,17 @@ plugins {
     alias(libs.plugins.gradleKtlint)
 }
 
+ktlint {
+    filter {
+        exclude("**/buildSrc/**")
+        exclude("**/build/**")
+        exclude("**/generated/**")
+        exclude("**/generated-src/**")
+        include("**/kotlin/**")
+        include("**/*.kts")
+    }
+}
+
 internal val gradleKtLintPluginId = libs.plugins.gradleKtlint.get().pluginId
 
 allprojects {
