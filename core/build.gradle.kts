@@ -16,7 +16,6 @@ application {
 
 dependencies {
     antlr(libs.antlr)
-    implementation(libs.logback)
 
     // Test dependencies
     testImplementation(libs.kotlin.test)
