@@ -1,11 +1,11 @@
 package tw.xcc.gumtree.api.tree
 
-import org.antlr.v4.runtime.tree.Tree as AntlrTree
-
 /**
- * Tree is the top-and-only adaptor interface for ANTLR's [Tree] interface.
+ * Common interface for defining a tree structure.
+ * A tree is a hierarchical structure that consists of nodes connected by edges.
+ * The number of children can be any non-negative integer.
  * */
-internal interface Tree : AntlrTree {
+interface Tree {
     /**
      * To check if the current node is a root node.
      * */
@@ -19,25 +19,20 @@ internal interface Tree : AntlrTree {
     /**
      * To get the number of children.
      * */
-    override fun getChildCount(): Int
+    fun childCount(): Int
 
     /**
      * To get the child at the specified index.
      * */
-    override fun getChild(i: Int): Tree
+    fun childAt(i: Int): Tree?
 
     /**
-     * To get the parent node.
+     * The children of the Tree.
      * */
-    override fun getParent(): Tree?
+    val children: List<Tree>
 
     /**
-     * To get the serialized tree as a string.
+     * To get the parent of the Tree.
      * */
-    override fun toStringTree(): String
-
-    /**
-     * To get the payload of the current node.
-     * */
-    override fun getPayload(): Any
+    val parent: Tree?
 }

@@ -2,41 +2,44 @@ package tw.xcc.gumtree.model
 
 import tw.xcc.gumtree.api.tree.Tree
 
-internal abstract class BasicTree : Tree, Any() {
-    private var parent: BasicTree? = null
+internal abstract class BasicTree : Tree {
+    private var _parent: BasicTree? = null
+    override val parent: BasicTree?
+        get() = _parent
 
-    private val _children = mutableListOf<BasicTree>()
-    val children: List<BasicTree>
-        get() = _children
+    protected val childrenMap = sortedMapOf<Int, BasicTree>()
+    override val children: List<BasicTree>
+        get() = childrenMap.values.toList()
 
     fun addChild(child: BasicTree) {
-        _children.add(child.also { it.parent = this })
+        synchronized(this) {
+            childrenMap[childrenMap.size] = child.also { it._parent = this }
+        }
     }
 
     fun setChildren(children: List<BasicTree>) =
-        with(_children) {
-            clear()
-            addAll(children)
-            forEach { it.parent = this@BasicTree }
+        with(childrenMap) {
+            synchronized(this) {
+                clear()
+                children.forEachIndexed { i, child ->
+                    this[i] = child.also { it._parent = this@BasicTree }
+                }
+            }
         }
 
     fun setParent(parent: BasicTree?) {
-        this.parent = parent
+        synchronized(this) {
+            this._parent = parent
+        }
     }
 
-    override fun getChild(i: Int): BasicTree = _children[i]
+    override fun childAt(i: Int): Tree? = childrenMap[i]
 
-    override fun getChildCount(): Int = _children.size
+    override fun childCount(): Int = childrenMap.size
 
-    override fun getParent(): BasicTree? = parent
+    override fun isRoot(): Boolean = _parent == null
 
-    override fun getPayload(): Any = TODO("Not yet implemented")
-
-    override fun toStringTree(): String = TODO("Not yet implemented")
-
-    override fun isRoot(): Boolean = parent == null
-
-    override fun isLeaf(): Boolean = childCount == 0
+    override fun isLeaf(): Boolean = childrenMap.size == 0
 
     abstract override fun equals(other: Any?): Boolean
 

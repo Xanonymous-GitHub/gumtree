@@ -1,7 +1,6 @@
 plugins {
     alias(libs.plugins.kotlinJvm)
     application
-    antlr
 }
 
 group = "tw.xcc.gumtree"
@@ -15,23 +14,11 @@ application {
 }
 
 dependencies {
-    antlr(libs.antlr)
-
-    // Test dependencies
     testImplementation(libs.kotlin.test)
     testImplementation(libs.kotlin.test.junit5)
 }
 
 tasks {
-    generateGrammarSource {
-        // Since this project uses the ANTLR only for its interfaces, we don't need to generate the sources.
-        enabled = false
-    }
-    generateTestGrammarSource {
-        // Since this project uses the ANTLR only for its interfaces, we don't need to generate the sources.
-        enabled = false
-    }
-
     test {
         useJUnitPlatform()
     }
