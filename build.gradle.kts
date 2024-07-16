@@ -17,7 +17,10 @@ ktlint {
     }
 }
 
-internal val gradleKtLintPluginId = libs.plugins.gradleKtlint.get().pluginId
+internal val gradleKtLintPluginId =
+    libs.plugins.gradleKtlint
+        .get()
+        .pluginId
 
 allprojects {
     apply(plugin = gradleKtLintPluginId)
