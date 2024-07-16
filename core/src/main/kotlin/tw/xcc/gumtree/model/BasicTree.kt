@@ -1,45 +1,57 @@
 package tw.xcc.gumtree.model
 
 import tw.xcc.gumtree.api.tree.Tree
+import java.util.concurrent.atomic.AtomicReference
 
+/**
+ * The general thread-safe implementation of a tree structure.
+ * */
 internal abstract class BasicTree : Tree {
-    private var _parent: BasicTree? = null
-    override val parent: BasicTree?
-        get() = _parent
+    private val _parent = AtomicReference<BasicTree?>()
+    final override var parent: BasicTree?
+        get() = synchronized(this) { _parent.get() }
+        private set(value) {
+            synchronized(this) {
+                _parent.set(value)
+            }
+        }
 
-    protected val childrenMap = sortedMapOf<Int, BasicTree>()
-    override val children: List<BasicTree>
-        get() = childrenMap.values.toList()
+    protected val childrenMap = AtomicReference(sortedMapOf<Int, BasicTree>())
+    final override val children: List<BasicTree>
+        get() = synchronized(this) { childrenMap.get().values.toList() }
 
     fun addChild(child: BasicTree) {
         synchronized(this) {
-            childrenMap[childrenMap.size] = child.also { it._parent = this }
+            val newChildrenMap = childrenMap.get()
+            newChildrenMap[newChildrenMap.size] = child.also { it.parent = this }
+            childrenMap.set(newChildrenMap)
         }
     }
 
     fun setChildren(children: List<BasicTree>) =
         with(childrenMap) {
             synchronized(this) {
-                clear()
+                val newChildrenMap = sortedMapOf<Int, BasicTree>()
                 children.forEachIndexed { i, child ->
-                    this[i] = child.also { it._parent = this@BasicTree }
+                    newChildrenMap[i] = child.also { it.parent = this@BasicTree }
                 }
+                this.set(newChildrenMap)
             }
         }
 
     fun setParent(parent: BasicTree?) {
         synchronized(this) {
-            this._parent = parent
+            this.parent = parent
         }
     }
 
-    override fun childAt(i: Int): Tree? = childrenMap[i]
+    final override fun childAt(i: Int): Tree? = synchronized(this) { childrenMap.get()[i] }
 
-    override fun childCount(): Int = childrenMap.size
+    final override fun childCount(): Int = synchronized(this) { childrenMap.get().size }
 
-    override fun isRoot(): Boolean = _parent == null
+    final override fun isRoot(): Boolean = synchronized(this) { parent == null }
 
-    override fun isLeaf(): Boolean = childrenMap.size == 0
+    final override fun isLeaf(): Boolean = synchronized(this) { childrenMap.get().isEmpty() }
 
     abstract override fun equals(other: Any?): Boolean
 
