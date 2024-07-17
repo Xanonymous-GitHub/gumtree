@@ -10,7 +10,11 @@ class GumTree :
     private val traversalHelper = TraversalHelper(this)
     private val compareHelper = CompareHelper(this)
 
-    
+    val type: TreeType = TreeType("")
+    var label: String = ""
+    val pos: Int = -1
+    val length: Int = -1
+
     fun insertChildAt(
         pos: Int,
         child: GumTree
@@ -30,6 +34,10 @@ class GumTree :
             childrenMap.set(newChildrenMap)
         }
     }
+
+    infix fun hasSameTypeAs(other: GumTree): Boolean = type == other.type
+
+    infix fun hasSameLabelAs(other: GumTree): Boolean = label == other.label
 
     override fun preOrdered(): List<GumTree> = traversalHelper.preOrdered()
 
