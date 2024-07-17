@@ -3,7 +3,12 @@ package tw.xcc.gumtree.model
 import tw.xcc.gumtree.api.tree.Comparable
 import tw.xcc.gumtree.api.tree.Traversable
 
-class GumTree : BasicTree<GumTree>(), Traversable<GumTree>, Comparable<GumTree> {
+class GumTree :
+    BasicTree<GumTree>(),
+    Traversable<GumTree>,
+    Comparable<GumTree> {
+    private val traversalHelper = TraversalHelper(this)
+
     fun insertChildAt(
         pos: Int,
         child: GumTree
@@ -24,41 +29,9 @@ class GumTree : BasicTree<GumTree>(), Traversable<GumTree>, Comparable<GumTree> 
         }
     }
 
-    private fun preOrderedImpl(
-        tree: GumTree,
-        visited: MutableSet<GumTree>
-    ) {
-        synchronized(tree) {
-            visited.add(tree)
-            tree.children.forEach {
-                preOrderedImpl(it, visited)
-            }
-        }
-    }
+    override fun preOrdered(): List<GumTree> = traversalHelper.preOrdered()
 
-    override fun preOrdered(): List<GumTree> {
-        val visited = mutableSetOf<GumTree>()
-        preOrderedImpl(this, visited)
-        return visited.toList()
-    }
-
-    private fun postOrderedImpl(
-        tree: GumTree,
-        visited: MutableSet<GumTree>
-    ) {
-        synchronized(tree) {
-            tree.children.forEach {
-                postOrderedImpl(it, visited)
-            }
-            visited.add(tree)
-        }
-    }
-
-    override fun postOrdered(): List<GumTree> {
-        val visited = mutableSetOf<GumTree>()
-        postOrderedImpl(this, visited)
-        return visited.toList()
-    }
+    override fun postOrdered(): List<GumTree> = traversalHelper.postOrdered()
 
     override infix fun isIsomorphicTo(other: GumTree): Boolean {
         TODO("Not yet implemented")
