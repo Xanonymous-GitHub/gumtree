@@ -10,13 +10,8 @@ abstract class BasicTree<T> : Tree<T> where T : BasicTree<T> {
     protected abstract val self: T
 
     private val _parent = AtomicReference<T?>()
-    final override var parent: T?
+    final override val parent: T?
         get() = synchronized(this) { _parent.get() }
-        private set(value) {
-            synchronized(this) {
-                _parent.set(value)
-            }
-        }
 
     protected val childrenMap = AtomicReference(sortedMapOf<Int, T>())
     final override val children: List<T>
@@ -25,25 +20,25 @@ abstract class BasicTree<T> : Tree<T> where T : BasicTree<T> {
     fun addChild(child: T) {
         synchronized(this) {
             val newChildrenMap = childrenMap.get()
-            newChildrenMap[newChildrenMap.size] = child.also { it.parent = self }
+            newChildrenMap[newChildrenMap.size] = child.also { it.setParentTo(self) }
             childrenMap.set(newChildrenMap)
         }
     }
 
-    fun setChildren(children: List<T>) =
+    fun setChildrenTo(children: List<T>) =
         with(childrenMap) {
             synchronized(this) {
                 val newChildrenMap = sortedMapOf<Int, T>()
                 children.forEachIndexed { i, child ->
-                    newChildrenMap[i] = child.also { it.parent = self }
+                    newChildrenMap[i] = child.also { it.setParentTo(self) }
                 }
                 this.set(newChildrenMap)
             }
         }
 
-    fun setParent(parent: T?) {
+    fun setParentTo(parent: T?) {
         synchronized(this) {
-            this.parent = parent
+            _parent.set(parent)
         }
     }
 

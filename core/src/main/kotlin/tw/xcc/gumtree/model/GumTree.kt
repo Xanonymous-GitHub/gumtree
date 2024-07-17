@@ -19,7 +19,7 @@ class GumTree : BasicTree<GumTree>(), Traversable<GumTree>, Comparable<GumTree> 
             }
 
             val newChildrenMap = childrenMap.get()
-            newChildrenMap[pos] = child.also { it.setParent(this) }
+            newChildrenMap[pos] = child.also { it.setParentTo(this) }
             childrenMap.set(newChildrenMap)
         }
     }
