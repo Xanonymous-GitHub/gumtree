@@ -8,6 +8,9 @@ class GumTree :
     Traversable<GumTree>,
     Comparable<GumTree> {
     private val traversalHelper = TraversalHelper(this)
+    private val compareHelper = CompareHelper(this)
+
+    override val equatableProps: List<Any?> = listOf()
 
     fun insertChildAt(
         pos: Int,
@@ -33,23 +36,15 @@ class GumTree :
 
     override fun postOrdered(): List<GumTree> = traversalHelper.postOrdered()
 
-    override infix fun isIsomorphicTo(other: GumTree): Boolean {
+    override infix fun isIsomorphicTo(other: GumTree): Boolean = compareHelper.isIsomorphicTo(other)
+
+    override infix fun isIsoStructuralTo(other: GumTree): Boolean = compareHelper.isIsoStructuralTo(other)
+
+    override fun similarityHashCode(): Int {
         TODO("Not yet implemented")
     }
 
-    override infix fun isIsoStructuralTo(other: GumTree): Boolean {
-        TODO("Not yet implemented")
-    }
-
-    override fun equals(other: Any?): Boolean {
-        TODO("Not yet implemented")
-    }
-
-    override fun hashCode(): Int {
-        TODO("Not yet implemented")
-    }
-
-    override fun structureHashCode(): Int {
+    override fun similarityStructureHashCode(): Int {
         TODO("Not yet implemented")
     }
 
