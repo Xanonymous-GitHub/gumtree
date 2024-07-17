@@ -1,13 +1,12 @@
 package tw.xcc.gumtree.model
 
-import tw.xcc.gumtree.api.Equatable
 import tw.xcc.gumtree.api.tree.Tree
 import java.util.concurrent.atomic.AtomicReference
 
 /**
  * The general thread-safe implementation of a tree structure.
  * */
-abstract class BasicTree<T> : Equatable(), Tree<T> where T : BasicTree<T> {
+abstract class BasicTree<T> : Tree<T> where T : BasicTree<T> {
     protected abstract val self: T
 
     private val _parent = AtomicReference<T?>()

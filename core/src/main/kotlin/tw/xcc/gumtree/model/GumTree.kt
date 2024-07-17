@@ -3,14 +3,14 @@ package tw.xcc.gumtree.model
 import tw.xcc.gumtree.api.tree.Comparable
 import tw.xcc.gumtree.api.tree.Traversable
 
-class GumTree :
+data class GumTree(
+    val value: String
+) :
     BasicTree<GumTree>(),
-    Traversable<GumTree>,
-    Comparable<GumTree> {
+        Traversable<GumTree>,
+        Comparable<GumTree> {
     private val traversalHelper = TraversalHelper(this)
     private val compareHelper = CompareHelper(this)
-
-    override val equatableProps: List<Any?> = listOf()
 
     fun insertChildAt(
         pos: Int,
