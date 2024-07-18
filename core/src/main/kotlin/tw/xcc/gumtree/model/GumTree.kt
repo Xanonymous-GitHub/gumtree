@@ -1,13 +1,8 @@
 package tw.xcc.gumtree.model
 
 import tw.xcc.gumtree.api.tree.Comparable
-import tw.xcc.gumtree.api.tree.Traversable
 
-class GumTree :
-    BasicTree<GumTree>(),
-    Traversable<GumTree>,
-    Comparable<GumTree> {
-    private val traversalHelper = TraversalHelper(this)
+class GumTree : BasicTree<GumTree>(), Comparable<GumTree> {
     private val compareHelper = CompareHelper(this)
 
     val pos: Int = -1
@@ -60,10 +55,6 @@ class GumTree :
 
     infix fun hasSameLabelAs(other: GumTree): Boolean = label == other.label
 
-    override fun preOrdered(): List<GumTree> = traversalHelper.preOrdered()
-
-    override fun postOrdered(): List<GumTree> = traversalHelper.postOrdered()
-
     override infix fun isIsomorphicTo(other: GumTree): Boolean = compareHelper.isIsomorphicTo(other)
 
     override infix fun isIsoStructuralTo(other: GumTree): Boolean = compareHelper.isIsoStructuralTo(other)
@@ -75,6 +66,8 @@ class GumTree :
     override fun similarityStructureHashCode(): Int {
         TODO("Not yet implemented")
     }
+
+    override val traversalHelper = TraversalHelper(this)
 
     override val self: GumTree
         get() = this

@@ -1,13 +1,16 @@
 package tw.xcc.gumtree.model
 
+import tw.xcc.gumtree.api.tree.Traversable
 import tw.xcc.gumtree.api.tree.Tree
 import java.util.concurrent.atomic.AtomicReference
 
 /**
  * The general thread-safe implementation of a tree structure.
  * */
-abstract class BasicTree<T> : Tree<T> where T : BasicTree<T> {
+abstract class BasicTree<T> : Tree<T>, Traversable<T> where T : BasicTree<T> {
     protected abstract val self: T
+
+    protected abstract val traversalHelper: TraversalHelper<T>
 
     private val _parent = AtomicReference<T?>()
     final override val parent: T?
@@ -49,6 +52,10 @@ abstract class BasicTree<T> : Tree<T> where T : BasicTree<T> {
     final override fun isRoot(): Boolean = synchronized(this) { parent == null }
 
     final override fun isLeaf(): Boolean = synchronized(this) { childrenMap.get().isEmpty() }
+
+    final override fun preOrdered(): List<T> = traversalHelper.preOrdered()
+
+    final override fun postOrdered(): List<T> = traversalHelper.postOrdered()
 
     abstract fun similarityHashCode(): Int
 
