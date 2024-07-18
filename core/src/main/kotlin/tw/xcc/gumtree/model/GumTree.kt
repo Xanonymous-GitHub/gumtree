@@ -1,6 +1,7 @@
 package tw.xcc.gumtree.model
 
 import tw.xcc.gumtree.api.tree.Comparable
+import java.util.concurrent.atomic.AtomicReference
 
 class GumTree : BasicTree<GumTree>(), Comparable<GumTree> {
     private val compareHelper = CompareHelper(this)
@@ -9,27 +10,29 @@ class GumTree : BasicTree<GumTree>(), Comparable<GumTree> {
     val length: Int = -1
     private var label: String = ""
 
-    private var _type = TreeType.empty()
-    private var type: TreeType
-        get() = _type
-        set(value) =
-            synchronized(this) {
-                _type = value
-            }
+    private val _type = AtomicReference(TreeType.empty())
+    private val type: TreeType // TODO: may not be private
+        get() = _type.get()
 
-    private var _metrics = TreeMetrics.empty()
-    var metrics: TreeMetrics
-        get() = _metrics
-        set(value) =
-            synchronized(this) {
-                _metrics = value
-            }
+    private val _metrics = AtomicReference(TreeMetrics.empty())
+    val metrics: TreeMetrics
+        get() = _metrics.get()
 
     val descendents: List<GumTree> by lazy {
         synchronized(this) {
             preOrdered().drop(1)
         }
     }
+
+    fun setTypeTo(value: TreeType) =
+        synchronized(this) {
+            _type.set(value)
+        }
+
+    fun setMetricsTo(value: TreeMetrics) =
+        synchronized(this) {
+            _metrics.set(value)
+        }
 
     fun insertChildAt(
         pos: Int,
