@@ -17,12 +17,6 @@ class GumTree(type: TreeType, private val label: String = EMPTY_LABEL) : BasicTr
     val metrics: TreeMetrics
         get() = _metrics.get()
 
-    val descendents: List<GumTree> by lazy {
-        synchronized(this) {
-            preOrdered().drop(1)
-        }
-    }
-
     // TODO: may not be private
     private fun setTypeTo(value: TreeType) =
         synchronized(this) {

@@ -20,6 +20,12 @@ abstract class BasicTree<T> : Tree<T>, Traversable<T> where T : BasicTree<T> {
     final override val children: List<T>
         get() = synchronized(this) { childrenMap.get().values.toList() }
 
+    val descendents: List<T> by lazy {
+        synchronized(this) {
+            preOrdered().drop(1)
+        }
+    }
+
     fun addChild(child: T) {
         synchronized(this) {
             val newChildrenMap = childrenMap.get()
