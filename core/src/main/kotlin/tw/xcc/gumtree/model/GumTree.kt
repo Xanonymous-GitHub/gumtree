@@ -3,18 +3,17 @@ package tw.xcc.gumtree.model
 import tw.xcc.gumtree.api.tree.Comparable
 import java.util.concurrent.atomic.AtomicReference
 
-class GumTree : BasicTree<GumTree>(), Comparable<GumTree> {
+class GumTree(type: TreeType, private val label: String = EMPTY_LABEL) : BasicTree<GumTree>(), Comparable<GumTree> {
     private val compareHelper = CompareHelper(this)
 
     val pos: Int = -1
     val length: Int = -1
-    private var label: String = ""
 
     private val _type = AtomicReference(TreeType.empty())
     private val type: TreeType // TODO: may not be private
         get() = _type.get()
 
-    private val _metrics = AtomicReference(TreeMetrics.empty())
+    private val _metrics = AtomicReference(TreeMetrics.empty()) // TODO: calculate metrics
     val metrics: TreeMetrics
         get() = _metrics.get()
 
@@ -24,7 +23,8 @@ class GumTree : BasicTree<GumTree>(), Comparable<GumTree> {
         }
     }
 
-    fun setTypeTo(value: TreeType) =
+    // TODO: may not be private
+    private fun setTypeTo(value: TreeType) =
         synchronized(this) {
             _type.set(value)
         }
@@ -74,4 +74,12 @@ class GumTree : BasicTree<GumTree>(), Comparable<GumTree> {
 
     override val self: GumTree
         get() = this
+
+    companion object {
+        const val EMPTY_LABEL = ""
+    }
+
+    init {
+        setTypeTo(type)
+    }
 }
