@@ -7,7 +7,9 @@ import java.util.concurrent.atomic.AtomicReference
 /**
  * The general thread-safe implementation of a tree structure.
  * */
-abstract class BasicTree<T> : Tree<T>, Traversable<T> where T : BasicTree<T> {
+abstract class BasicTree<T> :
+    Tree<T>,
+    Traversable<T> where T : BasicTree<T> {
     protected abstract val self: T
 
     protected abstract val traversalHelper: TraversalHelper<T>

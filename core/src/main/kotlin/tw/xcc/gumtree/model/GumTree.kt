@@ -3,7 +3,11 @@ package tw.xcc.gumtree.model
 import tw.xcc.gumtree.api.tree.Comparable
 import java.util.concurrent.atomic.AtomicReference
 
-class GumTree(type: TreeType, val label: String = EMPTY_LABEL) : BasicTree<GumTree>(), Comparable<GumTree> {
+class GumTree(
+    type: TreeType,
+    val label: String = EMPTY_LABEL
+) : BasicTree<GumTree>(),
+    Comparable<GumTree> {
     private val compareHelper = CompareHelper(this)
 
     var pos: Int = -1
