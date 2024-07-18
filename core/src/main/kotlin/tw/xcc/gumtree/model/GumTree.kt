@@ -10,10 +10,31 @@ class GumTree :
     private val traversalHelper = TraversalHelper(this)
     private val compareHelper = CompareHelper(this)
 
-    val type: TreeType = TreeType("")
-    var label: String = ""
     val pos: Int = -1
     val length: Int = -1
+    private var label: String = ""
+
+    private var _type = TreeType.empty()
+    private var type: TreeType
+        get() = _type
+        set(value) =
+            synchronized(this) {
+                _type = value
+            }
+
+    private var _metrics = TreeMetrics.empty()
+    var metrics: TreeMetrics
+        get() = _metrics
+        set(value) =
+            synchronized(this) {
+                _metrics = value
+            }
+
+    val descendents: List<GumTree> by lazy {
+        synchronized(this) {
+            preOrdered().drop(1)
+        }
+    }
 
     fun insertChildAt(
         pos: Int,
