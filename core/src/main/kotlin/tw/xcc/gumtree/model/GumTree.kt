@@ -3,22 +3,21 @@ package tw.xcc.gumtree.model
 import tw.xcc.gumtree.api.tree.Comparable
 import java.util.concurrent.atomic.AtomicReference
 
-class GumTree(type: TreeType, private val label: String = EMPTY_LABEL) : BasicTree<GumTree>(), Comparable<GumTree> {
+class GumTree(type: TreeType, val label: String = EMPTY_LABEL) : BasicTree<GumTree>(), Comparable<GumTree> {
     private val compareHelper = CompareHelper(this)
 
-    val pos: Int = -1
-    val length: Int = -1
+    var pos: Int = -1
+    var length: Int = -1
 
     private val _type = AtomicReference(TreeType.empty())
-    private val type: TreeType // TODO: may not be private
+    val type: TreeType
         get() = _type.get()
 
     private val _metrics = AtomicReference(TreeMetrics.empty()) // TODO: calculate metrics
     val metrics: TreeMetrics
         get() = _metrics.get()
 
-    // TODO: may not be private
-    private fun setTypeTo(value: TreeType) =
+    fun setTypeTo(value: TreeType) =
         synchronized(this) {
             _type.set(value)
         }
@@ -33,9 +32,8 @@ class GumTree(type: TreeType, private val label: String = EMPTY_LABEL) : BasicTr
         child: GumTree
     ) {
         synchronized(this) {
-            val childCount = childCount()
-            if (pos < 0 || pos > childCount) {
-                throw IndexOutOfBoundsException("Index: $pos, Size: $childCount")
+            if (pos < 0) {
+                throw IndexOutOfBoundsException("The position $pos should be non-negative.")
             }
 
             if (childrenMap.get().containsKey(pos)) {
