@@ -115,9 +115,9 @@ internal class BasicTreeTest {
 
     private class TestBasicTree : BasicTree<TestBasicTree>() {
         override val self: TestBasicTree
-            get() = throw NotImplementedError()
+            get() = this
         override val traversalHelper: TraversalHelper<TestBasicTree>
-            get() = throw NotImplementedError()
+            get() = TraversalHelper(this)
 
         override fun similarityHashCode(): Int = throw NotImplementedError()
 
