@@ -1,7 +1,6 @@
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 import tw.xcc.gumtree.model.BasicTree
-import tw.xcc.gumtree.model.TraversalHelper
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
@@ -20,13 +19,13 @@ internal class BasicTreeTest {
 
     @Test
     fun `test default parent`() {
-        val actualParent = givenTree.parent
+        val actualParent = givenTree.getParent()
         assertEquals(null, actualParent)
     }
 
     @Test
     fun `test default children`() {
-        val actualChildren = givenTree.children
+        val actualChildren = givenTree.getChildren()
         assertContentEquals(emptyList(), actualChildren)
     }
 
@@ -42,7 +41,7 @@ internal class BasicTreeTest {
         val child2 = TestBasicTree()
         givenTree.addChild(child1)
         givenTree.addChild(child2)
-        val actualChildren = givenTree.children
+        val actualChildren = givenTree.getChildren()
         assertContentEquals(listOf(child1, child2), actualChildren)
     }
 
@@ -51,7 +50,7 @@ internal class BasicTreeTest {
         val child1 = TestBasicTree()
         val child2 = TestBasicTree()
         givenTree.setChildrenTo(listOf(child1, child2))
-        val actualChildren = givenTree.children
+        val actualChildren = givenTree.getChildren()
         assertContentEquals(listOf(child1, child2), actualChildren)
     }
 
@@ -59,7 +58,7 @@ internal class BasicTreeTest {
     fun `test setParentTo`() {
         val parent = TestBasicTree()
         givenTree.setParentTo(parent)
-        val actualParent = givenTree.parent
+        val actualParent = givenTree.getParent()
         assertEquals(parent, actualParent)
     }
 
@@ -116,8 +115,6 @@ internal class BasicTreeTest {
     private class TestBasicTree : BasicTree<TestBasicTree>() {
         override val self: TestBasicTree
             get() = this
-        override val traversalHelper: TraversalHelper<TestBasicTree>
-            get() = TraversalHelper(this)
 
         override fun similarityHashCode(): Int = throw NotImplementedError()
 

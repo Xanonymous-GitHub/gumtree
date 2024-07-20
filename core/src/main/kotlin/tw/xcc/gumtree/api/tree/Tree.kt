@@ -5,7 +5,7 @@ package tw.xcc.gumtree.api.tree
  * A tree is a hierarchical structure that consists of nodes connected by edges.
  * The number of children can be any non-negative integer.
  * */
-interface Tree<out T> where T : Tree<T>, T : Any {
+interface Tree {
     /**
      * To check if the current node is a root node.
      * */
@@ -24,15 +24,15 @@ interface Tree<out T> where T : Tree<T>, T : Any {
     /**
      * To get the child at the specified index.
      * */
-    fun childAt(i: Int): T?
+    fun childAt(i: Int): Tree?
 
     /**
-     * The children of the Tree.
+     * To get the children of the Tree.
      * */
-    val children: List<T>
+    fun getChildren(): List<Tree>
 
     /**
      * To get the parent of the Tree.
      * */
-    val parent: T?
+    fun getParent(): Tree?
 }

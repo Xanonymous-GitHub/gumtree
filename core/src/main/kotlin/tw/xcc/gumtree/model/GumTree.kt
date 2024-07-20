@@ -6,8 +6,7 @@ import java.util.concurrent.atomic.AtomicReference
 class GumTree(
     type: TreeType,
     val label: String = EMPTY_LABEL
-) : BasicTree<GumTree>(),
-    Comparable<GumTree> {
+) : BasicTree<GumTree>(), Comparable<GumTree> {
     private val compareHelper = CompareHelper(this)
 
     var pos: Int = -1
@@ -65,8 +64,6 @@ class GumTree(
     override fun similarityStructureHashCode(): Int {
         TODO("Not yet implemented")
     }
-
-    override val traversalHelper = TraversalHelper(this)
 
     override val self: GumTree
         get() = this

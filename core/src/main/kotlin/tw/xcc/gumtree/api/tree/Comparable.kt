@@ -3,7 +3,7 @@ package tw.xcc.gumtree.api.tree
 /**
  * Comparable defines the basic methods for comparing two [Tree]s.
  * */
-internal interface Comparable<T> where T : Tree<T>, T : Any {
+internal interface Comparable<T> where T : Tree, T : Any {
     /**
      * To compare whether this tree is strictly equal to another tree.
      * All the node's properties must be equal.

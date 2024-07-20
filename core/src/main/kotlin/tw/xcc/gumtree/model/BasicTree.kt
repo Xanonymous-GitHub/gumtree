@@ -2,25 +2,19 @@ package tw.xcc.gumtree.model
 
 import tw.xcc.gumtree.api.tree.Traversable
 import tw.xcc.gumtree.api.tree.Tree
+import tw.xcc.gumtree.helper.postOrdered
+import tw.xcc.gumtree.helper.preOrdered
 import java.util.concurrent.atomic.AtomicReference
 
 /**
  * The general thread-safe implementation of a tree structure.
  * */
-abstract class BasicTree<T> :
-    Tree<T>,
-    Traversable<T> where T : BasicTree<T> {
+abstract class BasicTree<T> : Tree, Traversable<T> where T : BasicTree<T> {
     protected abstract val self: T
 
-    protected abstract val traversalHelper: TraversalHelper<T>
-
-    private val _parent = AtomicReference<T?>()
-    final override val parent: T?
-        get() = synchronized(this) { _parent.get() }
+    private val parent = AtomicReference<T?>()
 
     protected val childrenMap = AtomicReference(sortedMapOf<Int, T>())
-    final override val children: List<T>
-        get() = synchronized(this) { childrenMap.get().values.toList() }
 
     val descendents: List<T> by lazy {
         synchronized(this) {
@@ -49,21 +43,25 @@ abstract class BasicTree<T> :
 
     fun setParentTo(parent: T?) {
         synchronized(this) {
-            _parent.set(parent)
+            this.parent.set(parent)
         }
     }
 
+    final override fun getParent(): T? = synchronized(this) { parent.get() }
+
+    final override fun getChildren(): List<T> = synchronized(this) { childrenMap.get().values.toList() }
+
     final override fun childAt(i: Int): T? = synchronized(this) { childrenMap.get()[i] }
+
+    final override fun preOrdered(): List<T> = preOrdered(self)
+
+    final override fun postOrdered(): List<T> = postOrdered(self)
 
     final override fun childCount(): Int = synchronized(this) { childrenMap.get().size }
 
-    final override fun isRoot(): Boolean = synchronized(this) { parent == null }
+    final override fun isRoot(): Boolean = synchronized(this) { parent.get() == null }
 
     final override fun isLeaf(): Boolean = synchronized(this) { childrenMap.get().isEmpty() }
-
-    final override fun preOrdered(): List<T> = traversalHelper.preOrdered()
-
-    final override fun postOrdered(): List<T> = traversalHelper.postOrdered()
 
     abstract fun similarityHashCode(): Int
 
