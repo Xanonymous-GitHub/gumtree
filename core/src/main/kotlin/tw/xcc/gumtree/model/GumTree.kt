@@ -1,14 +1,14 @@
 package tw.xcc.gumtree.model
 
 import tw.xcc.gumtree.api.tree.Comparable
+import tw.xcc.gumtree.helper.isIsoStructuralTo
+import tw.xcc.gumtree.helper.isIsomorphicTo
 import java.util.concurrent.atomic.AtomicReference
 
 class GumTree(
     type: TreeType,
     val label: String = EMPTY_LABEL
 ) : BasicTree<GumTree>(), Comparable<GumTree> {
-    private val compareHelper = CompareHelper(this)
-
     var pos: Int = -1
     var length: Int = -1
 
@@ -53,9 +53,9 @@ class GumTree(
 
     infix fun hasSameLabelAs(other: GumTree): Boolean = label == other.label
 
-    override infix fun isIsomorphicTo(other: GumTree): Boolean = compareHelper.isIsomorphicTo(other)
+    override infix fun isIsomorphicTo(other: GumTree): Boolean = isIsomorphicTo(this, other)
 
-    override infix fun isIsoStructuralTo(other: GumTree): Boolean = compareHelper.isIsoStructuralTo(other)
+    override infix fun isIsoStructuralTo(other: GumTree): Boolean = isIsoStructuralTo(this, other)
 
     override fun similarityHashCode(): Int {
         TODO("Not yet implemented")
