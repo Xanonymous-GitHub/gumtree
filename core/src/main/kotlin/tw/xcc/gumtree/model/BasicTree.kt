@@ -47,15 +47,23 @@ abstract class BasicTree<T> : Tree, Traversable<T> where T : BasicTree<T> {
         }
     }
 
+    final override fun preOrdered(): List<T> {
+        val result = mutableListOf<T>()
+        preOrdered(self) { result.add(it) }
+        return result
+    }
+
+    final override fun postOrdered(): List<T> {
+        val result = mutableListOf<T>()
+        postOrdered(self) { result.add(it) }
+        return result
+    }
+
     final override fun getParent(): T? = synchronized(this) { parent.get() }
 
     final override fun getChildren(): List<T> = synchronized(this) { childrenMap.get().values.toList() }
 
     final override fun childAt(i: Int): T? = synchronized(this) { childrenMap.get()[i] }
-
-    final override fun preOrdered(): List<T> = preOrdered(self)
-
-    final override fun postOrdered(): List<T> = postOrdered(self)
 
     final override fun childCount(): Int = synchronized(this) { childrenMap.get().size }
 

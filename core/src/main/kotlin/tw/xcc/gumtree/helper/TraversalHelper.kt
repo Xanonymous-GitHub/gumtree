@@ -4,38 +4,36 @@ import tw.xcc.gumtree.api.tree.Tree
 
 private fun <T : Tree> preOrderedImpl(
     tree: T,
-    visited: MutableList<T>
+    action: (T) -> Unit
 ) {
-    visited.add(tree)
+    action(tree)
     tree.getChildren().forEach {
         @Suppress("UNCHECKED_CAST")
-        preOrderedImpl(it as T, visited)
+        preOrderedImpl(it as T, action)
     }
 }
 
 private fun <T : Tree> postOrderedImpl(
     tree: T,
-    visited: MutableList<T>
+    action: (T) -> Unit
 ) {
     tree.getChildren().forEach {
         @Suppress("UNCHECKED_CAST")
-        postOrderedImpl(it as T, visited)
+        postOrderedImpl(it as T, action)
     }
-    visited.add(tree)
+    action(tree)
 }
 
-fun <T : Tree> preOrdered(tree: T): List<T> {
-    synchronized(tree) {
-        val visited = mutableListOf<T>()
-        preOrderedImpl(tree, visited)
-        return visited.toList()
-    }
+fun <T : Tree> preOrdered(
+    tree: T,
+    action: (T) -> Unit
+) = synchronized(tree) {
+    preOrderedImpl(tree, action)
 }
 
-fun <T : Tree> postOrdered(tree: T): List<T> {
-    synchronized(tree) {
-        val visited = mutableListOf<T>()
-        postOrderedImpl(tree, visited)
-        return visited.toList()
-    }
+fun <T : Tree> postOrdered(
+    tree: T,
+    action: (T) -> Unit
+) = synchronized(tree) {
+    postOrderedImpl(tree, action)
 }
