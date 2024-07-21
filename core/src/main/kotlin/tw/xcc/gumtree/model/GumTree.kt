@@ -7,7 +7,7 @@ import java.util.concurrent.atomic.AtomicReference
 
 class GumTree(
     type: TreeType,
-    val label: String = EMPTY_LABEL
+    var label: String = EMPTY_LABEL
 ) : BasicTree<GumTree>(), Comparable<GumTree> {
     var pos: Int = -1
     var length: Int = -1
