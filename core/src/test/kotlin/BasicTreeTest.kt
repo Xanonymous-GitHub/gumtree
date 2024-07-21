@@ -10,11 +10,11 @@ import kotlin.test.assertTrue
 
 @Execution(ExecutionMode.CONCURRENT)
 internal class BasicTreeTest {
-    private lateinit var givenTree: BasicTree<TestBasicTree>
+    private lateinit var givenTree: BasicTree<FakeTinnyTree>
 
     @BeforeTest
     fun setUp() {
-        givenTree = TestBasicTree()
+        givenTree = FakeTinnyTree()
     }
 
     @Test
@@ -37,8 +37,8 @@ internal class BasicTreeTest {
 
     @Test
     fun `test addChild`() {
-        val child1 = TestBasicTree()
-        val child2 = TestBasicTree()
+        val child1 = FakeTinnyTree()
+        val child2 = FakeTinnyTree()
         givenTree.addChild(child1)
         givenTree.addChild(child2)
         val actualChildren = givenTree.getChildren()
@@ -47,8 +47,8 @@ internal class BasicTreeTest {
 
     @Test
     fun `test setChildrenTo`() {
-        val child1 = TestBasicTree()
-        val child2 = TestBasicTree()
+        val child1 = FakeTinnyTree()
+        val child2 = FakeTinnyTree()
         givenTree.setChildrenTo(listOf(child1, child2))
         val actualChildren = givenTree.getChildren()
         assertContentEquals(listOf(child1, child2), actualChildren)
@@ -56,7 +56,7 @@ internal class BasicTreeTest {
 
     @Test
     fun `test setParentTo`() {
-        val parent = TestBasicTree()
+        val parent = FakeTinnyTree()
         givenTree.setParentTo(parent)
         val actualParent = givenTree.getParent()
         assertEquals(parent, actualParent)
@@ -64,8 +64,8 @@ internal class BasicTreeTest {
 
     @Test
     fun `test childAt`() {
-        val child1 = TestBasicTree()
-        val child2 = TestBasicTree()
+        val child1 = FakeTinnyTree()
+        val child2 = FakeTinnyTree()
         givenTree.addChild(child1)
         givenTree.addChild(child2)
         val actualChild1 = givenTree.childAt(0)
@@ -76,8 +76,8 @@ internal class BasicTreeTest {
 
     @Test
     fun `test childCount`() {
-        val child1 = TestBasicTree()
-        val child2 = TestBasicTree()
+        val child1 = FakeTinnyTree()
+        val child2 = FakeTinnyTree()
         givenTree.addChild(child1)
         givenTree.addChild(child2)
         val actualChildCount = givenTree.childCount()
@@ -92,7 +92,7 @@ internal class BasicTreeTest {
 
     @Test
     fun `test isRoot`() {
-        val parent = TestBasicTree()
+        val parent = FakeTinnyTree()
         givenTree.setParentTo(parent)
         val actualIsRoot = givenTree.isRoot()
         assertFalse(actualIsRoot)
@@ -106,18 +106,9 @@ internal class BasicTreeTest {
 
     @Test
     fun `test isLeaf`() {
-        val child = TestBasicTree()
+        val child = FakeTinnyTree()
         givenTree.addChild(child)
         val actualIsLeaf = givenTree.isLeaf()
         assertFalse(actualIsLeaf)
-    }
-
-    private class TestBasicTree : BasicTree<TestBasicTree>() {
-        override val self: TestBasicTree
-            get() = this
-
-        override fun similarityHashCode(): Int = throw NotImplementedError()
-
-        override fun similarityStructureHashCode(): Int = throw NotImplementedError()
     }
 }
