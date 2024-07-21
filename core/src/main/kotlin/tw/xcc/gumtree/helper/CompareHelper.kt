@@ -50,7 +50,6 @@ private suspend fun compareTrees(
         selfChildren.zip(otherChildren).forEach { (selfChild, otherChild) ->
             val job =
                 async(Dispatchers.Default) {
-                    println(coroutineContext)
                     ensureActive()
                     compareTrees(selfChild, otherChild, shouldCheckLabel)
                 }
