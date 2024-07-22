@@ -16,6 +16,10 @@ abstract class BasicTree<T> : Tree, Traversable<T> where T : BasicTree<T> {
 
     protected val childrenMap = AtomicReference(sortedMapOf<Int, T>())
 
+    private val _metrics = AtomicReference(TreeMetrics.empty())
+    val metrics: TreeMetrics
+        get() = _metrics.get()
+
     val descendents: List<T> by lazy {
         synchronized(this) {
             preOrdered().drop(1)

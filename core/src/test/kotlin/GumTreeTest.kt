@@ -1,7 +1,6 @@
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 import tw.xcc.gumtree.model.GumTree
-import tw.xcc.gumtree.model.TreeMetrics
 import tw.xcc.gumtree.model.TreeType
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -45,22 +44,6 @@ internal class GumTreeTest {
         givenTree.length = givenNewTreeLength
         val newActualTreeLength = givenTree.length
         assertEquals(givenNewTreeLength, newActualTreeLength)
-    }
-
-    @Test
-    fun `test setTypeTo`() {
-        val newTreeType = TreeType("newType")
-        givenTree.setTypeTo(newTreeType)
-        val actualTreeType = givenTree.type
-        assertEquals(newTreeType, actualTreeType, "TreeType should be equal")
-    }
-
-    @Test
-    fun `test setMetricsTo`() {
-        val newTreeMetrics = TreeMetrics(1, 2, 3, 4)
-        givenTree.setMetricsTo(newTreeMetrics)
-        val actualTreeMetrics = givenTree.metrics
-        assertEquals(newTreeMetrics, actualTreeMetrics, "TreeMetrics should be equal")
     }
 
     @Test

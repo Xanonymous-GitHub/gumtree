@@ -16,19 +16,9 @@ class GumTree(
     val type: TreeType
         get() = _type.get()
 
-    private val _metrics = AtomicReference(TreeMetrics.empty()) // TODO: calculate metrics
-    val metrics: TreeMetrics
-        get() = _metrics.get()
-
-    fun setTypeTo(value: TreeType) =
-        synchronized(this) {
-            _type.set(value)
-        }
-
-    fun setMetricsTo(value: TreeMetrics) =
-        synchronized(this) {
-            _metrics.set(value)
-        }
+    init {
+        _type.set(type)
+    }
 
     fun insertChildAt(
         pos: Int,
@@ -70,9 +60,5 @@ class GumTree(
 
     companion object {
         const val EMPTY_LABEL = ""
-    }
-
-    init {
-        setTypeTo(type)
     }
 }

@@ -67,18 +67,6 @@ internal class CompareHelperTest {
     }
 
     @Test
-    fun `test isIsomorphic negative with different type`() {
-        val actual = givenRoot1 isIsomorphicTo givenRoot2.also { it.setTypeTo(TreeType("different")) }
-        assertFalse(actual)
-    }
-
-    @Test
-    fun `test isIsoStructural negative with different type`() {
-        val actual = givenRoot1 isIsoStructuralTo givenRoot2.also { it.setTypeTo(TreeType("different")) }
-        assertFalse(actual)
-    }
-
-    @Test
     fun `test isIsomorphic negative with different label`() {
         val diffLabelChild1 = GumTree(TreeType("same"), "different1")
         val diffLabelChild2 = GumTree(TreeType("same"), "different2")
