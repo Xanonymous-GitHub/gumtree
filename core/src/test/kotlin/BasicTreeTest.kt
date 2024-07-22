@@ -111,4 +111,27 @@ internal class BasicTreeTest {
         val actualIsLeaf = givenTree.isLeaf()
         assertFalse(actualIsLeaf)
     }
+
+    @Test
+    fun `test height`() {
+        val child1 = FakeTinnyTree()
+        val child2 = FakeTinnyTree()
+        val child3 = FakeTinnyTree()
+        val child4 = FakeTinnyTree()
+        givenTree.addChild(child1)
+        givenTree.addChild(child2)
+        child1.addChild(child3)
+        child1.addChild(child4)
+        val actualHeight = givenTree.height
+        assertEquals(2, actualHeight)
+    }
+
+    @Test
+    fun `test depth`() {
+        val parent = FakeTinnyTree()
+        val child = FakeTinnyTree()
+        parent.addChild(child)
+        val actualDepth = child.depth
+        assertEquals(1, actualDepth)
+    }
 }

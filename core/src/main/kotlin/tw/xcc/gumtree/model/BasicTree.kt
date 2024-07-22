@@ -4,6 +4,7 @@ import tw.xcc.gumtree.api.tree.Traversable
 import tw.xcc.gumtree.api.tree.Tree
 import tw.xcc.gumtree.helper.postOrdered
 import tw.xcc.gumtree.helper.preOrdered
+import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.atomic.AtomicReference
 
 /**
@@ -16,15 +17,38 @@ abstract class BasicTree<T> : Tree, Traversable<T> where T : BasicTree<T> {
 
     protected val childrenMap = AtomicReference(sortedMapOf<Int, T>())
 
-    private val _metrics = AtomicReference(TreeMetrics.empty())
-    val metrics: TreeMetrics
-        get() = _metrics.get()
+    private val _height = AtomicInteger(0)
+    val height: Int by lazy { calculateHeight() }
+
+    private val _depth = AtomicInteger(0)
+    val depth: Int by lazy { calculateDepth() }
 
     val descendents: List<T> by lazy {
         synchronized(this) {
             preOrdered().drop(1)
         }
     }
+
+    val subTreeSize: Int by lazy { descendents.size }
+
+    private fun calculateHeight(): Int =
+        synchronized(this) {
+            return if (childCount() == 0) {
+                0
+            } else {
+                getChildren().maxOf { it.height } + 1
+            }
+        }
+
+    private fun calculateDepth(): Int =
+        synchronized(this) {
+            val parent = getParent()
+            return if (parent == null) {
+                0
+            } else {
+                parent.depth + 1
+            }
+        }
 
     fun addChild(child: T) {
         synchronized(this) {
