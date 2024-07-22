@@ -72,4 +72,13 @@ internal class GumTreeTest {
         val actualResult = givenTree hasSameLabelAs otherTree
         assertFalse(actualResult, "TreeLabel should not be equal")
     }
+
+    @Test
+    fun `test positionOfParent`() {
+        val givenPositionOfParent = 9487
+        val parent = GumTree(TreeType("parentType"))
+        parent.insertChildAt(givenPositionOfParent, givenTree)
+        val actualPositionOfParent = givenTree.positionOfParent
+        assertEquals(givenPositionOfParent, actualPositionOfParent)
+    }
 }

@@ -3,6 +3,7 @@ package tw.xcc.gumtree.model
 import tw.xcc.gumtree.api.tree.Comparable
 import tw.xcc.gumtree.helper.isIsoStructuralTo
 import tw.xcc.gumtree.helper.isIsomorphicTo
+import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.atomic.AtomicReference
 
 class GumTree(
@@ -15,6 +16,10 @@ class GumTree(
     private val _type = AtomicReference(TreeType.empty())
     val type: TreeType
         get() = _type.get()
+
+    private val _positionOfParent = AtomicInteger(-1)
+    val positionOfParent: Int
+        get() = _positionOfParent.get()
 
     init {
         _type.set(type)
@@ -34,7 +39,11 @@ class GumTree(
             }
 
             val newChildrenMap = childrenMap.get()
-            newChildrenMap[pos] = child.also { it.setParentTo(this) }
+            newChildrenMap[pos] =
+                child.also {
+                    it.setParentTo(this)
+                    it._positionOfParent.set(pos)
+                }
             childrenMap.set(newChildrenMap)
         }
     }
