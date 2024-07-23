@@ -102,7 +102,5 @@ abstract class BasicTree<T> : Tree, Traversable<T> where T : BasicTree<T> {
 
     final override fun isLeaf(): Boolean = synchronized(this) { childrenMap.get().isEmpty() }
 
-    abstract fun similarityHashCode(): Int
-
-    abstract fun similarityStructureHashCode(): Int
+    abstract fun similarityProperties(): String
 }

@@ -56,13 +56,7 @@ class GumTree(
 
     override infix fun isIsoStructuralTo(other: GumTree): Boolean = isIsoStructuralTo(this, other)
 
-    override fun similarityHashCode(): Int {
-        TODO("Not yet implemented")
-    }
-
-    override fun similarityStructureHashCode(): Int {
-        TODO("Not yet implemented")
-    }
+    override fun similarityProperties(): String = "<$label>[$type]<"
 
     override val self: GumTree
         get() = this
