@@ -1,7 +1,7 @@
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
-import tw.xcc.gumtree.helper.postOrdered
-import tw.xcc.gumtree.helper.preOrdered
+import tw.xcc.gumtree.helper.postOrderOf
+import tw.xcc.gumtree.helper.preOrderOf
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
@@ -28,7 +28,7 @@ internal class TraversalHelperTest {
         givenRoot.addChild(child4)
 
         val actualPreOrdered = mutableListOf<FakeTinnyTree>()
-        preOrdered(givenRoot) { actualPreOrdered.add(it) }
+        preOrderOf(givenRoot) { actualPreOrdered.add(it) }
 
         val expectedPreOrdered = listOf(givenRoot, child1, child2, child3, child4)
         assertContentEquals(expectedPreOrdered, actualPreOrdered)
@@ -37,7 +37,7 @@ internal class TraversalHelperTest {
     @Test
     fun `test preOrdered with empty tree`() {
         val actualPreOrdered = mutableListOf<FakeTinnyTree>()
-        preOrdered(givenRoot) { actualPreOrdered.add(it) }
+        preOrderOf(givenRoot) { actualPreOrdered.add(it) }
 
         val expectedPreOrdered = listOf(givenRoot)
         assertContentEquals(expectedPreOrdered, actualPreOrdered)
@@ -49,7 +49,7 @@ internal class TraversalHelperTest {
         givenRoot.addChild(child1)
 
         val actualPreOrdered = mutableListOf<FakeTinnyTree>()
-        preOrdered(givenRoot) { actualPreOrdered.add(it) }
+        preOrderOf(givenRoot) { actualPreOrdered.add(it) }
 
         val expectedPreOrdered = listOf(givenRoot, child1)
         assertContentEquals(expectedPreOrdered, actualPreOrdered)
@@ -68,7 +68,7 @@ internal class TraversalHelperTest {
         givenRoot.addChild(child4)
 
         val actualPostOrdered = mutableListOf<FakeTinnyTree>()
-        postOrdered(givenRoot) { actualPostOrdered.add(it) }
+        postOrderOf(givenRoot) { actualPostOrdered.add(it) }
 
         val expectedPostOrdered = listOf(child2, child3, child1, child4, givenRoot)
         assertContentEquals(expectedPostOrdered, actualPostOrdered)
@@ -77,7 +77,7 @@ internal class TraversalHelperTest {
     @Test
     fun `test postOrdered with empty tree`() {
         val actualPostOrdered = mutableListOf<FakeTinnyTree>()
-        postOrdered(givenRoot) { actualPostOrdered.add(it) }
+        postOrderOf(givenRoot) { actualPostOrdered.add(it) }
 
         val expectedPostOrdered = listOf(givenRoot)
         assertContentEquals(expectedPostOrdered, actualPostOrdered)
@@ -89,7 +89,7 @@ internal class TraversalHelperTest {
         givenRoot.addChild(child1)
 
         val actualPostOrdered = mutableListOf<FakeTinnyTree>()
-        postOrdered(givenRoot) { actualPostOrdered.add(it) }
+        postOrderOf(givenRoot) { actualPostOrdered.add(it) }
 
         val expectedPostOrdered = listOf(child1, givenRoot)
         assertContentEquals(expectedPostOrdered, actualPostOrdered)

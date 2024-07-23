@@ -2,8 +2,8 @@ package tw.xcc.gumtree.model
 
 import tw.xcc.gumtree.api.tree.Traversable
 import tw.xcc.gumtree.api.tree.Tree
-import tw.xcc.gumtree.helper.postOrdered
-import tw.xcc.gumtree.helper.preOrdered
+import tw.xcc.gumtree.helper.postOrderOf
+import tw.xcc.gumtree.helper.preOrderOf
 import java.util.UUID
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.atomic.AtomicReference
@@ -80,13 +80,13 @@ abstract class BasicTree<T> : Tree, Traversable<T> where T : BasicTree<T> {
 
     final override fun preOrdered(): List<T> {
         val result = mutableListOf<T>()
-        preOrdered(self) { result.add(it) }
+        preOrderOf(self) { result.add(it) }
         return result
     }
 
     final override fun postOrdered(): List<T> {
         val result = mutableListOf<T>()
-        postOrdered(self) { result.add(it) }
+        postOrderOf(self) { result.add(it) }
         return result
     }
 

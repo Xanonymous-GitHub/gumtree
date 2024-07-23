@@ -24,14 +24,14 @@ private fun <T : Tree> postOrderedImpl(
     action(tree)
 }
 
-fun <T : Tree> preOrdered(
+fun <T : Tree> preOrderOf(
     tree: T,
     action: (T) -> Unit
 ) = synchronized(tree) {
     preOrderedImpl(tree, action)
 }
 
-fun <T : Tree> postOrdered(
+fun <T : Tree> postOrderOf(
     tree: T,
     action: (T) -> Unit
 ) = synchronized(tree) {
