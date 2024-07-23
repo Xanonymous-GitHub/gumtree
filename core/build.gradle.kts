@@ -17,6 +17,17 @@ dependencies {
     implementation(libs.kotlin.stdlib)
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.core.jvm)
+    implementation(libs.lwjgl)
+    implementation(libs.lwjgl.xxhash)
+    implementation(platform(libs.lwjgl.bom))
+
+    runtimeOnly(libs.lwjgl) {
+        artifact { classifier = "natives-macos" }
+    }
+    runtimeOnly(libs.lwjgl.xxhash) {
+        artifact { classifier = "natives-macos" }
+    }
+
     testImplementation(libs.kotlin.test)
     testImplementation(libs.kotlin.test.junit5)
 }
