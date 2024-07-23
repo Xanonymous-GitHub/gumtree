@@ -7,6 +7,11 @@ package tw.xcc.gumtree.api.tree
  * */
 interface Tree {
     /**
+     * The unique identifier of the Tree.
+     * */
+    val id: String
+
+    /**
      * To check if the current node is a root node.
      * */
     fun isRoot(): Boolean

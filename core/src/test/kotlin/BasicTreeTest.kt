@@ -1,6 +1,8 @@
+import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 import tw.xcc.gumtree.model.BasicTree
+import java.util.UUID
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
@@ -133,5 +135,11 @@ internal class BasicTreeTest {
         parent.addChild(child)
         val actualDepth = child.depth
         assertEquals(1, actualDepth)
+    }
+
+    @Test
+    fun `test tree id`() {
+        val actualTreeId = givenTree.id
+        assertDoesNotThrow { UUID.fromString(actualTreeId) }
     }
 }
