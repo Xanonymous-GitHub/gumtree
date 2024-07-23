@@ -81,4 +81,11 @@ internal class GumTreeTest {
         val actualPositionOfParent = givenTree.positionOfParent
         assertEquals(givenPositionOfParent, actualPositionOfParent)
     }
+
+    @Test
+    fun `test similarityProperties`() {
+        val actualSimilarityProperties = givenTree.similarityProperties()
+        val expectedSimilarityProperties = "<$givenTreeLabel>[$givenTreeType]<"
+        assertEquals(expectedSimilarityProperties, actualSimilarityProperties)
+    }
 }
