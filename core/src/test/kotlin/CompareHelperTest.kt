@@ -1,9 +1,11 @@
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
+import tw.xcc.gumtree.helper.createHashMemoOf
 import tw.xcc.gumtree.model.GumTree
 import tw.xcc.gumtree.model.TreeType
 import kotlin.test.BeforeTest
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
@@ -84,5 +86,12 @@ internal class CompareHelperTest {
         givenRoot2.addChild(diffLabelChild2)
         val actual = givenRoot1 isIsoStructuralTo givenRoot2
         assertTrue(actual)
+    }
+
+    @Test
+    fun `test isIsomorphic should have same hashMemo`() {
+        val hashMemo1 = createHashMemoOf(givenRoot1)
+        val hashMemo2 = createHashMemoOf(givenRoot2)
+        assertEquals(hashMemo1[givenRoot1.id], hashMemo2[givenRoot2.id])
     }
 }
