@@ -4,11 +4,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import tw.xcc.gumtree.api.tree.TreeMappingStorage
 
 /**
  * The storage for saving the references of the mapping between two GumTrees. (Left and Right)
  * */
-class MappingStorage {
+class MappingStorage : TreeMappingStorage<GumTree> {
     private val mappingLR = mutableMapOf<GumTree, GumTree>()
     private val mappingRL = mutableMapOf<GumTree, GumTree>()
 
@@ -97,62 +98,62 @@ class MappingStorage {
             !mappingLR.containsKey(mapping.first) && !mappingRL.containsKey(mapping.second)
         }
 
-    fun addMappingOf(mapping: Pair<GumTree, GumTree>) =
+    override fun addMappingOf(mapping: Pair<GumTree, GumTree>) =
         runBlocking(Dispatchers.Default) {
             addMappingImpl(mapping)
         }
 
-    fun addMappingRecursivelyOf(mapping: Pair<GumTree, GumTree>) =
+    override fun addMappingRecursivelyOf(mapping: Pair<GumTree, GumTree>) =
         runBlocking(Dispatchers.Default) {
             addMappingRecursivelyImpl(mapping)
         }
 
-    fun removeMappingOf(mapping: Pair<GumTree, GumTree>) =
+    override fun removeMappingOf(mapping: Pair<GumTree, GumTree>) =
         runBlocking(Dispatchers.Default) {
             removeMappingImpl(mapping)
         }
 
-    fun getMappingOfLeft(left: GumTree): GumTree? =
+    override fun getMappingOfLeft(left: GumTree): GumTree? =
         runBlocking(Dispatchers.Default) {
             extractMappedTreeOf(left, mappingLR)
         }
 
-    fun getMappingOfRight(right: GumTree): GumTree? =
+    override fun getMappingOfRight(right: GumTree): GumTree? =
         runBlocking(Dispatchers.Default) {
             extractMappedTreeOf(right, mappingRL)
         }
 
-    fun isLeftMapped(left: GumTree): Boolean =
+    override fun isLeftMapped(left: GumTree): Boolean =
         runBlocking(Dispatchers.Default) {
             isMappingExistsIn(mappingLR, left)
         }
 
-    fun isAnyOfLeftsUnMapped(lefts: Iterable<GumTree>): Boolean =
+    override fun isAnyOfLeftsUnMapped(lefts: Iterable<GumTree>): Boolean =
         runBlocking(Dispatchers.Default) {
             isAnyTreeNotExistsIn(mappingLR, lefts)
         }
 
-    fun isRightMapped(right: GumTree): Boolean =
+    override fun isRightMapped(right: GumTree): Boolean =
         runBlocking(Dispatchers.Default) {
             isMappingExistsIn(mappingRL, right)
         }
 
-    fun isAnyOfRightsUnMapped(rights: Iterable<GumTree>): Boolean =
+    override fun isAnyOfRightsUnMapped(rights: Iterable<GumTree>): Boolean =
         runBlocking(Dispatchers.Default) {
             isAnyTreeNotExistsIn(mappingRL, rights)
         }
 
-    fun areBothUnMapped(mapping: Pair<GumTree, GumTree>): Boolean =
+    override fun areBothUnMapped(mapping: Pair<GumTree, GumTree>): Boolean =
         runBlocking(Dispatchers.Default) {
             areBothUnMappedImpl(mapping)
         }
 
-    fun hasUnMappedDescendentOfLeft(left: GumTree): Boolean =
+    override fun hasUnMappedDescendentOfLeft(left: GumTree): Boolean =
         runBlocking(Dispatchers.Default) {
             hasUnMappedDescendent(left, mappingLR)
         }
 
-    fun hasUnMappedDescendentOfRight(right: GumTree): Boolean =
+    override fun hasUnMappedDescendentOfRight(right: GumTree): Boolean =
         runBlocking(Dispatchers.Default) {
             hasUnMappedDescendent(right, mappingRL)
         }

@@ -1,8 +1,6 @@
 package tw.xcc.gumtree.api.tree
 
-import tw.xcc.gumtree.model.BasicTree
-
-internal interface PriorityTreeList<T : BasicTree<T>> {
+internal interface PriorityTreeList<in T : Tree> {
     /**
      * Inserts the node n in the list.
      * */
@@ -14,15 +12,15 @@ internal interface PriorityTreeList<T : BasicTree<T>> {
     fun open(tree: T)
 
     /**
-     * Returns and removes the set of all nodes which has a priority equals to [peekMax]
+     * Returns and removes the set of all nodes that has a priority equals to [peekMax]
      * */
-    fun pop(): List<T>
+    fun pop(): List<Tree>
 
     /**
      * Returns and removes the set of all nodes which has a priority equals to [peekMax],
      * and inserts all the children of these nodes in the list.
      * */
-    fun popOpen(): List<T>
+    fun popOpen(): List<Tree>
 
     /**
      * Returns the highest priority value of the list.
