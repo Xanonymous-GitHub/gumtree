@@ -62,6 +62,6 @@ class GumTree(
         get() = this
 
     companion object {
-        const val EMPTY_LABEL = ""
+        private const val EMPTY_LABEL = ""
     }
 }
