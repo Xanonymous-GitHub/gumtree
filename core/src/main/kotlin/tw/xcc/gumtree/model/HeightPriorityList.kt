@@ -51,4 +51,24 @@ class HeightPriorityList : PriorityTreeList<GumTree> {
         synchronized(this) {
             trees.clear()
         }
+
+    infix fun hasBeenSynchronizedTo(other: HeightPriorityList): Boolean {
+        while (true) {
+            if (this.isEmpty() || other.isEmpty()) {
+                this.clear()
+                other.clear()
+                return false
+            }
+
+            val selfMaxPeak = this.peekMax()
+            val otherMaxPeak = other.peekMax()
+            if (selfMaxPeak == otherMaxPeak) return true
+
+            if (selfMaxPeak > otherMaxPeak) {
+                this.popOpen()
+            } else {
+                other.popOpen()
+            }
+        }
+    }
 }

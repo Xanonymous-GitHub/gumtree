@@ -107,4 +107,20 @@ internal class HeightPriorityListTest {
             givenList.peekMax()
         }
     }
+
+    @Test
+    fun `test hasBeenSynchronizedTo`() {
+        val anotherList = HeightPriorityList()
+        assertFalse(givenList hasBeenSynchronizedTo anotherList)
+
+        givenList.push(node5)
+        assertFalse(givenList hasBeenSynchronizedTo anotherList)
+
+        givenList.push(node1)
+        anotherList.push(node1)
+        assertTrue(givenList hasBeenSynchronizedTo anotherList)
+
+        givenList.push(node0)
+        assertTrue(givenList hasBeenSynchronizedTo anotherList)
+    }
 }
