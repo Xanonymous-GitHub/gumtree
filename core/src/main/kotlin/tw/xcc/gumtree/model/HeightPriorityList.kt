@@ -2,12 +2,16 @@ package tw.xcc.gumtree.model
 
 import tw.xcc.gumtree.api.tree.PriorityTreeList
 
-class HeightPriorityList : PriorityTreeList<GumTree> {
+class HeightPriorityList(private val minHeight: Int = 1) : PriorityTreeList<GumTree> {
     private val trees = sortedMapOf<Int, MutableList<GumTree>>()
 
     override fun push(tree: GumTree) {
         synchronized(this) {
             val height = tree.height
+            if (height < minHeight) {
+                return
+            }
+
             if (trees.containsKey(height)) {
                 trees[height]!!.add(tree)
             } else {

@@ -123,4 +123,12 @@ internal class HeightPriorityListTest {
         givenList.push(node0)
         assertTrue(givenList hasBeenSynchronizedTo anotherList)
     }
+
+    @Test
+    fun `test minHeight can avoid pushing`() {
+        givenList.push(node5)
+        assertThrows<NoSuchElementException> {
+            givenList.pop()
+        }
+    }
 }
