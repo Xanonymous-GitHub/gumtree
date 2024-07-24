@@ -1,6 +1,6 @@
 package tw.xcc.gumtree.api.tree
 
-internal interface TreeMappingStorage<in T : Tree> {
+interface TreeMappingStorage<in T : Tree> {
     fun addMappingOf(mapping: Pair<T, T>)
 
     fun addMappingRecursivelyOf(mapping: Pair<T, T>)
