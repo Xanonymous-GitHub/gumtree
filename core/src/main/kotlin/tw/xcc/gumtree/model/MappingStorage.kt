@@ -2,8 +2,6 @@ package tw.xcc.gumtree.model
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 import tw.xcc.gumtree.api.tree.TreeMappingStorage
 
 /**
@@ -13,36 +11,34 @@ class MappingStorage : TreeMappingStorage<GumTree> {
     private val mappingLR = mutableMapOf<GumTree, GumTree>()
     private val mappingRL = mutableMapOf<GumTree, GumTree>()
 
-    private val mutex = Mutex()
-
     val size: Int by lazy {
         runBlocking(Dispatchers.Default) {
             calculateSizeImpl()
         }
     }
 
-    private suspend fun calculateSizeImpl() =
-        mutex.withLock {
+    private fun calculateSizeImpl() =
+        synchronized(this) {
             if (mappingLR.size != mappingRL.size) {
                 throw IllegalStateException("The size of the mappingLR and mappingRL should be the same.")
             }
             mappingLR.size
         }
 
-    private suspend fun addMappingImpl(mapping: Pair<GumTree, GumTree>) =
-        mutex.withLock {
+    private fun addMappingImpl(mapping: Pair<GumTree, GumTree>) =
+        synchronized(this) {
             mappingLR[mapping.first] = mapping.second
             mappingRL[mapping.second] = mapping.first
         }
 
-    private suspend fun addMappingRecursivelyImpl(mapping: Pair<GumTree, GumTree>) {
+    private fun addMappingRecursivelyImpl(mapping: Pair<GumTree, GumTree>) {
         addMappingImpl(mapping)
         mapping.first.getChildren().zip(mapping.second.getChildren()).forEach {
             addMappingRecursivelyImpl(it)
         }
     }
 
-    private suspend fun removeMappingImpl(mapping: Pair<GumTree, GumTree>) {
+    private fun removeMappingImpl(mapping: Pair<GumTree, GumTree>) {
         if (mappingLR[mapping.first] != mapping.second) {
             throw IllegalArgumentException(
                 "The mapping should be existed, found L[${mapping.first}] -> R[${mappingLR[mapping.first]}]"
@@ -55,106 +51,70 @@ class MappingStorage : TreeMappingStorage<GumTree> {
             )
         }
 
-        mutex.withLock {
+        synchronized(this) {
             mappingLR.remove(mapping.first)
             mappingRL.remove(mapping.second)
         }
     }
 
-    private suspend fun extractMappedTreeOf(
+    private fun extractMappedTreeOf(
         tree: GumTree,
         mapping: Map<GumTree, GumTree>
     ): GumTree? =
-        mutex.withLock {
+        synchronized(this) {
             mapping[tree]
         }
 
-    private suspend fun isMappingExistsIn(
+    private fun isMappingExistsIn(
         mapping: Map<GumTree, GumTree>,
         tree: GumTree
     ): Boolean =
-        mutex.withLock {
+        synchronized(this) {
             mapping.containsKey(tree)
         }
 
-    private suspend fun isAnyTreeNotExistsIn(
+    private fun isAnyTreeNotExistsIn(
         mapping: Map<GumTree, GumTree>,
         trees: Iterable<GumTree>
     ): Boolean =
-        mutex.withLock {
+        synchronized(this) {
             trees.any { !mapping.containsKey(it) }
         }
 
-    private suspend fun hasUnMappedDescendent(
+    private fun hasUnMappedDescendent(
         tree: GumTree,
         mapping: Map<GumTree, GumTree>
     ): Boolean =
-        mutex.withLock {
+        synchronized(this) {
             tree.descendents.any { !mapping.containsKey(it) }
         }
 
-    private suspend fun areBothUnMappedImpl(mapping: Pair<GumTree, GumTree>): Boolean =
-        mutex.withLock {
+    private fun areBothUnMappedImpl(mapping: Pair<GumTree, GumTree>): Boolean =
+        synchronized(this) {
             !mappingLR.containsKey(mapping.first) && !mappingRL.containsKey(mapping.second)
         }
 
-    override fun addMappingOf(mapping: Pair<GumTree, GumTree>) =
-        runBlocking(Dispatchers.Default) {
-            addMappingImpl(mapping)
-        }
+    override fun addMappingOf(mapping: Pair<GumTree, GumTree>) = addMappingImpl(mapping)
 
-    override fun addMappingRecursivelyOf(mapping: Pair<GumTree, GumTree>) =
-        runBlocking(Dispatchers.Default) {
-            addMappingRecursivelyImpl(mapping)
-        }
+    override fun addMappingRecursivelyOf(mapping: Pair<GumTree, GumTree>) = addMappingRecursivelyImpl(mapping)
 
-    override fun removeMappingOf(mapping: Pair<GumTree, GumTree>) =
-        runBlocking(Dispatchers.Default) {
-            removeMappingImpl(mapping)
-        }
+    override fun removeMappingOf(mapping: Pair<GumTree, GumTree>) = removeMappingImpl(mapping)
 
-    override fun getMappingOfLeft(left: GumTree): GumTree? =
-        runBlocking(Dispatchers.Default) {
-            extractMappedTreeOf(left, mappingLR)
-        }
+    override fun getMappingOfLeft(left: GumTree): GumTree? = extractMappedTreeOf(left, mappingLR)
 
-    override fun getMappingOfRight(right: GumTree): GumTree? =
-        runBlocking(Dispatchers.Default) {
-            extractMappedTreeOf(right, mappingRL)
-        }
+    override fun getMappingOfRight(right: GumTree): GumTree? = extractMappedTreeOf(right, mappingRL)
 
-    override fun isLeftMapped(left: GumTree): Boolean =
-        runBlocking(Dispatchers.Default) {
-            isMappingExistsIn(mappingLR, left)
-        }
+    override fun isLeftMapped(left: GumTree): Boolean = isMappingExistsIn(mappingLR, left)
 
-    override fun isAnyOfLeftsUnMapped(lefts: Iterable<GumTree>): Boolean =
-        runBlocking(Dispatchers.Default) {
-            isAnyTreeNotExistsIn(mappingLR, lefts)
-        }
+    override fun isAnyOfLeftsUnMapped(lefts: Iterable<GumTree>): Boolean = isAnyTreeNotExistsIn(mappingLR, lefts)
 
-    override fun isRightMapped(right: GumTree): Boolean =
-        runBlocking(Dispatchers.Default) {
-            isMappingExistsIn(mappingRL, right)
-        }
+    override fun isRightMapped(right: GumTree): Boolean = isMappingExistsIn(mappingRL, right)
 
-    override fun isAnyOfRightsUnMapped(rights: Iterable<GumTree>): Boolean =
-        runBlocking(Dispatchers.Default) {
-            isAnyTreeNotExistsIn(mappingRL, rights)
-        }
+    override fun isAnyOfRightsUnMapped(rights: Iterable<GumTree>): Boolean = isAnyTreeNotExistsIn(mappingRL, rights)
 
-    override fun areBothUnMapped(mapping: Pair<GumTree, GumTree>): Boolean =
-        runBlocking(Dispatchers.Default) {
-            areBothUnMappedImpl(mapping)
-        }
+    override fun areBothUnMapped(mapping: Pair<GumTree, GumTree>): Boolean = areBothUnMappedImpl(mapping)
 
-    override fun hasUnMappedDescendentOfLeft(left: GumTree): Boolean =
-        runBlocking(Dispatchers.Default) {
-            hasUnMappedDescendent(left, mappingLR)
-        }
+    override fun hasUnMappedDescendentOfLeft(left: GumTree): Boolean = hasUnMappedDescendent(left, mappingLR)
 
-    override fun hasUnMappedDescendentOfRight(right: GumTree): Boolean =
-        runBlocking(Dispatchers.Default) {
-            hasUnMappedDescendent(right, mappingRL)
-        }
+    override fun hasUnMappedDescendentOfRight(right: GumTree): Boolean = hasUnMappedDescendent(right, mappingRL)
 }
