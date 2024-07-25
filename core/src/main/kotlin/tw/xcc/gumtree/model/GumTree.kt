@@ -8,12 +8,19 @@ import java.util.concurrent.atomic.AtomicReference
 
 class GumTree(
     type: TreeType,
+    /**
+     * The Label corresponds to the actual tokens in the code.
+     * */
     var label: String = EMPTY_LABEL
 ) : BasicTree<GumTree>(), Comparable<GumTree> {
     var pos: Int = -1
     var length: Int = -1
 
     private val _type = AtomicReference(TreeType.empty())
+
+    /**
+     * The Type corresponds to the name of their production rule in the grammar.
+     * */
     val type: TreeType
         get() = _type.get()
 
