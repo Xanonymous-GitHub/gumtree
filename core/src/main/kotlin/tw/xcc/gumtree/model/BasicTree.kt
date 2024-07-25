@@ -32,6 +32,22 @@ abstract class BasicTree<T> : Tree, Traversable<T> where T : BasicTree<T> {
         }
     }
 
+    /**
+     * The sequence of the node's ancestor nodes.
+     * Sorted by their distance to the node.
+     * */
+    val ancestors: List<T> by lazy {
+        synchronized(this) {
+            if (isRoot()) {
+                emptyList()
+            } else {
+                val parent = parent.get()
+                assert(parent != null)
+                listOf(parent!!) + parent.ancestors
+            }
+        }
+    }
+
     val subTreeSize: Int by lazy { descendents.size }
 
     private fun calculateHeight(): Int =

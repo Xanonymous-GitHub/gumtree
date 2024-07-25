@@ -1,6 +1,7 @@
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
+import tw.xcc.gumtree.helper.gumTree
 import tw.xcc.gumtree.model.BasicTree
 import java.util.UUID
 import kotlin.test.BeforeTest
@@ -8,6 +9,7 @@ import kotlin.test.Test
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 @Execution(ExecutionMode.CONCURRENT)
@@ -141,5 +143,26 @@ internal class BasicTreeTest {
     fun `test tree id`() {
         val actualTreeId = givenTree.id
         assertDoesNotThrow { UUID.fromString(actualTreeId) }
+    }
+
+    @Test
+    fun `test ancestor finding`() {
+        val tree =
+            gumTree("0") {
+                child("1") {
+                    child("2") {
+                        child("3")
+                    }
+                }
+                child("notAncestor")
+            }
+
+        val mostDescendent = tree.descendents.find { it.type.name == "3" }
+        assertNotNull(mostDescendent)
+
+        val itsAncestors = mostDescendent.ancestors
+        val ancestorNames = itsAncestors.map { it.type.name }
+
+        assertContentEquals(listOf("2", "1", "0"), ancestorNames)
     }
 }
