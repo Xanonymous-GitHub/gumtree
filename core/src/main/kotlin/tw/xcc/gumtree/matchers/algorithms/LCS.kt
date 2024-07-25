@@ -8,7 +8,7 @@ import kotlin.contracts.contract
 private inline fun <T> calculateLCSLength(
     collection1: Collection<T>,
     collection2: Collection<T>,
-    equals: (T, T) -> Boolean = { a, b -> a == b }
+    equals: (T, T) -> Boolean
 ): Array<IntArray> {
     contract {
         callsInPlace(equals, InvocationKind.UNKNOWN)
