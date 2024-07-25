@@ -11,44 +11,44 @@ internal annotation class GumTreeMarker
 
 @OptIn(ExperimentalContracts::class)
 @GumTreeMarker
-internal class GumTreeBuilder(name: String, label: String) {
-    private val root by lazy { GumTree(TreeType(name), label) }
+internal class GumTreeBuilder(grammarName: String, label: String) {
+    private val root by lazy { GumTree(TreeType(grammarName), label) }
 
     fun child(
-        name: String,
-        label: String,
+        grammarName: String,
+        label: String = "",
         block: GumTreeBuilder.() -> Unit
     ) {
         contract {
             callsInPlace(block, InvocationKind.EXACTLY_ONCE)
         }
 
-        val child = GumTreeBuilder(name, label)
+        val child = GumTreeBuilder(grammarName, label)
         child.block()
         root.addChild(child.build())
     }
 
     fun child(
-        name: String,
-        label: String
+        grammarName: String,
+        label: String = ""
     ) {
-        root.addChild(GumTree(TreeType(name), label))
+        root.addChild(GumTree(TreeType(grammarName), label))
     }
 
-    fun build(): GumTree = root
+    internal fun build(): GumTree = root
 }
 
 @OptIn(ExperimentalContracts::class)
 internal fun gumTree(
-    name: String,
-    label: String,
+    grammarName: String,
+    label: String = "",
     block: GumTreeBuilder.() -> Unit
 ): GumTree {
     contract {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)
     }
 
-    val builder = GumTreeBuilder(name, label)
+    val builder = GumTreeBuilder(grammarName, label)
     builder.block()
     return builder.build()
 }
