@@ -26,6 +26,18 @@ internal class SharedFunctionTest {
         val sizeB = 0
         val theirIntersectionSize = 0
 
+        val expectDice = 0.0
+        val actualDice = calculateDiceValue(theirIntersectionSize, sizeA, sizeB)
+
+        assertEquals(expectDice, actualDice, 0.0001)
+    }
+
+    @Test
+    fun `test dice function with zero size and intersection`() {
+        val sizeA = 0
+        val sizeB = 0
+        val theirIntersectionSize = 8787878
+
         val expectDice = 1.0
         val actualDice = calculateDiceValue(theirIntersectionSize, sizeA, sizeB)
 
