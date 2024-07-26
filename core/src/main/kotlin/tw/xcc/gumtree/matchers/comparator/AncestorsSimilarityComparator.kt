@@ -1,6 +1,6 @@
 package tw.xcc.gumtree.matchers.comparator
 
-import tw.xcc.gumtree.matchers.algorithms.lcsBaseOnlySize
+import tw.xcc.gumtree.algorithms.lcsBaseOnlySize
 import tw.xcc.gumtree.model.GumTree
 
 class AncestorsSimilarityComparator : Comparator<Pair<GumTree, GumTree>> {

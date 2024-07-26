@@ -1,7 +1,7 @@
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
-import tw.xcc.gumtree.matchers.algorithms.lcsBaseOnlySize
-import tw.xcc.gumtree.matchers.algorithms.lcsBaseWithElements
+import tw.xcc.gumtree.algorithms.lcsBaseOnlySize
+import tw.xcc.gumtree.algorithms.lcsBaseWithElements
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

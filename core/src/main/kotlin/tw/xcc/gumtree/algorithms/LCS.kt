@@ -1,4 +1,4 @@
-package tw.xcc.gumtree.matchers.algorithms
+package tw.xcc.gumtree.algorithms
 
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
