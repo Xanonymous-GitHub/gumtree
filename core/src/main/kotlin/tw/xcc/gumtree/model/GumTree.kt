@@ -11,11 +11,17 @@ open class GumTree(
     /**
      * The Label corresponds to the actual tokens in the code.
      * */
-    var label: String = EMPTY_LABEL
+    val label: String = EMPTY_LABEL,
+    /**
+     * pos is the position of the node in the source code.
+     * */
+    val pos: Int = -1,
+    /**
+     * length is the length of the node in the source code.
+     * for example, the length of a token is the length of the token itself.
+     * */
+    val length: Int = -1
 ) : BasicTree<GumTree>(), Comparable<GumTree> {
-    var pos: Int = -1
-    var length: Int = -1
-
     private val _type = AtomicReference(TreeType.empty())
 
     /**
@@ -32,7 +38,7 @@ open class GumTree(
         _type.set(type)
     }
 
-    fun insertChildAt(
+    open fun insertChildAt(
         pos: Int,
         child: GumTree
     ) {

@@ -31,8 +31,8 @@ internal class GumTreeTest {
         val actualTreePos = givenTree.pos
         assertEquals(-1, actualTreePos)
         val givenNewTreePos = 9487
-        givenTree.pos = givenNewTreePos
-        val newActualTreePos = givenTree.pos
+        val treeWithCustomPos = GumTree(TreeType.empty(), "label", givenNewTreePos)
+        val newActualTreePos = treeWithCustomPos.pos
         assertEquals(givenNewTreePos, newActualTreePos)
     }
 
@@ -41,8 +41,8 @@ internal class GumTreeTest {
         val actualTreeLength = givenTree.length
         assertEquals(-1, actualTreeLength)
         val givenNewTreeLength = 9487
-        givenTree.length = givenNewTreeLength
-        val newActualTreeLength = givenTree.length
+        val treeWithCustomLength = GumTree(TreeType.empty(), "label", -1, givenNewTreeLength)
+        val newActualTreeLength = treeWithCustomLength.length
         assertEquals(givenNewTreeLength, newActualTreeLength)
     }
 
