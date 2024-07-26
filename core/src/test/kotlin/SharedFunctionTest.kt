@@ -1,7 +1,10 @@
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
+import tw.xcc.gumtree.helper.gumTree
 import tw.xcc.gumtree.matchers.comparator.calculateDiceValue
 import tw.xcc.gumtree.matchers.comparator.hasSameParent
+import tw.xcc.gumtree.matchers.comparator.numOfMappedDescendents
+import tw.xcc.gumtree.model.MappingStorage
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -70,5 +73,42 @@ internal class SharedFunctionTest {
         val actualResult = hasSameParent(m1, m2)
 
         assertTrue(actualResult)
+    }
+
+    @Test
+    fun `test numOfMappedDescendents`() {
+        val tree1 =
+            gumTree("root1") {
+                child("child1") {
+                    child("child2")
+                }
+            }
+
+        val tree2 =
+            gumTree("root2") {
+                child("child3") {
+                    child("child4")
+                }
+            }
+
+        val otherTree =
+            gumTree("root3") {
+                child("child5") {
+                    child("child6")
+                }
+            }
+
+        val child1 = tree1.getChildren().first()
+        val child2 = child1.getChildren().first()
+        val child3 = tree2.getChildren().first()
+        val child5 = otherTree.getChildren().first()
+
+        val storage = MappingStorage()
+        storage.addMappingOf(child1 to child3)
+        storage.addMappingOf(child2 to child5)
+
+        val actualResult = numOfMappedDescendents(tree1, tree2, storage)
+
+        assertEquals(1, actualResult)
     }
 }

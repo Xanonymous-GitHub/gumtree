@@ -1,6 +1,8 @@
 package tw.xcc.gumtree.matchers.comparator
 
 import tw.xcc.gumtree.api.tree.Tree
+import tw.xcc.gumtree.api.tree.TreeMappingStorage
+import tw.xcc.gumtree.model.BasicTree
 import kotlin.math.max
 
 /**
@@ -53,3 +55,18 @@ fun <T : Tree> hasSameParent(
     m1: Pair<T, T>,
     m2: Pair<T, T>
 ): Boolean = (m1.first.getParent() == m2.first.getParent()) && (m1.second.getParent() == m2.second.getParent())
+
+/**
+ * To calculate the number of mapped descendents in [tree1] and [tree2].
+ * The descendents of [tree1] should be saved in the Left part of [storage].
+ * */
+fun <T : BasicTree<T>> numOfMappedDescendents(
+    tree1: T,
+    tree2: T,
+    storage: TreeMappingStorage<T>
+): Int {
+    val tree2Descendents = tree2.descendents
+    return tree1.descendents.count {
+        tree2Descendents.contains(storage.getMappingOfLeft(it))
+    }
+}
