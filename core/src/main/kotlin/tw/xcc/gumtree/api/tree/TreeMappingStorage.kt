@@ -1,15 +1,15 @@
 package tw.xcc.gumtree.api.tree
 
-interface TreeMappingStorage<in T : Tree> {
+interface TreeMappingStorage<T : Tree> {
     fun addMappingOf(mapping: Pair<T, T>)
 
     fun addMappingRecursivelyOf(mapping: Pair<T, T>)
 
     fun removeMappingOf(mapping: Pair<T, T>)
 
-    fun getMappingOfLeft(left: T): Tree?
+    fun getMappingOfLeft(left: T): T?
 
-    fun getMappingOfRight(right: T): Tree?
+    fun getMappingOfRight(right: T): T?
 
     fun isLeftMapped(left: T): Boolean
 
