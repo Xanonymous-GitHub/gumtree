@@ -12,11 +12,11 @@ import java.util.concurrent.atomic.AtomicReference
 import kotlin.math.ln
 
 class BottomUpMatcher : TreeMatcher<GumTree> {
-    private suspend fun lcsFinalMatching(
+    private suspend inline fun lcsFinalMatching(
         tree1: GumTree,
         tree2: GumTree,
         storage: TreeMappingStorage<GumTree>,
-        equalFunc: (GumTree, GumTree) -> Boolean
+        noinline equalFunc: (GumTree, GumTree) -> Boolean
     ) = coroutineScope {
         val unMappedChildrenOfLeftJob =
             async {
