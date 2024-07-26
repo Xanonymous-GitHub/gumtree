@@ -1,3 +1,4 @@
+import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 import tw.xcc.gumtree.helper.createHashMemoOf
@@ -38,29 +39,33 @@ internal class HashMemoHelperTest {
     }
 
     @Test
-    fun `test createHashMemo for a single node`() {
-        val hashMemo = createHashMemoOf(GumTree(TreeType.empty()))
-        assertEquals(1, hashMemo.size)
-    }
+    fun `test createHashMemo for a single node`() =
+        runBlocking {
+            val hashMemo = createHashMemoOf(GumTree(TreeType.empty()))
+            assertEquals(1, hashMemo.size)
+        }
 
     @Test
-    fun `test createHashMemo for given tree`() {
-        val hashMemo = createHashMemoOf(givenRoot)
-        assertEquals(111111, hashMemo.size)
-    }
+    fun `test createHashMemo for given tree`() =
+        runBlocking {
+            val hashMemo = createHashMemoOf(givenRoot)
+            assertEquals(111111, hashMemo.size)
+        }
 
     @Test
-    fun `test createHashMemo consistency`() {
-        val hashMemo1 = createHashMemoOf(givenRoot)
-        val hashMemo2 = createHashMemoOf(givenRoot)
-        assertEquals(hashMemo1, hashMemo2)
-    }
+    fun `test createHashMemo consistency`() =
+        runBlocking {
+            val hashMemo1 = createHashMemoOf(givenRoot)
+            val hashMemo2 = createHashMemoOf(givenRoot)
+            assertEquals(hashMemo1, hashMemo2)
+        }
 
     @Test
-    fun `test createHashMemo can really store for every node`() {
-        val hashMemo = createHashMemoOf(givenRoot)
-        val allDescendents = givenRoot.descendents
-        val actual = allDescendents.all { hashMemo.containsKey(it.id) }
-        assertTrue(actual)
-    }
+    fun `test createHashMemo can really store for every node`() =
+        runBlocking {
+            val hashMemo = createHashMemoOf(givenRoot)
+            val allDescendents = givenRoot.descendents
+            val actual = allDescendents.all { hashMemo.containsKey(it.id) }
+            assertTrue(actual)
+        }
 }

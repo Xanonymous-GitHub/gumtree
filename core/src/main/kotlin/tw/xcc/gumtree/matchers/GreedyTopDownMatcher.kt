@@ -1,5 +1,6 @@
 package tw.xcc.gumtree.matchers
 
+import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
@@ -48,8 +49,11 @@ class GreedyTopDownMatcher(private val minHeight: Int = 1) : TreeMatcher<GumTree
             val list1 = HeightPriorityList(minHeight).also { it.push(tree1) }
             val list2 = HeightPriorityList(minHeight).also { it.push(tree2) }
 
-            val memo1 = createHashMemoOf(tree1)
-            val memo2 = createHashMemoOf(tree2)
+            val memo1Job = async { createHashMemoOf(tree1) }
+            val memo2Job = async { createHashMemoOf(tree2) }
+
+            val memo1 = memo1Job.await()
+            val memo2 = memo2Job.await()
 
             val nonUniqueMappings = mutableListOf<PairOfIsomorphicSet>()
 

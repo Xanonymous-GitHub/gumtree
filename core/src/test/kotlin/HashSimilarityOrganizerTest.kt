@@ -1,3 +1,4 @@
+import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 import tw.xcc.gumtree.helper.createHashMemoOf
@@ -46,8 +47,8 @@ class HashSimilarityOrganizerTest {
                 }
             }
 
-        val memo1 = createHashMemoOf(leftTree)
-        val memo2 = createHashMemoOf(rightTree)
+        val memo1 = runBlocking { createHashMemoOf(leftTree) }
+        val memo2 = runBlocking { createHashMemoOf(rightTree) }
         val mappings = leftTree.preOrdered() crossProductOf rightTree.preOrdered()
 
         givenOrganizer = HashSimilarityOrganizer(memo1, memo2, mappings)

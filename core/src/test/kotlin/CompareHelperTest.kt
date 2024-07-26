@@ -1,3 +1,4 @@
+import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 import tw.xcc.gumtree.helper.createHashMemoOf
@@ -89,9 +90,10 @@ internal class CompareHelperTest {
     }
 
     @Test
-    fun `test isIsomorphic should have same hashMemo`() {
-        val hashMemo1 = createHashMemoOf(givenRoot1)
-        val hashMemo2 = createHashMemoOf(givenRoot2)
-        assertEquals(hashMemo1[givenRoot1.id], hashMemo2[givenRoot2.id])
-    }
+    fun `test isIsomorphic should have same hashMemo`() =
+        runBlocking {
+            val hashMemo1 = createHashMemoOf(givenRoot1)
+            val hashMemo2 = createHashMemoOf(givenRoot2)
+            assertEquals(hashMemo1[givenRoot1.id], hashMemo2[givenRoot2.id])
+        }
 }
