@@ -6,7 +6,7 @@ import tw.xcc.gumtree.helper.isIsomorphicTo
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.atomic.AtomicReference
 
-class GumTree(
+open class GumTree(
     type: TreeType,
     /**
      * The Label corresponds to the actual tokens in the code.
@@ -55,17 +55,25 @@ class GumTree(
         }
     }
 
+    open fun toFrozen(): GumTreeView =
+        synchronized(this) {
+            val children = childrenMap.get()
+            children.replaceAll { _, v -> v.toFrozen() }
+            childrenMap.set(children)
+            return GumTreeView.from(this)
+        }
+
     infix fun hasSameTypeAs(other: GumTree): Boolean = type == other.type
 
     infix fun hasSameLabelAs(other: GumTree): Boolean = label == other.label
 
-    override infix fun isIsomorphicTo(other: GumTree): Boolean = isIsomorphicTo(this, other)
+    final override infix fun isIsomorphicTo(other: GumTree): Boolean = isIsomorphicTo(this, other)
 
-    override infix fun isIsoStructuralTo(other: GumTree): Boolean = isIsoStructuralTo(this, other)
+    final override infix fun isIsoStructuralTo(other: GumTree): Boolean = isIsoStructuralTo(this, other)
 
-    override fun similarityProperties(): String = "<$label>[$type]<"
+    final override fun similarityProperties(): String = "<$label>[$type]<"
 
-    override val self: GumTree
+    final override val self: GumTree
         get() = this
 
     companion object {

@@ -21,12 +21,12 @@ abstract class BasicTree<T> : Tree, Traversable<T> where T : BasicTree<T> {
     override val id: String = UUID.randomUUID().toString()
 
     private val _height = AtomicInteger(0)
-    val height: Int by lazy { calculateHeight() }
+    open val height: Int by lazy { calculateHeight() }
 
     private val _depth = AtomicInteger(0)
-    val depth: Int by lazy { calculateDepth() }
+    open val depth: Int by lazy { calculateDepth() }
 
-    val descendents: List<T> by lazy {
+    open val descendents: List<T> by lazy {
         synchronized(this) {
             preOrdered().drop(1)
         }
@@ -36,7 +36,7 @@ abstract class BasicTree<T> : Tree, Traversable<T> where T : BasicTree<T> {
      * The sequence of the node's ancestor nodes.
      * Sorted by their distance to the node.
      * */
-    val ancestors: List<T> by lazy {
+    open val ancestors: List<T> by lazy {
         synchronized(this) {
             if (isRoot()) {
                 emptyList()
@@ -48,7 +48,7 @@ abstract class BasicTree<T> : Tree, Traversable<T> where T : BasicTree<T> {
         }
     }
 
-    val subTreeSize: Int by lazy { descendents.size }
+    open val subTreeSize: Int by lazy { descendents.size }
 
     private fun calculateHeight(): Int =
         synchronized(this) {
