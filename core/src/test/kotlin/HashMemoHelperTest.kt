@@ -24,7 +24,7 @@ internal class HashMemoHelperTest {
     @BeforeTest
     fun setUp() {
         givenRoot = GumTree(TreeType.empty())
-        val level = 5 // will cause 111111 nodes
+        val level = 5 // will cause 111,111 nodes
         val needChildrens = mutableListOf<GumTree>()
         needChildrens.add(givenRoot)
         repeat(level) { idx ->
