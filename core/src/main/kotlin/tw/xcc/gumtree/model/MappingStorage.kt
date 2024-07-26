@@ -3,13 +3,14 @@ package tw.xcc.gumtree.model
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import tw.xcc.gumtree.api.tree.TreeMappingStorage
+import java.util.concurrent.ConcurrentHashMap
 
 /**
  * The storage for saving the references of the mapping between two GumTrees. (Left and Right)
  * */
 class MappingStorage : TreeMappingStorage<GumTree> {
-    private val mappingLR = mutableMapOf<GumTree, GumTree>()
-    private val mappingRL = mutableMapOf<GumTree, GumTree>()
+    private val mappingLR = ConcurrentHashMap<GumTree, GumTree>()
+    private val mappingRL = ConcurrentHashMap<GumTree, GumTree>()
 
     val size: Int by lazy {
         runBlocking(Dispatchers.Default) {
