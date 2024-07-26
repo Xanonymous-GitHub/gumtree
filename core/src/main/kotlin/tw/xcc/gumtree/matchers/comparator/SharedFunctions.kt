@@ -51,7 +51,7 @@ fun calculateDiceValue(
  * When the first elements of the pairs have the same parent and the second elements of the pairs have the same parent,
  * the function returns true.
  * */
-fun <T : Tree> hasSameParent(
+inline fun <reified T : Tree> hasSameParent(
     m1: Pair<T, T>,
     m2: Pair<T, T>
 ): Boolean = (m1.first.getParent() == m2.first.getParent()) && (m1.second.getParent() == m2.second.getParent())
@@ -60,7 +60,7 @@ fun <T : Tree> hasSameParent(
  * To calculate the number of mapped descendents in [tree1] and [tree2].
  * The descendents of [tree1] should be saved in the Left part of [storage].
  * */
-fun <T : BasicTree<T>> numOfMappedDescendents(
+inline fun <reified T : BasicTree<T>> numOfMappedDescendents(
     tree1: T,
     tree2: T,
     storage: TreeMappingStorage<T>
