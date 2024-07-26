@@ -5,7 +5,7 @@ import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
 @OptIn(ExperimentalContracts::class)
-private inline fun <T> calculateLCSLength(
+private inline fun <reified T> calculateLCSLength(
     collection1: Collection<T>,
     collection2: Collection<T>,
     crossinline equals: (T, T) -> Boolean
@@ -65,7 +65,7 @@ private fun <T> findCommonElements(
  * Longest Common Subsequence (LCS) algorithm.
  * This function only calculates the size of the LCS.
  * */
-internal inline fun <T> lcsBaseOnlySize(
+internal inline fun <reified T> lcsBaseOnlySize(
     collection1: Collection<T>,
     collection2: Collection<T>,
     crossinline equals: (T, T) -> Boolean = { a, b -> a == b }
@@ -82,7 +82,7 @@ internal inline fun <T> lcsBaseOnlySize(
  * Longest Common Subsequence (LCS) algorithm.
  * This function calculates the LCS and returns the common elements.
  * */
-internal inline fun <T> lcsBaseWithElements(
+internal inline fun <reified T> lcsBaseWithElements(
     collection1: Collection<T>,
     collection2: Collection<T>,
     crossinline equals: (T, T) -> Boolean = { a, b -> a == b }
