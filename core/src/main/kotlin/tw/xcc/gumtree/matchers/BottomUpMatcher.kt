@@ -1,5 +1,7 @@
 package tw.xcc.gumtree.matchers
 
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import tw.xcc.gumtree.api.tree.TreeMappingStorage
 import tw.xcc.gumtree.api.tree.TreeMatcher
 import tw.xcc.gumtree.matchers.algorithms.lcsBaseWithElements
@@ -10,34 +12,58 @@ import java.util.concurrent.atomic.AtomicReference
 import kotlin.math.ln
 
 class BottomUpMatcher : TreeMatcher<GumTree> {
-    private fun lcsFinalMatching(
+    private suspend fun lcsFinalMatching(
         tree1: GumTree,
         tree2: GumTree,
         storage: TreeMappingStorage<GumTree>,
         equalFunc: (GumTree, GumTree) -> Boolean
-    ) {
-        val unMappedChildrenOfLeft = tree1.getChildren().filter { !storage.isLeftMapped(it) }
-        val unMappedChildrenOfRight = tree2.getChildren().filter { !storage.isRightMapped(it) }
+    ) = coroutineScope {
+        val unMappedChildrenOfLeftJob =
+            async {
+                tree1.getChildren().filter { !storage.isLeftMapped(it) }
+            }
+        val unMappedChildrenOfRightJob =
+            async {
+                tree2.getChildren().filter { !storage.isRightMapped(it) }
+            }
+
+        val unMappedChildrenOfLeft = unMappedChildrenOfLeftJob.await()
+        val unMappedChildrenOfRight = unMappedChildrenOfRightJob.await()
 
         val lcsOfUnMapped =
             lcsBaseWithElements(unMappedChildrenOfLeft, unMappedChildrenOfRight, equalFunc)
 
         lcsOfUnMapped.forEach { (left, right) ->
-            val areAllLeftSideUnmapped = left.preOrdered().all { !storage.isLeftMapped(it) }
-            val areAllRightSideUnmapped = right.preOrdered().all { !storage.isRightMapped(it) }
-            if (areAllLeftSideUnmapped && areAllRightSideUnmapped) {
+            val areAllLeftSideUnmapped =
+                async {
+                    left.preOrdered().all { !storage.isLeftMapped(it) }
+                }
+            val areAllRightSideUnmapped =
+                async {
+                    right.preOrdered().all { !storage.isRightMapped(it) }
+                }
+            if (areAllLeftSideUnmapped.await() && areAllRightSideUnmapped.await()) {
                 storage.addMappingRecursivelyOf(left to right)
             }
         }
     }
 
-    private fun histogramMatching(
+    private suspend fun histogramMatching(
         tree1: GumTree,
         tree2: GumTree,
         storage: TreeMappingStorage<GumTree>
-    ) {
-        val histogramOfLeft = tree1.getChildren().filter { !storage.isLeftMapped(it) }.groupBy { it.type }
-        val histogramOfRight = tree2.getChildren().filter { !storage.isRightMapped(it) }.groupBy { it.type }
+    ) = coroutineScope {
+        val histogramOfLeftJob =
+            async {
+                tree1.getChildren().filter { !storage.isLeftMapped(it) }.groupBy { it.type }
+            }
+        val histogramOfRightJob =
+            async {
+                tree2.getChildren().filter { !storage.isRightMapped(it) }.groupBy { it.type }
+            }
+
+        val histogramOfLeft = histogramOfLeftJob.await()
+        val histogramOfRight = histogramOfRightJob.await()
 
         (histogramOfLeft.keys intersect histogramOfRight.keys).forEach { key ->
             val leftNodes = histogramOfLeft[key]
@@ -51,19 +77,22 @@ class BottomUpMatcher : TreeMatcher<GumTree> {
         }
     }
 
-    private fun postMatching(
+    private suspend fun postMatching(
         tree1: GumTree,
         tree2: GumTree,
         storage: TreeMappingStorage<GumTree>
     ) {
-        lcsFinalMatching(tree1, tree2, storage) { left, right ->
-            left isIsomorphicTo right
-        }
-        lcsFinalMatching(tree1, tree2, storage) { left, right ->
-            left isIsoStructuralTo right
-        }
+        coroutineScope {
+            lcsFinalMatching(tree1, tree2, storage) { left, right ->
+                left isIsomorphicTo right
+            }
 
-        histogramMatching(tree1, tree2, storage)
+            lcsFinalMatching(tree1, tree2, storage) { left, right ->
+                left isIsoStructuralTo right
+            }
+
+            histogramMatching(tree1, tree2, storage)
+        }
     }
 
     private fun extractCandidatesOf(
@@ -106,50 +135,51 @@ class BottomUpMatcher : TreeMatcher<GumTree> {
         return numOfMappedDescendents(tree1, tree2, storage).toDouble() / maxSubTreeSize.toDouble()
     }
 
-    override fun match(
+    override suspend fun match(
         tree1: GumTree,
         tree2: GumTree
     ): TreeMappingStorage<GumTree> = match(tree1, tree2, MappingStorage())
 
-    override fun match(
+    override suspend fun match(
         tree1: GumTree,
         tree2: GumTree,
         storage: TreeMappingStorage<GumTree>
-    ): TreeMappingStorage<GumTree> {
-        for (t in tree1.postOrdered()) {
-            when {
-                t.isRoot() -> {
-                    storage.addMappingOf(t to tree2)
-                    postMatching(t, tree2, storage)
-                    break
-                }
-                !storage.isLeftMapped(t) && !t.isLeaf() -> {
-                    val candidates = extractCandidatesOf(t, storage)
-                    val subTreeSize = t.subTreeSize.toDouble()
+    ): TreeMappingStorage<GumTree> =
+        coroutineScope {
+            for (t in tree1.postOrdered()) {
+                when {
+                    t.isRoot() -> {
+                        storage.addMappingOf(t to tree2)
+                        postMatching(t, tree2, storage)
+                        break
+                    }
+                    !storage.isLeftMapped(t) && !t.isLeaf() -> {
+                        val candidates = extractCandidatesOf(t, storage)
+                        val subTreeSize = t.subTreeSize.toDouble()
 
-                    val bestSimilarCandidate =
-                        candidates.maxByOrNull { candidate ->
-                            val similarityThreshold = 1.0 / (1.0 + ln(candidate.subTreeSize.toDouble() + subTreeSize))
-                            val similarity = calculateChawatheSimilarity(t, candidate, storage)
-                            similarity.takeIf { it >= similarityThreshold } ?: 0.0
+                        val bestSimilarCandidate =
+                            candidates.maxByOrNull { candidate ->
+                                val threshold = 1.0 / (1.0 + ln(candidate.subTreeSize.toDouble() + subTreeSize))
+                                val similarity = calculateChawatheSimilarity(t, candidate, storage)
+                                similarity.takeIf { it >= threshold } ?: 0.0
+                            }
+
+                        if (bestSimilarCandidate != null) {
+                            postMatching(t, bestSimilarCandidate, storage)
+                            storage.addMappingOf(t to bestSimilarCandidate)
+                        }
+                    }
+                    storage.isLeftMapped(t) && storage.hasUnMappedDescendentOfLeft(t) -> {
+                        val mappedRight = storage.getMappingOfLeft(t)
+                        if (mappedRight == null || !storage.hasUnMappedDescendentOfRight(mappedRight)) {
+                            continue
                         }
 
-                    if (bestSimilarCandidate != null) {
-                        postMatching(t, bestSimilarCandidate, storage)
-                        storage.addMappingOf(t to bestSimilarCandidate)
+                        postMatching(t, mappedRight, storage)
                     }
-                }
-                storage.isLeftMapped(t) && storage.hasUnMappedDescendentOfLeft(t) -> {
-                    val mappedRight = storage.getMappingOfLeft(t)
-                    if (mappedRight == null || !storage.hasUnMappedDescendentOfRight(mappedRight)) {
-                        continue
-                    }
-
-                    postMatching(t, mappedRight, storage)
                 }
             }
-        }
 
-        return storage
-    }
+            return@coroutineScope storage
+        }
 }

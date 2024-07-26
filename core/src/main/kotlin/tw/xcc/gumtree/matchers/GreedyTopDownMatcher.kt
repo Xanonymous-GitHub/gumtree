@@ -1,9 +1,8 @@
 package tw.xcc.gumtree.matchers
 
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import tw.xcc.gumtree.api.tree.TreeMappingStorage
 import tw.xcc.gumtree.api.tree.TreeMatcher
 import tw.xcc.gumtree.helper.createHashMemoOf
@@ -35,17 +34,17 @@ class GreedyTopDownMatcher(private val minHeight: Int = 1) : TreeMatcher<GumTree
             }
     }
 
-    override fun match(
+    override suspend fun match(
         tree1: GumTree,
         tree2: GumTree
     ): TreeMappingStorage<GumTree> = match(tree1, tree2, MappingStorage())
 
-    override fun match(
+    override suspend fun match(
         tree1: GumTree,
         tree2: GumTree,
         storage: TreeMappingStorage<GumTree>
     ): TreeMappingStorage<GumTree> =
-        runBlocking(Dispatchers.Default) {
+        coroutineScope {
             val list1 = HeightPriorityList(minHeight).also { it.push(tree1) }
             val list2 = HeightPriorityList(minHeight).also { it.push(tree2) }
 
@@ -82,7 +81,7 @@ class GreedyTopDownMatcher(private val minHeight: Int = 1) : TreeMatcher<GumTree
 
             processNonUniqueMappings(nonUniqueMappings, storage)
 
-            return@runBlocking storage
+            return@coroutineScope storage
         }
 
     private inner class AdvancedDiceComparator(
