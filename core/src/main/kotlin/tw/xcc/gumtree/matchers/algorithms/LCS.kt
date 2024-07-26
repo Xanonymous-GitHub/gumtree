@@ -37,8 +37,8 @@ private fun <T> findCommonElements(
     collection1: Collection<T>,
     collection2: Collection<T>,
     calculatedLengths: Array<IntArray>
-): List<T> {
-    val lcs = mutableListOf<T>()
+): List<Pair<T, T>> {
+    val lcs = mutableListOf<Pair<T, T>>()
 
     if (calculatedLengths.isEmpty()) {
         return lcs
@@ -52,7 +52,7 @@ private fun <T> findCommonElements(
         } else if (calculatedLengths[i][j] == calculatedLengths[i][j - 1]) {
             j--
         } else {
-            lcs.add(collection1.elementAt(i - 1))
+            lcs.add(collection1.elementAt(i - 1) to collection2.elementAt(j - 1))
             i--
             j--
         }
@@ -86,7 +86,7 @@ internal fun <T> lcsBaseWithElements(
     collection1: Collection<T>,
     collection2: Collection<T>,
     equals: (T, T) -> Boolean = { a, b -> a == b }
-): List<T> {
+): List<Pair<T, T>> {
     val calculatedLengths = calculateLCSLength(collection1, collection2, equals)
     return findCommonElements(collection1, collection2, calculatedLengths)
 }

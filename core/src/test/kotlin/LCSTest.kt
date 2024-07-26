@@ -38,7 +38,13 @@ internal class LCSTest {
     fun `test lcs with return elements`() {
         val a = "AGGTAB"
         val b = "GXTXAYB"
-        val expectLCS = "GTAB".toList()
+        val expectLCS =
+            listOf(
+                'G' to 'G',
+                'T' to 'T',
+                'A' to 'A',
+                'B' to 'B'
+            )
         val actualLCS = lcsBaseWithElements(a.toList(), b.toList())
         assertEquals(expectLCS, actualLCS)
     }
@@ -47,7 +53,7 @@ internal class LCSTest {
     fun `test lcs with return elements with empty string`() {
         val a = ""
         val b = "GXTXAYB"
-        val expectLCS = emptyList<Char>()
+        val expectLCS = emptyList<Pair<Char, Char>>()
         val actualLCS = lcsBaseWithElements(a.toList(), b.toList())
         assertEquals(expectLCS, actualLCS)
     }
@@ -56,7 +62,15 @@ internal class LCSTest {
     fun `test lcs with return elements with same string`() {
         val a = "AGGTAB"
         val b = "AGGTAB"
-        val expectLCS = "AGGTAB".toList()
+        val expectLCS =
+            listOf(
+                'A' to 'A',
+                'G' to 'G',
+                'G' to 'G',
+                'T' to 'T',
+                'A' to 'A',
+                'B' to 'B'
+            )
         val actualLCS = lcsBaseWithElements(a.toList(), b.toList())
         assertEquals(expectLCS, actualLCS)
     }
@@ -65,7 +79,13 @@ internal class LCSTest {
     fun `test lcs with return elements with same string and different order`() {
         val a = "AGGTAB"
         val b = "BATGGA"
-        val expectLCS = "AGGA".toList()
+        val expectLCS =
+            listOf(
+                'A' to 'A',
+                'G' to 'G',
+                'G' to 'G',
+                'A' to 'A'
+            )
         val actualLCS = lcsBaseWithElements(a.toList(), b.toList())
         assertEquals(expectLCS, actualLCS)
     }
@@ -74,7 +94,7 @@ internal class LCSTest {
     fun `test lcs with return elements but no common elements`() {
         val a = "AGGTAB"
         val b = "xxxxxxxxx"
-        val expectLCS = emptyList<Char>()
+        val expectLCS = emptyList<Pair<Char, Char>>()
         val actualLCS = lcsBaseWithElements(a.toList(), b.toList())
         assertEquals(expectLCS, actualLCS)
     }
