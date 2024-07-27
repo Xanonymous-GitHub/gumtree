@@ -37,6 +37,26 @@ private fun <T : Tree> postOrderedImpl(
     action(tree)
 }
 
+@OptIn(ExperimentalContracts::class)
+inline fun <reified T : Tree> bfsOrderOf(
+    tree: T,
+    crossinline action: (T) -> Unit
+) {
+    contract {
+        callsInPlace(action, InvocationKind.AT_LEAST_ONCE)
+    }
+
+    val queue = ArrayDeque<T>()
+    queue.add(tree)
+
+    while (queue.isNotEmpty()) {
+        val current = queue.removeFirst()
+        action(current)
+        @Suppress("UNCHECKED_CAST")
+        queue.addAll(current.getChildren() as Collection<T>)
+    }
+}
+
 fun <T : Tree> preOrderOf(
     tree: T,
     action: (T) -> Unit

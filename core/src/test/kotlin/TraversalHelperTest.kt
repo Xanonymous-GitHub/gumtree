@@ -1,5 +1,6 @@
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
+import tw.xcc.gumtree.helper.bfsOrderOf
 import tw.xcc.gumtree.helper.postOrderOf
 import tw.xcc.gumtree.helper.preOrderOf
 import kotlin.test.BeforeTest
@@ -93,5 +94,24 @@ internal class TraversalHelperTest {
 
         val expectedPostOrdered = listOf(child1, givenRoot)
         assertContentEquals(expectedPostOrdered, actualPostOrdered)
+    }
+
+    @Test
+    fun `test bfsOrdered`() {
+        val child1 = FakeTinnyTree()
+        val child2 = FakeTinnyTree()
+        val child3 = FakeTinnyTree()
+        val child4 = FakeTinnyTree()
+
+        givenRoot.addChild(child1)
+        child1.addChild(child2)
+        child1.addChild(child3)
+        givenRoot.addChild(child4)
+
+        val actualBfsOrdered = mutableListOf<FakeTinnyTree>()
+        bfsOrderOf(givenRoot) { actualBfsOrdered.add(it) }
+
+        val expectedBfsOrdered = listOf(givenRoot, child1, child4, child2, child3)
+        assertContentEquals(expectedBfsOrdered, actualBfsOrdered)
     }
 }
