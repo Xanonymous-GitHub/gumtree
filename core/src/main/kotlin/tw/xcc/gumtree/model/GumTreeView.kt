@@ -1,30 +1,28 @@
 package tw.xcc.gumtree.model
 
-import java.util.concurrent.atomic.AtomicReference
-
 class GumTreeView private constructor(target: GumTree) : GumTree(target) {
-    private val frozenPreOrdered by lazy { AtomicReference(super.preOrdered()) }
-    private val frozenPostOrdered by lazy { AtomicReference(super.postOrdered()) }
-    private val frozenDescendents by lazy { AtomicReference(frozenPreOrdered.get().drop(1)) }
-    private val frozenSubTreeSize by lazy { AtomicReference(frozenDescendents.get().size) }
-    private val frozenAncestors by lazy { AtomicReference(super.ancestors.toList()) }
-    private val frozenHeight by lazy { AtomicReference(super.height) }
-    private val frozenDepth by lazy { AtomicReference(super.depth) }
+    private val frozenPreOrdered by lazy { super.preOrdered() }
+    private val frozenPostOrdered by lazy { super.postOrdered() }
+    private val frozenDescendents by lazy { frozenPreOrdered.drop(1) }
+    private val frozenSubTreeSize by lazy { frozenDescendents.size }
+    private val frozenAncestors by lazy { super.ancestors.toList() }
+    private val frozenHeight by lazy { super.height }
+    private val frozenDepth by lazy { super.depth }
 
     override val descendents: List<GumTree>
-        get() = frozenDescendents.get()
+        get() = frozenDescendents
     override val ancestors: List<GumTree>
-        get() = frozenAncestors.get()
+        get() = frozenAncestors
     override val subTreeSize: Int
-        get() = frozenSubTreeSize.get()
+        get() = frozenSubTreeSize
     override val height: Int
-        get() = frozenHeight.get()
+        get() = frozenHeight
     override val depth: Int
-        get() = frozenDepth.get()
+        get() = frozenDepth
 
-    override fun postOrdered(): List<GumTree> = frozenPostOrdered.get()
+    override fun postOrdered(): List<GumTree> = frozenPostOrdered
 
-    override fun preOrdered(): List<GumTree> = frozenPreOrdered.get()
+    override fun preOrdered(): List<GumTree> = frozenPreOrdered
 
     override fun toNewFrozen(): GumTreeView = this
 
