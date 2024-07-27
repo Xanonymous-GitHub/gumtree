@@ -10,7 +10,7 @@ import tw.xcc.gumtree.helper.createHashMemoOf
 import tw.xcc.gumtree.helper.crossProductOf
 import tw.xcc.gumtree.matchers.comparator.AbsolutePositionDistanceComparator
 import tw.xcc.gumtree.matchers.comparator.AncestorsSimilarityComparator
-import tw.xcc.gumtree.matchers.comparator.PositionOfParentsSimilarityComparator
+import tw.xcc.gumtree.matchers.comparator.PositionOfAncestorsSimilarityComparator
 import tw.xcc.gumtree.matchers.comparator.SiblingsSimilarityComparator
 import tw.xcc.gumtree.matchers.comparator.SubtreeSizeComparator
 import tw.xcc.gumtree.matchers.comparator.TextualPositionDistanceComparator
@@ -93,7 +93,7 @@ class GreedyTopDownMatcher(private val minHeight: Int = 1) : TreeMatcher<GumTree
     ) : Comparator<Pair<GumTree, GumTree>> {
         private val siblingsSimilarityComparator = SiblingsSimilarityComparator(storage)
         private val ancestorsSimilarityComparator = AncestorsSimilarityComparator()
-        private val positionOfParentsSimilarityComparator = PositionOfParentsSimilarityComparator()
+        private val positionOfAncestorsSimilarityComparator = PositionOfAncestorsSimilarityComparator()
         private val textualPositionDistanceComparator = TextualPositionDistanceComparator()
         private val absolutePositionDistanceComparator = AbsolutePositionDistanceComparator()
 
@@ -103,7 +103,7 @@ class GreedyTopDownMatcher(private val minHeight: Int = 1) : TreeMatcher<GumTree
         ): Int {
             siblingsSimilarityComparator.compare(m1, m2).takeIf { it != 0 }?.let { return it }
             ancestorsSimilarityComparator.compare(m1, m2).takeIf { it != 0 }?.let { return it }
-            positionOfParentsSimilarityComparator.compare(m1, m2).takeIf { it != 0 }?.let { return it }
+            positionOfAncestorsSimilarityComparator.compare(m1, m2).takeIf { it != 0 }?.let { return it }
             textualPositionDistanceComparator.compare(m1, m2).takeIf { it != 0 }?.let { return it }
             return absolutePositionDistanceComparator.compare(m1, m2)
         }
