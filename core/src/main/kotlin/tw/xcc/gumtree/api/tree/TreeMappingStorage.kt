@@ -25,5 +25,5 @@ interface TreeMappingStorage<T : Tree> : Cloneable {
 
     fun hasUnMappedDescendentOfRight(right: T): Boolean
 
-    override fun clone(): TreeMappingStorage<T>
+    public override fun clone(): TreeMappingStorage<T>
 }
