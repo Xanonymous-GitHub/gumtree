@@ -17,8 +17,11 @@ import tw.xcc.gumtree.matchers.comparator.TextualPositionDistanceComparator
 import tw.xcc.gumtree.model.GumTree
 import tw.xcc.gumtree.model.HeightPriorityList
 import tw.xcc.gumtree.model.MappingStorage
+import tw.xcc.gumtree.model.NonFrozenGumTreeCachePool
 
 class GreedyTopDownMatcher(private val minHeight: Int = 1) : TreeMatcher<GumTree> {
+    private val realTreePool = NonFrozenGumTreeCachePool
+
     private fun processNonUniqueMappings(
         mappedPacks: List<PairOfIsomorphicSet>,
         storage: TreeMappingStorage<GumTree>
@@ -29,7 +32,9 @@ class GreedyTopDownMatcher(private val minHeight: Int = 1) : TreeMatcher<GumTree
                 mappings.sortedWith(AdvancedDiceComparator(storage))
                     .forEach { mapping ->
                         if (storage.areBothUnMapped(mapping)) {
-                            storage.addMappingRecursivelyOf(mapping)
+                            storage.addMappingRecursivelyOf(
+                                realTreePool.mustExtractRealOf(mapping)
+                            )
                         }
                     }
             }
@@ -65,7 +70,11 @@ class GreedyTopDownMatcher(private val minHeight: Int = 1) : TreeMatcher<GumTree
                 val uniqueJob =
                     launch {
                         organizer.uniqueIsomorphicMappings.forEach { pairOfSet ->
-                            storage.addMappingRecursivelyOf(pairOfSet.first.single() to pairOfSet.second.single())
+                            storage.addMappingRecursivelyOf(
+                                realTreePool.mustExtractRealOf(
+                                    pairOfSet.first.single() to pairOfSet.second.single()
+                                )
+                            )
                         }
                     }
                 val nonUniqueJob =

@@ -8,10 +8,13 @@ import tw.xcc.gumtree.api.tree.TreeMatcher
 import tw.xcc.gumtree.matchers.comparator.numOfMappedDescendents
 import tw.xcc.gumtree.model.GumTree
 import tw.xcc.gumtree.model.MappingStorage
+import tw.xcc.gumtree.model.NonFrozenGumTreeCachePool
 import java.util.concurrent.atomic.AtomicReference
 import kotlin.math.ln
 
 class BottomUpMatcher : TreeMatcher<GumTree> {
+    private val realTreePool = NonFrozenGumTreeCachePool
+
     private suspend inline fun lcsFinalMatching(
         tree1: GumTree,
         tree2: GumTree,
@@ -43,7 +46,9 @@ class BottomUpMatcher : TreeMatcher<GumTree> {
                     right.preOrdered().all { !storage.isRightMapped(it) }
                 }
             if (areAllLeftSideUnmapped.await() && areAllRightSideUnmapped.await()) {
-                storage.addMappingRecursivelyOf(left to right)
+                storage.addMappingRecursivelyOf(
+                    realTreePool.mustExtractRealOf(left to right)
+                )
             }
         }
     }
@@ -71,7 +76,9 @@ class BottomUpMatcher : TreeMatcher<GumTree> {
             if ((leftNodes != null && rightNodes != null) && (leftNodes.size == 1 && rightNodes.size == 1)) {
                 val left = leftNodes.single()
                 val right = rightNodes.single()
-                storage.addMappingOf(left to right)
+                storage.addMappingOf(
+                    realTreePool.mustExtractRealOf(left to right)
+                )
                 postMatching(left, right, storage)
             }
         }
@@ -149,7 +156,9 @@ class BottomUpMatcher : TreeMatcher<GumTree> {
             for (t in tree1.postOrdered()) {
                 when {
                     t.isRoot() -> {
-                        storage.addMappingOf(t to tree2)
+                        storage.addMappingOf(
+                            realTreePool.mustExtractRealOf(t to tree2)
+                        )
                         postMatching(t, tree2, storage)
                         break
                     }
@@ -166,7 +175,9 @@ class BottomUpMatcher : TreeMatcher<GumTree> {
 
                         if (bestSimilarCandidate != null) {
                             postMatching(t, bestSimilarCandidate, storage)
-                            storage.addMappingOf(t to bestSimilarCandidate)
+                            storage.addMappingOf(
+                                realTreePool.mustExtractRealOf(t to bestSimilarCandidate)
+                            )
                         }
                     }
                     storage.isLeftMapped(t) && storage.hasUnMappedDescendentOfLeft(t) -> {
