@@ -35,13 +35,13 @@ class MappingStorage : TreeMappingStorage<GumTree> {
     }
 
     private fun removeMappingImpl(mapping: Pair<GumTree, GumTree>) {
-        if (mappingLR[mapping.first.id] != mapping.second) {
+        if (mappingLR[mapping.first.id]?.id != mapping.second.id) {
             throw IllegalArgumentException(
                 "The mapping should be existed, found L[${mapping.first}] -> R[${mappingLR[mapping.first.id]}]"
             )
         }
 
-        if (mappingRL[mapping.second.id] != mapping.first) {
+        if (mappingRL[mapping.second.id]?.id != mapping.first.id) {
             throw IllegalArgumentException(
                 "The mapping should be existed, found R[${mapping.second}] -> L[${mappingRL[mapping.second.id]}]"
             )
