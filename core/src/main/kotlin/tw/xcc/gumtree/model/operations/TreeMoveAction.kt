@@ -2,7 +2,7 @@ package tw.xcc.gumtree.model.operations
 
 import tw.xcc.gumtree.model.GumTree
 
-data class TreeInsert(
+data class TreeMoveAction(
     override val pos: Int,
     override val node: GumTree,
     override val parent: GumTree,
