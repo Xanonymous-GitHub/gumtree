@@ -6,6 +6,7 @@ import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 @Execution(ExecutionMode.CONCURRENT)
 internal class GumTreeTest {
@@ -87,5 +88,16 @@ internal class GumTreeTest {
         val actualSimilarityProperties = givenTree.similarityProperties()
         val expectedSimilarityProperties = "<$givenTreeLabel>[$givenTreeType]<"
         assertEquals(expectedSimilarityProperties, actualSimilarityProperties)
+    }
+
+    @Test
+    fun `test toNewFrozen`() {
+        val child = GumTree(TreeType.empty(), "child")
+        givenTree.addChild(child)
+        val frozen = givenTree.toNewFrozen()
+        assertEquals(givenTree.id, frozen.id)
+        assertTrue(frozen !== givenTree)
+        assertEquals(child.id, frozen.childAt(0)?.id)
+        assertTrue(child !== frozen.childAt(0))
     }
 }

@@ -2,16 +2,15 @@ package tw.xcc.gumtree.model
 
 import java.util.concurrent.atomic.AtomicReference
 
-class GumTreeView private constructor(target: GumTree) : GumTree(target.type, target.label, target.pos, target.length) {
-    private val frozenPreOrdered by lazy { AtomicReference(target.preOrdered()) }
-    private val frozenPostOrdered by lazy { AtomicReference(target.postOrdered()) }
+class GumTreeView private constructor(target: GumTree) : GumTree(target) {
+    private val frozenPreOrdered by lazy { AtomicReference(super.preOrdered()) }
+    private val frozenPostOrdered by lazy { AtomicReference(super.postOrdered()) }
     private val frozenDescendents by lazy { AtomicReference(frozenPreOrdered.get().drop(1)) }
     private val frozenSubTreeSize by lazy { AtomicReference(frozenDescendents.get().size) }
-    private val frozenAncestors by lazy { AtomicReference(target.ancestors.toList()) }
-    private val frozenHeight by lazy { AtomicReference(target.height) }
-    private val frozenDepth by lazy { AtomicReference(target.depth) }
+    private val frozenAncestors by lazy { AtomicReference(super.ancestors.toList()) }
+    private val frozenHeight by lazy { AtomicReference(super.height) }
+    private val frozenDepth by lazy { AtomicReference(super.depth) }
 
-    override val id: String = target.id
     override val descendents: List<GumTree>
         get() = frozenDescendents.get()
     override val ancestors: List<GumTree>
@@ -27,7 +26,7 @@ class GumTreeView private constructor(target: GumTree) : GumTree(target.type, ta
 
     override fun preOrdered(): List<GumTree> = frozenPreOrdered.get()
 
-    override fun toFrozen(): GumTreeView = this
+    override fun toNewFrozen(): GumTreeView = this
 
     override fun setChildrenTo(children: List<GumTree>) {
         throw NoSuchMethodException("calling this method in GumTreeView is not allowed")
@@ -49,6 +48,6 @@ class GumTreeView private constructor(target: GumTree) : GumTree(target.type, ta
     companion object {
         fun from(gumTree: GumTree): GumTreeView = GumTreeView(gumTree)
 
-        fun frozeEntireTreeFrom(gumTree: GumTree): GumTreeView = gumTree.toFrozen()
+        fun frozeEntireTreeFrom(gumTree: GumTree): GumTreeView = gumTree.toNewFrozen()
     }
 }

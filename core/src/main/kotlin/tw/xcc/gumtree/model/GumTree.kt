@@ -22,6 +22,15 @@ open class GumTree(
      * */
     val length: Int = -1
 ) : BasicTree<GumTree>(), Comparable<GumTree> {
+    protected constructor(other: GumTree) : this(other.type, other.label, other.pos, other.length) {
+        val otherChildren = other.childrenMap.get()
+        otherChildren.forEach { (pos, child) ->
+            insertChildAtImpl(pos, GumTree(child))
+        }
+        idRef.set(other.idRef.get())
+        parent.set(other.parent.get())
+    }
+
     private val _type = AtomicReference(TreeType.empty())
 
     /**
@@ -38,7 +47,7 @@ open class GumTree(
         _type.set(type)
     }
 
-    open fun insertChildAt(
+    private fun insertChildAtImpl(
         pos: Int,
         child: GumTree
     ) {
@@ -61,10 +70,15 @@ open class GumTree(
         }
     }
 
-    open fun toFrozen(): GumTreeView =
+    open fun insertChildAt(
+        pos: Int,
+        child: GumTree
+    ) = insertChildAtImpl(pos, child)
+
+    open fun toNewFrozen(): GumTreeView =
         synchronized(this) {
             val children = childrenMap.get()
-            children.replaceAll { _, v -> v.toFrozen() }
+            children.replaceAll { _, v -> v.toNewFrozen() }
             childrenMap.set(children)
             return GumTreeView.from(this)
         }

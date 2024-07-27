@@ -5,7 +5,6 @@ import tw.xcc.gumtree.api.tree.Tree
 import tw.xcc.gumtree.helper.postOrderOf
 import tw.xcc.gumtree.helper.preOrderOf
 import java.util.UUID
-import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.atomic.AtomicReference
 
 /**
@@ -14,17 +13,17 @@ import java.util.concurrent.atomic.AtomicReference
 abstract class BasicTree<T> : Tree, Traversable<T> where T : BasicTree<T> {
     protected abstract val self: T
 
-    private val parent = AtomicReference<T?>()
+    protected val parent = AtomicReference<T?>()
 
     protected val childrenMap = AtomicReference(sortedMapOf<Int, T>())
 
-    override val id: String by lazy { UUID.randomUUID().toString() }
+    protected val idRef = AtomicReference(UUID.randomUUID().toString())
+    override val id: String
+        get() = idRef.get()
 
-    private val _height = AtomicInteger(0)
     open val height: Int
         get() = calculateHeight()
 
-    private val _depth = AtomicInteger(0)
     open val depth: Int
         get() = calculateDepth()
 
