@@ -3,13 +3,13 @@ package tw.xcc.gumtree.model
 import java.util.concurrent.atomic.AtomicReference
 
 class GumTreeView private constructor(target: GumTree) : GumTree(target.type, target.label, target.pos, target.length) {
-    private val frozenPreOrdered = AtomicReference(target.preOrdered())
-    private val frozenPostOrdered = AtomicReference(target.postOrdered())
-    private val frozenDescendents = AtomicReference(frozenPreOrdered.get().drop(1))
-    private val frozenAncestors = AtomicReference(target.ancestors.toList())
-    private val frozenHeight = AtomicReference(target.height)
-    private val frozenDepth = AtomicReference(target.depth)
-    private val frozenSubTreeSize = AtomicReference(frozenDescendents.get().size)
+    private val frozenPreOrdered by lazy { AtomicReference(target.preOrdered()) }
+    private val frozenPostOrdered by lazy { AtomicReference(target.postOrdered()) }
+    private val frozenDescendents by lazy { AtomicReference(frozenPreOrdered.get().drop(1)) }
+    private val frozenSubTreeSize by lazy { AtomicReference(frozenDescendents.get().size) }
+    private val frozenAncestors by lazy { AtomicReference(target.ancestors.toList()) }
+    private val frozenHeight by lazy { AtomicReference(target.height) }
+    private val frozenDepth by lazy { AtomicReference(target.depth) }
 
     override val id: String = target.id
     override val descendents: List<GumTree>

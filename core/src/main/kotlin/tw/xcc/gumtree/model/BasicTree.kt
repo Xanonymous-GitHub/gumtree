@@ -18,37 +18,37 @@ abstract class BasicTree<T> : Tree, Traversable<T> where T : BasicTree<T> {
 
     protected val childrenMap = AtomicReference(sortedMapOf<Int, T>())
 
-    override val id: String = UUID.randomUUID().toString()
+    override val id: String by lazy { UUID.randomUUID().toString() }
 
     private val _height = AtomicInteger(0)
-    open val height: Int by lazy { calculateHeight() }
+    open val height: Int
+        get() = calculateHeight()
 
     private val _depth = AtomicInteger(0)
-    open val depth: Int by lazy { calculateDepth() }
+    open val depth: Int
+        get() = calculateDepth()
 
-    open val descendents: List<T> by lazy {
-        synchronized(this) {
-            preOrdered().drop(1)
-        }
-    }
+    open val descendents: List<T>
+        get() = preOrdered().drop(1)
 
     /**
      * The sequence of the node's ancestor nodes.
      * Sorted by their distance to the node.
      * */
-    open val ancestors: List<T> by lazy {
-        synchronized(this) {
-            if (isRoot()) {
-                emptyList()
-            } else {
-                val parent = parent.get()
-                assert(parent != null)
-                listOf(parent!!) + parent.ancestors
+    open val ancestors: List<T>
+        get() =
+            synchronized(this) {
+                if (isRoot()) {
+                    emptyList()
+                } else {
+                    val parent = parent.get()
+                    assert(parent != null)
+                    listOf(parent!!) + parent.ancestors
+                }
             }
-        }
-    }
 
-    open val subTreeSize: Int by lazy { descendents.size }
+    open val subTreeSize: Int
+        get() = descendents.size
 
     private fun calculateHeight(): Int =
         synchronized(this) {

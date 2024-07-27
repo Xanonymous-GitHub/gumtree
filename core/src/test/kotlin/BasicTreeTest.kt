@@ -37,6 +37,12 @@ internal class BasicTreeTest {
     fun `test default descendents`() {
         val actualDescendents = givenTree.descendents
         assertContentEquals(emptyList(), actualDescendents)
+        val child1 = FakeTinnyTree()
+        val child2 = FakeTinnyTree()
+        child1.addChild(child2)
+        givenTree.addChild(child1)
+        val actualDescendentsAfterAdd = givenTree.descendents
+        assertContentEquals(listOf(child1, child2), actualDescendentsAfterAdd)
     }
 
     @Test
@@ -164,5 +170,16 @@ internal class BasicTreeTest {
         val ancestorNames = itsAncestors.map { it.type.name }
 
         assertContentEquals(listOf("2", "1", "0"), ancestorNames)
+
+        val newRoot =
+            gumTree("newRoot") {
+                child("newChild")
+            }
+        tree.setParentTo(newRoot)
+
+        val newAncestors = mostDescendent.ancestors
+        val newAncestorNames = newAncestors.map { it.type.name }
+
+        assertContentEquals(listOf("2", "1", "0", "newRoot"), newAncestorNames)
     }
 }
