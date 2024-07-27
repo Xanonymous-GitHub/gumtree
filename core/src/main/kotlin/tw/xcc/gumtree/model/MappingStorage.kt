@@ -7,8 +7,8 @@ import java.util.concurrent.ConcurrentHashMap
  * The storage for saving the references of the mapping between two GumTrees. (Left and Right)
  * */
 class MappingStorage : TreeMappingStorage<GumTree> {
-    private val mappingLR = ConcurrentHashMap<GumTree, GumTree>()
-    private val mappingRL = ConcurrentHashMap<GumTree, GumTree>()
+    private val mappingLR = ConcurrentHashMap<String, GumTree>()
+    private val mappingRL = ConcurrentHashMap<String, GumTree>()
 
     val size: Int
         get() = calculateSizeImpl()
@@ -23,8 +23,8 @@ class MappingStorage : TreeMappingStorage<GumTree> {
 
     private fun addMappingImpl(mapping: Pair<GumTree, GumTree>) =
         synchronized(this) {
-            mappingLR[mapping.first] = mapping.second
-            mappingRL[mapping.second] = mapping.first
+            mappingLR[mapping.first.id] = mapping.second
+            mappingRL[mapping.second.id] = mapping.first
         }
 
     private fun addMappingRecursivelyImpl(mapping: Pair<GumTree, GumTree>) {
@@ -35,59 +35,59 @@ class MappingStorage : TreeMappingStorage<GumTree> {
     }
 
     private fun removeMappingImpl(mapping: Pair<GumTree, GumTree>) {
-        if (mappingLR[mapping.first] != mapping.second) {
+        if (mappingLR[mapping.first.id] != mapping.second) {
             throw IllegalArgumentException(
-                "The mapping should be existed, found L[${mapping.first}] -> R[${mappingLR[mapping.first]}]"
+                "The mapping should be existed, found L[${mapping.first}] -> R[${mappingLR[mapping.first.id]}]"
             )
         }
 
-        if (mappingRL[mapping.second] != mapping.first) {
+        if (mappingRL[mapping.second.id] != mapping.first) {
             throw IllegalArgumentException(
-                "The mapping should be existed, found R[${mapping.second}] -> L[${mappingRL[mapping.second]}]"
+                "The mapping should be existed, found R[${mapping.second}] -> L[${mappingRL[mapping.second.id]}]"
             )
         }
 
         synchronized(this) {
-            mappingLR.remove(mapping.first)
-            mappingRL.remove(mapping.second)
+            mappingLR.remove(mapping.first.id)
+            mappingRL.remove(mapping.second.id)
         }
     }
 
     private fun extractMappedTreeOf(
         tree: GumTree,
-        mapping: Map<GumTree, GumTree>
+        mapping: Map<String, GumTree>
     ): GumTree? =
         synchronized(this) {
-            mapping[tree]
+            mapping[tree.id]
         }
 
     private fun isMappingExistsIn(
-        mapping: Map<GumTree, GumTree>,
+        mapping: Map<String, GumTree>,
         tree: GumTree
     ): Boolean =
         synchronized(this) {
-            mapping.containsKey(tree)
+            mapping.containsKey(tree.id)
         }
 
     private fun isAnyTreeNotExistsIn(
-        mapping: Map<GumTree, GumTree>,
+        mapping: Map<String, GumTree>,
         trees: Iterable<GumTree>
     ): Boolean =
         synchronized(this) {
-            trees.any { !mapping.containsKey(it) }
+            trees.any { !mapping.containsKey(it.id) }
         }
 
     private fun hasUnMappedDescendent(
         tree: GumTree,
-        mapping: Map<GumTree, GumTree>
+        mapping: Map<String, GumTree>
     ): Boolean =
         synchronized(this) {
-            tree.descendents.any { !mapping.containsKey(it) }
+            tree.descendents.any { !mapping.containsKey(it.id) }
         }
 
     private fun areBothUnMappedImpl(mapping: Pair<GumTree, GumTree>): Boolean =
         synchronized(this) {
-            !mappingLR.containsKey(mapping.first) && !mappingRL.containsKey(mapping.second)
+            !mappingLR.containsKey(mapping.first.id) && !mappingRL.containsKey(mapping.second.id)
         }
 
     override fun addMappingOf(mapping: Pair<GumTree, GumTree>) = addMappingImpl(mapping)
