@@ -14,10 +14,7 @@ class SiblingsSimilarityComparator(
             return 0
         }
 
-        return p1.descendents.count {
-            val mappedR = storage.getMappingOfLeft(it)
-            mappedR != null && mappedR in p2.descendents
-        }
+        return numOfMappedDescendents(p1, p2, storage)
     }
 
     override fun compare(
