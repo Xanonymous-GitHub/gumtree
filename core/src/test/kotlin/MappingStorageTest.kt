@@ -318,4 +318,14 @@ internal class MappingStorageTest {
         val actual = givenStorage.hasUnMappedDescendentOfRight(right)
         assertFalse(actual)
     }
+
+    @Test
+    fun `test clone`() {
+        val left = GumTree(TreeType("left"))
+        val right = GumTree(TreeType("right"))
+        givenStorage.addMappingOf(left to right)
+        val clonedStorage = givenStorage.clone()
+        val actual = clonedStorage.getMappingOfLeft(left)
+        assertEquals(right, actual)
+    }
 }

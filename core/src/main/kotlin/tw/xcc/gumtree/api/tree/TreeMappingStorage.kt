@@ -1,6 +1,6 @@
 package tw.xcc.gumtree.api.tree
 
-interface TreeMappingStorage<T : Tree> {
+interface TreeMappingStorage<T : Tree> : Cloneable {
     fun addMappingOf(mapping: Pair<T, T>)
 
     fun addMappingRecursivelyOf(mapping: Pair<T, T>)
@@ -24,4 +24,6 @@ interface TreeMappingStorage<T : Tree> {
     fun hasUnMappedDescendentOfLeft(left: T): Boolean
 
     fun hasUnMappedDescendentOfRight(right: T): Boolean
+
+    override fun clone(): TreeMappingStorage<T>
 }
