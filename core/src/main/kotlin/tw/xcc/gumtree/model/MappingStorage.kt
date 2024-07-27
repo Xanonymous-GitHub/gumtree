@@ -119,10 +119,11 @@ class MappingStorage : TreeMappingStorage<GumTree> {
 
     override fun hasUnMappedDescendentOfRight(right: GumTree): Boolean = hasUnMappedDescendent(right, mappingRL)
 
-    public override fun clone(): TreeMappingStorage<GumTree> {
-        val newStorage = MappingStorage()
-        newStorage.mappingRL.putAll(this.mappingRL)
-        newStorage.mappingLR.putAll(this.mappingLR)
-        return newStorage
-    }
+    public override fun clone(): MappingStorage =
+        synchronized(this) {
+            val newStorage = MappingStorage()
+            newStorage.mappingRL.putAll(this.mappingRL)
+            newStorage.mappingLR.putAll(this.mappingLR)
+            return newStorage
+        }
 }
