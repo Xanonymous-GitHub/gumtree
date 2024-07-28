@@ -1,5 +1,6 @@
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
+import tw.xcc.gumtree.helper.gumTree
 import tw.xcc.gumtree.model.GumTree
 import tw.xcc.gumtree.model.TreeType
 import kotlin.test.BeforeTest
@@ -25,6 +26,47 @@ internal class GumTreeTest {
         val actualTreeLabel = givenTree.label
         assertEquals(givenTreeType, actualTreeType, "TreeType should be equal")
         assertEquals(givenTreeLabel, actualTreeLabel, "TreeLabel should be equal")
+    }
+
+    @Test
+    fun `test copy constructor`() {
+        val sourceTree =
+            gumTree("root", "label", 123, 456) {
+                child("child-layer1", "child1", 12301, 45601) {
+                    child("child-layer2", "child2", 12302, 45602)
+                }
+                child("child-layer1", "child3", 12303, 45603)
+                child("child-layer1", "child4", 12304, 45604) {
+                    child("child-layer2", "child5", 12305, 45605)
+                    child("child-layer2", "child6", 12306, 45606)
+                }
+            }
+        val copiedTree = GumTree(sourceTree)
+        assertEquals(sourceTree.type, copiedTree.type)
+        assertEquals(sourceTree.label, copiedTree.label)
+        assertEquals(sourceTree.pos, copiedTree.pos)
+        assertEquals(sourceTree.length, copiedTree.length)
+        assertEquals(sourceTree.id, copiedTree.id)
+        assertEquals(sourceTree.descendents.size, copiedTree.descendents.size)
+        assertEquals(sourceTree.ancestors.size, copiedTree.ancestors.size)
+        assertEquals(sourceTree.height, copiedTree.height)
+        assertEquals(sourceTree.depth, copiedTree.depth)
+        assertEquals(sourceTree.childCount(), copiedTree.childCount())
+
+        for (i in 0 until sourceTree.childCount()) {
+            val sourceChild = sourceTree.childAt(i)
+            val copiedChild = copiedTree.childAt(i)
+            assertEquals(sourceChild?.type, copiedChild?.type)
+            assertEquals(sourceChild?.label, copiedChild?.label)
+            assertEquals(sourceChild?.pos, copiedChild?.pos)
+            assertEquals(sourceChild?.length, copiedChild?.length)
+            assertEquals(sourceChild?.id, copiedChild?.id)
+            assertEquals(sourceChild?.descendents?.size, copiedChild?.descendents?.size)
+            assertEquals(sourceChild?.ancestors?.size, copiedChild?.ancestors?.size)
+            assertEquals(sourceChild?.height, copiedChild?.height)
+            assertEquals(sourceChild?.depth, copiedChild?.depth)
+            assertEquals(sourceChild?.childCount(), copiedChild?.childCount())
+        }
     }
 
     @Test

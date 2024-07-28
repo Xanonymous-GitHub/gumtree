@@ -118,4 +118,17 @@ abstract class BasicTree<T> : Tree, Traversable<T> where T : BasicTree<T> {
     final override fun isLeaf(): Boolean = synchronized(this) { childrenMap.get().isEmpty() }
 
     abstract fun similarityProperties(): String
+
+    /**
+     * The Equal function ignores the parent and children fields.
+     * We only compare the [id] field.
+     * */
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is BasicTree<*>) return false
+        if (idRef.get() != other.idRef.get()) return false
+        return true
+    }
+
+    override fun hashCode(): Int = idRef.get().hashCode()
 }

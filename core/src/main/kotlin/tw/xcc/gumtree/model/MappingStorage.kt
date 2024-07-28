@@ -117,8 +117,12 @@ class MappingStorage : TreeMappingStorage<GumTree> {
     override fun clone(): MappingStorage =
         synchronized(this) {
             val newStorage = MappingStorage()
-            newStorage.mappingRL.putAll(this.mappingRL)
-            newStorage.mappingLR.putAll(this.mappingLR)
+            this.mappingRL.forEach {
+                newStorage.mappingRL[it.key] = GumTree(it.value)
+            }
+            this.mappingLR.forEach {
+                newStorage.mappingLR[it.key] = GumTree(it.value)
+            }
             return newStorage
         }
 }

@@ -22,7 +22,7 @@ open class GumTree(
      * */
     val length: Int = -1
 ) : BasicTree<GumTree>(), Comparable<GumTree> {
-    protected constructor(other: GumTree) : this(other.type, other.label, other.pos, other.length) {
+    constructor(other: GumTree) : this(other.type, other.label, other.pos, other.length) {
         val otherChildren = other.childrenMap.get()
         otherChildren.forEach { (pos, child) ->
             insertChildAtImpl(pos, GumTree(child))
@@ -95,6 +95,28 @@ open class GumTree(
 
     final override val self: GumTree
         get() = this
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is GumTree) return false
+        if (label != other.label) return false
+        if (pos != other.pos) return false
+        if (length != other.length) return false
+        if (type != other.type) return false
+        return super.equals(other)
+    }
+
+    override fun hashCode(): Int {
+        val hashCodes =
+            arrayOf(
+                label.hashCode(),
+                pos.hashCode(),
+                length.hashCode(),
+                type.hashCode(),
+                super.hashCode()
+            )
+        return hashCodes.fold(0) { acc, i -> 31 * acc + i }
+    }
 
     companion object {
         private const val EMPTY_LABEL = ""
