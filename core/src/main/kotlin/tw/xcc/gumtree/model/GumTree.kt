@@ -76,6 +76,23 @@ open class GumTree(
         child: GumTree
     ) = insertChildAtImpl(pos, child)
 
+    open fun tryRemoveChild(child: GumTree): Boolean =
+        synchronized(this) {
+            val pos = child.positionOfParent
+            if (pos == -1) {
+                return false
+            }
+
+            val children = childrenMap.get()
+            val removedChild = children.remove(pos) ?: return false
+
+            removedChild.setParentTo(null)
+            removedChild._positionOfParent.set(-1)
+            childrenMap.set(children)
+
+            return true
+        }
+
     open fun toNewFrozen(): GumTreeView =
         synchronized(this) {
             val children = childrenMap.get()
@@ -87,6 +104,11 @@ open class GumTree(
     infix fun hasSameTypeAs(other: GumTree): Boolean = type == other.type
 
     infix fun hasSameLabelAs(other: GumTree): Boolean = label == other.label
+
+    override fun addChild(child: GumTree) {
+        super.addChild(child)
+        child._positionOfParent.set(childCount() - 1)
+    }
 
     final override infix fun isIsomorphicTo(other: GumTree): Boolean = isIsomorphicTo(this, other)
 

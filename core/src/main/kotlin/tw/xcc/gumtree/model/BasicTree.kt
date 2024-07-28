@@ -68,7 +68,7 @@ abstract class BasicTree<T> : Tree, Traversable<T> where T : BasicTree<T> {
             }
         }
 
-    fun addChild(child: T) {
+    open fun addChild(child: T) {
         synchronized(this) {
             val newChildrenMap = childrenMap.get()
             newChildrenMap[newChildrenMap.size] = child.also { it.setParentTo(self) }

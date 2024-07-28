@@ -142,4 +142,20 @@ internal class GumTreeTest {
         assertEquals(child.id, frozen.childAt(0)?.id)
         assertTrue(child !== frozen.childAt(0))
     }
+
+    @Test
+    fun `test tryRemoveChild`() {
+        val child = GumTree(TreeType.empty(), "child")
+        givenTree.addChild(child)
+        val actualResult = givenTree.tryRemoveChild(child)
+        assertTrue(actualResult)
+        assertEquals(0, givenTree.childCount())
+    }
+
+    @Test
+    fun `test tryRemoveChild with non-child`() {
+        val child = GumTree(TreeType.empty(), "child")
+        val actualResult = givenTree.tryRemoveChild(child)
+        assertFalse(actualResult)
+    }
 }
