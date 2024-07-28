@@ -11,7 +11,7 @@ open class GumTree(
     /**
      * The Label corresponds to the actual tokens in the code.
      * */
-    val label: String = EMPTY_LABEL,
+    var label: String = EMPTY_LABEL,
     /**
      * pos is the position of the node in the source code.
      * */
@@ -36,8 +36,9 @@ open class GumTree(
     /**
      * The Type corresponds to the name of their production rule in the grammar.
      * */
-    val type: TreeType
+    var type: TreeType
         get() = _type.get()
+        set(value) = _type.set(value)
 
     private val _positionOfParent = AtomicInteger(-1)
     val positionOfParent: Int
