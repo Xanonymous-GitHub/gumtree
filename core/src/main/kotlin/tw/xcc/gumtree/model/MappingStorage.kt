@@ -34,6 +34,11 @@ class MappingStorage : TreeMappingStorage<GumTree> {
         }
     }
 
+    private fun hasImpl(mapping: Pair<GumTree, GumTree>): Boolean =
+        synchronized(this) {
+            return mappingLR[mapping.first.id] == mapping.second && mappingRL[mapping.second.id] == mapping.first
+        }
+
     private fun removeMappingImpl(mapping: Pair<GumTree, GumTree>) {
         if (mappingLR[mapping.first.id]?.id != mapping.second.id) {
             throw IllegalArgumentException(
@@ -109,6 +114,8 @@ class MappingStorage : TreeMappingStorage<GumTree> {
     override fun isAnyOfRightsUnMapped(rights: Iterable<GumTree>): Boolean = isAnyTreeNotExistsIn(mappingRL, rights)
 
     override fun areBothUnMapped(mapping: Pair<GumTree, GumTree>): Boolean = areBothUnMappedImpl(mapping)
+
+    override fun has(mapping: Pair<GumTree, GumTree>): Boolean = hasImpl(mapping)
 
     override fun hasUnMappedDescendentOfLeft(left: GumTree): Boolean = hasUnMappedDescendent(left, mappingLR)
 

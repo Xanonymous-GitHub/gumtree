@@ -328,4 +328,13 @@ internal class MappingStorageTest {
         val actual = clonedStorage.getMappingOfLeft(left)
         assertEquals(right, actual)
     }
+
+    @Test
+    fun `test has`() {
+        val left = GumTree(TreeType("left"))
+        val right = GumTree(TreeType("right"))
+        givenStorage.addMappingOf(left to right)
+        val actual = givenStorage.has(left to right)
+        assertTrue(actual)
+    }
 }

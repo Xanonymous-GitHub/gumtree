@@ -21,6 +21,8 @@ interface TreeMappingStorage<T : Tree> : Cloneable {
 
     fun areBothUnMapped(mapping: Pair<T, T>): Boolean
 
+    fun has(mapping: Pair<T, T>): Boolean
+
     fun hasUnMappedDescendentOfLeft(left: T): Boolean
 
     fun hasUnMappedDescendentOfRight(right: T): Boolean
