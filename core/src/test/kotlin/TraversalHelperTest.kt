@@ -1,3 +1,4 @@
+import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 import tw.xcc.gumtree.helper.bfsOrderOf
@@ -97,7 +98,7 @@ internal class TraversalHelperTest {
     }
 
     @Test
-    fun `test bfsOrdered`() {
+    fun `test suspendableBfsOrderOf`() {
         val child1 = FakeTinnyTree()
         val child2 = FakeTinnyTree()
         val child3 = FakeTinnyTree()
@@ -109,7 +110,11 @@ internal class TraversalHelperTest {
         givenRoot.addChild(child4)
 
         val actualBfsOrdered = mutableListOf<FakeTinnyTree>()
-        bfsOrderOf(givenRoot) { actualBfsOrdered.add(it) }
+        runBlocking {
+            bfsOrderOf(givenRoot) {
+                actualBfsOrdered.add(it)
+            }
+        }
 
         val expectedBfsOrdered = listOf(givenRoot, child1, child4, child2, child3)
         assertContentEquals(expectedBfsOrdered, actualBfsOrdered)

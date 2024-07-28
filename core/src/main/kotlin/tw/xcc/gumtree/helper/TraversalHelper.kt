@@ -1,5 +1,7 @@
 package tw.xcc.gumtree.helper
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.coroutineScope
 import tw.xcc.gumtree.api.tree.Tree
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
@@ -37,23 +39,20 @@ private fun <T : Tree> postOrderedImpl(
     action(tree)
 }
 
-@OptIn(ExperimentalContracts::class)
-inline fun <reified T : Tree> bfsOrderOf(
+suspend inline fun <reified T : Tree> bfsOrderOf(
     tree: T,
-    crossinline action: (T) -> Unit
+    crossinline action: suspend CoroutineScope.(T) -> Unit
 ) {
-    contract {
-        callsInPlace(action, InvocationKind.AT_LEAST_ONCE)
-    }
-
     val queue = ArrayDeque<T>()
     queue.add(tree)
 
-    while (queue.isNotEmpty()) {
-        val current = queue.removeFirst()
-        action(current)
-        @Suppress("UNCHECKED_CAST")
-        queue.addAll(current.getChildren() as Collection<T>)
+    coroutineScope {
+        while (queue.isNotEmpty()) {
+            val current = queue.removeFirst()
+            action(current)
+            @Suppress("UNCHECKED_CAST")
+            queue.addAll(current.getChildren() as Collection<T>)
+        }
     }
 }
 
