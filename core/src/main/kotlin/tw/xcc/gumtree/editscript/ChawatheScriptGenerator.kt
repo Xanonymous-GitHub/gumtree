@@ -6,9 +6,9 @@ import kotlinx.coroutines.launch
 import tw.xcc.gumtree.algorithms.lcsBaseWithElements
 import tw.xcc.gumtree.api.EditScriptGenerator
 import tw.xcc.gumtree.api.tree.TreeMappingStorage
+import tw.xcc.gumtree.helper.bfsOrderOf
 import tw.xcc.gumtree.helper.crossProductOf
 import tw.xcc.gumtree.helper.postOrderOf
-import tw.xcc.gumtree.helper.bfsOrderOf
 import tw.xcc.gumtree.model.GumTree
 import tw.xcc.gumtree.model.TreeType
 import tw.xcc.gumtree.model.operations.Action
@@ -46,9 +46,11 @@ class ChawatheScriptGenerator(
      * */
     private fun ensureTreeNotUsed() {
         val pattern = fakeTreeLabelPattern.toRegex()
-        require(arrayOf(tree1, tree2).all {
-            !it.label.matches(pattern)
-        }) { "Trees can not be reused for generating edit scripts" }
+        require(
+            arrayOf(tree1, tree2).all {
+                !it.label.matches(pattern)
+            }
+        ) { "Trees can not be reused for generating edit scripts" }
     }
 
     /**
