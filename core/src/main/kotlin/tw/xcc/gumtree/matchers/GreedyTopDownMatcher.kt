@@ -33,7 +33,7 @@ class GreedyTopDownMatcher(private val minHeight: Int = 1) : TreeMatcher<GumTree
                     .forEach { mapping ->
                         if (storage.areBothUnMapped(mapping)) {
                             storage.addMappingRecursivelyOf(
-                                realTreePool.mustExtractRealOf(mapping)
+                                realTreePool.tryExtractRealOf(mapping)
                             )
                         }
                     }
@@ -71,7 +71,7 @@ class GreedyTopDownMatcher(private val minHeight: Int = 1) : TreeMatcher<GumTree
                     launch {
                         organizer.uniqueIsomorphicMappings.forEach { pairOfSet ->
                             storage.addMappingRecursivelyOf(
-                                realTreePool.mustExtractRealOf(
+                                realTreePool.tryExtractRealOf(
                                     pairOfSet.first.single() to pairOfSet.second.single()
                                 )
                             )

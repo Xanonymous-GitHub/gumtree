@@ -89,4 +89,45 @@ internal class NonFrozenGumTreePoolTest {
         assertSame(originL, extracted.first)
         assertSame(originR, extracted.second)
     }
+
+    @Test
+    fun `test tryExtractRealOf`() {
+        val originL =
+            gumTree("rootL") {
+                child("childL")
+            }
+        val originR =
+            gumTree("rootR") {
+                child("childR")
+            }
+
+        givenPool.putAll(originL.preOrdered().associateBy { it.id })
+        givenPool.putAll(originR.preOrdered().associateBy { it.id })
+
+        val pair = originL to originR
+        val extracted = givenPool.tryExtractRealOf(pair)
+
+        assertSame(originL, extracted.first)
+        assertSame(originR, extracted.second)
+    }
+
+    @Test
+    fun `test tryExtractRealOf with missing instances`() {
+        val originL =
+            gumTree("rootL") {
+                child("childL")
+            }
+        val originR =
+            gumTree("rootR") {
+                child("childR")
+            }
+
+        givenPool.putAll(originL.preOrdered().associateBy { it.id })
+
+        val pair = originL to originR
+        val extracted = givenPool.tryExtractRealOf(pair)
+
+        assertSame(originL, extracted.first)
+        assertSame(originR, extracted.second)
+    }
 }

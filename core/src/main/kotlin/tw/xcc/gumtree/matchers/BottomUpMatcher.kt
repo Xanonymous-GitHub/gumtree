@@ -50,7 +50,7 @@ class BottomUpMatcher : TreeMatcher<GumTree> {
                 }
             if (areAllLeftSideUnmapped.await() && areAllRightSideUnmapped.await()) {
                 storage.addMappingRecursivelyOf(
-                    realTreePool.mustExtractRealOf(left to right)
+                    realTreePool.tryExtractRealOf(left to right)
                 )
             }
         }
@@ -80,7 +80,7 @@ class BottomUpMatcher : TreeMatcher<GumTree> {
                 val left = leftNodes.single()
                 val right = rightNodes.single()
                 storage.addMappingOf(
-                    realTreePool.mustExtractRealOf(left to right)
+                    realTreePool.tryExtractRealOf(left to right)
                 )
                 postMatching(left, right, storage)
             }
@@ -160,7 +160,7 @@ class BottomUpMatcher : TreeMatcher<GumTree> {
                 when {
                     t.isRoot() -> {
                         storage.addMappingOf(
-                            realTreePool.mustExtractRealOf(t to tree2)
+                            realTreePool.tryExtractRealOf(t to tree2)
                         )
                         postMatching(t, tree2, storage)
                         break
@@ -179,7 +179,7 @@ class BottomUpMatcher : TreeMatcher<GumTree> {
                         if (bestSimilarCandidate != null) {
                             postMatching(t, bestSimilarCandidate, storage)
                             storage.addMappingOf(
-                                realTreePool.mustExtractRealOf(t to bestSimilarCandidate)
+                                realTreePool.tryExtractRealOf(t to bestSimilarCandidate)
                             )
                         }
                     }

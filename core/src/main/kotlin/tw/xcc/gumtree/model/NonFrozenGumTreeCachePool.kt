@@ -66,4 +66,18 @@ internal object NonFrozenGumTreeCachePool : MutableMap<String, GumTree> {
 
             return first to second
         }
+
+    /**
+     * A helper function to extract the real [GumTree] instances from a pair of [GumTree] instances.
+     * It calls [mustExtractRealOf] if the instances are found in the pool.
+     * Otherwise, it returns the given [pair].
+     * */
+    fun tryExtractRealOf(pair: Pair<GumTree, GumTree>): Pair<GumTree, GumTree> =
+        synchronized(this) {
+            if (!cache.containsKey(pair.first.id) || !cache.containsKey(pair.second.id)) {
+                return pair
+            }
+
+            return mustExtractRealOf(pair)
+        }
 }
