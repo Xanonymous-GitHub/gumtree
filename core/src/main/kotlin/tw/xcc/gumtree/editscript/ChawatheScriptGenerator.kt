@@ -32,17 +32,17 @@ class ChawatheScriptGenerator(
     private val fakeTreeLabelPattern by lazy { "_FAKED(${hashCode()})*" }
 
     /**
-     * To generate a dummy [GumTree] node.
+     * To generate a fake [GumTree] node.
      * The used [fakeTreeLabelPattern] is a string that will directly be converted to [Regex] for validation.
      * @see ensureTreeNotUsed
      * */
     private fun generateNewEmptyNode() = GumTree(TreeType.empty(), fakeTreeLabelPattern)
 
     /**
-     * To make sure the root of both given left ([tree1]) and right ([tree2]) tree haven't been
+     * To make sure the root of both given left ([tree1]) and right ([tree2]) haven't been
      * used for calculating the edit script.
-     * This step is used for prevent multiple fake tree node be appended to the same tree,
-     * which can potentially lead to wrong result.
+     * This step is used to prevent multiple fake tree nodes being appended to the same tree,
+     * which can potentially lead to a wrong result.
      * */
     private fun ensureTreeNotUsed() {
         val pattern = fakeTreeLabelPattern.toRegex()
@@ -58,7 +58,7 @@ class ChawatheScriptGenerator(
      * The function takes [targetOnRight] as the standard, finding the position in left side
      * that can be placed with a node so their parents can become isomorphic with each other.
      * This function may not always return an exactly expected position. If that happened,
-     * a 0 number will be returned, but expect [alignChildrenOf] to fix the order of nodes.
+     * a zero number will be returned, but expect [alignChildrenOf] to fix the order of nodes.
      * */
     private fun findInsertionPosFrom(targetOnRight: GumTree): Int {
         val parentOfRightTarget = targetOnRight.getParent() ?: return 0
@@ -142,7 +142,7 @@ class ChawatheScriptGenerator(
     }
 
     /**
-     * Re-order the mapped children of [pair] (which is expected a mapping in [storage]),
+     * Re-order the mapped children of [pair] (which is expected a matching in [storage]),
      * so that these mapped-children can have same index of their parents.
      * */
     private suspend fun alignChildrenOf(pair: Pair<GumTree, GumTree>) =
@@ -199,7 +199,7 @@ class ChawatheScriptGenerator(
             actions.clear()
 
             // Since the root of tree1(left) and tree2(right) may not match,
-            // we directly add a dummy matched Fake node pair to the storage
+            // we directly add a matched Fake node pair to the storage
             // without considering whether they(the roots) are actually matched or not, and
             // let these two fake nodes to be the new root of tree1 and tree2.
             val fakeLeftRoot = generateNewEmptyNode()
