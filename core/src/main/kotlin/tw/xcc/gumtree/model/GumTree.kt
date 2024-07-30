@@ -110,9 +110,9 @@ open class GumTree(
         child._positionOfParent.set(childCount() - 1)
     }
 
-    final override infix fun isIsomorphicTo(other: GumTree): Boolean = isIsomorphicTo(this, other)
+    final override suspend infix fun isIsomorphicTo(other: GumTree): Boolean = isIsomorphicTo(this, other)
 
-    final override infix fun isIsoStructuralTo(other: GumTree): Boolean = isIsoStructuralTo(this, other)
+    final override suspend infix fun isIsoStructuralTo(other: GumTree): Boolean = isIsoStructuralTo(this, other)
 
     final override fun similarityProperties(): String = "<$label>[$type]<"
 

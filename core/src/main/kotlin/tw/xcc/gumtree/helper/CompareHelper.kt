@@ -5,24 +5,17 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.ensureActive
-import kotlinx.coroutines.runBlocking
 import tw.xcc.gumtree.model.GumTree
 
-fun isIsomorphicTo(
+suspend fun isIsomorphicTo(
     self: GumTree,
     other: GumTree
-): Boolean =
-    runBlocking {
-        compareTrees(self, other, true)
-    }
+): Boolean = compareTrees(self, other, true)
 
-fun isIsoStructuralTo(
+suspend fun isIsoStructuralTo(
     self: GumTree,
     other: GumTree
-): Boolean =
-    runBlocking {
-        compareTrees(self, other, false)
-    }
+): Boolean = compareTrees(self, other, false)
 
 private suspend fun compareTrees(
     self: GumTree,

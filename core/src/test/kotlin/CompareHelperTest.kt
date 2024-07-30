@@ -46,48 +46,54 @@ internal class CompareHelperTest {
     }
 
     @Test
-    fun `test isIsomorphic positive`() {
-        val actual = givenRoot1 isIsomorphicTo givenRoot2
-        assertTrue(actual)
-    }
+    fun `test isIsomorphic positive`() =
+        runBlocking {
+            val actual = givenRoot1 isIsomorphicTo givenRoot2
+            assertTrue(actual)
+        }
 
     @Test
-    fun `test isIsoStructural positive`() {
-        val actual = givenRoot1 isIsoStructuralTo givenRoot2
-        assertTrue(actual)
-    }
+    fun `test isIsoStructural positive`() =
+        runBlocking {
+            val actual = givenRoot1 isIsoStructuralTo givenRoot2
+            assertTrue(actual)
+        }
 
     @Test
-    fun `test isIsomorphic negative`() {
-        val actual = givenRoot1 isIsomorphicTo givenRoot2.getChildren().first()
-        assertFalse(actual)
-    }
+    fun `test isIsomorphic negative`() =
+        runBlocking {
+            val actual = givenRoot1 isIsomorphicTo givenRoot2.getChildren().first()
+            assertFalse(actual)
+        }
 
     @Test
-    fun `test isIsoStructural negative`() {
-        val actual = givenRoot1 isIsoStructuralTo givenRoot2.getChildren().first()
-        assertFalse(actual)
-    }
+    fun `test isIsoStructural negative`() =
+        runBlocking {
+            val actual = givenRoot1 isIsoStructuralTo givenRoot2.getChildren().first()
+            assertFalse(actual)
+        }
 
     @Test
-    fun `test isIsomorphic negative with different label`() {
-        val diffLabelChild1 = GumTree(TreeType("same"), "different1")
-        val diffLabelChild2 = GumTree(TreeType("same"), "different2")
-        givenRoot1.addChild(diffLabelChild1)
-        givenRoot2.addChild(diffLabelChild2)
-        val actual = givenRoot1 isIsomorphicTo givenRoot2
-        assertFalse(actual)
-    }
+    fun `test isIsomorphic negative with different label`() =
+        runBlocking {
+            val diffLabelChild1 = GumTree(TreeType("same"), "different1")
+            val diffLabelChild2 = GumTree(TreeType("same"), "different2")
+            givenRoot1.addChild(diffLabelChild1)
+            givenRoot2.addChild(diffLabelChild2)
+            val actual = givenRoot1 isIsomorphicTo givenRoot2
+            assertFalse(actual)
+        }
 
     @Test
-    fun `test isIsoStructural positive with different label`() {
-        val diffLabelChild1 = GumTree(TreeType("same"), "different1")
-        val diffLabelChild2 = GumTree(TreeType("same"), "different2")
-        givenRoot1.addChild(diffLabelChild1)
-        givenRoot2.addChild(diffLabelChild2)
-        val actual = givenRoot1 isIsoStructuralTo givenRoot2
-        assertTrue(actual)
-    }
+    fun `test isIsoStructural positive with different label`() =
+        runBlocking {
+            val diffLabelChild1 = GumTree(TreeType("same"), "different1")
+            val diffLabelChild2 = GumTree(TreeType("same"), "different2")
+            givenRoot1.addChild(diffLabelChild1)
+            givenRoot2.addChild(diffLabelChild2)
+            val actual = givenRoot1 isIsoStructuralTo givenRoot2
+            assertTrue(actual)
+        }
 
     @Test
     fun `test isIsomorphic should have same hashMemo`() =

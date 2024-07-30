@@ -15,11 +15,11 @@ import kotlin.math.ln
 class BottomUpMatcher : TreeMatcher<GumTree> {
     private val realTreePool = NonFrozenGumTreeCachePool
 
-    private suspend inline fun lcsFinalMatching(
+    private suspend fun lcsFinalMatching(
         tree1: GumTree,
         tree2: GumTree,
         storage: TreeMappingStorage<GumTree>,
-        noinline equalFunc: (GumTree, GumTree) -> Boolean
+        equalFunc: suspend (GumTree, GumTree) -> Boolean
     ) = coroutineScope {
         val unMappedChildrenOfLeftJob =
             async {
@@ -34,7 +34,10 @@ class BottomUpMatcher : TreeMatcher<GumTree> {
         val unMappedChildrenOfRight = unMappedChildrenOfRightJob.await()
 
         val lcsOfUnMapped =
-            lcsBaseWithElements(unMappedChildrenOfLeft, unMappedChildrenOfRight, equalFunc)
+            lcsBaseWithElements(unMappedChildrenOfLeft, unMappedChildrenOfRight) {
+                    left, right ->
+                equalFunc(left, right)
+            }
 
         lcsOfUnMapped.forEach { (left, right) ->
             val areAllLeftSideUnmapped =

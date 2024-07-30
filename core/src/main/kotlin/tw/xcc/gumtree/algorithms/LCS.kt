@@ -8,7 +8,7 @@ import kotlin.contracts.contract
 private inline fun <reified T> calculateLCSLength(
     collection1: Collection<T>,
     collection2: Collection<T>,
-    crossinline equals: (T, T) -> Boolean
+    equals: (T, T) -> Boolean
 ): Array<IntArray> {
     contract {
         callsInPlace(equals, InvocationKind.UNKNOWN)
@@ -68,7 +68,7 @@ private fun <T> findCommonElements(
 internal inline fun <reified T> lcsBaseOnlySize(
     collection1: Collection<T>,
     collection2: Collection<T>,
-    crossinline equals: (T, T) -> Boolean = { a, b -> a == b }
+    equals: (T, T) -> Boolean = { a, b -> a == b }
 ): Int {
     val calculatedLengths = calculateLCSLength(collection1, collection2, equals)
     if (calculatedLengths.isEmpty()) {
@@ -85,7 +85,7 @@ internal inline fun <reified T> lcsBaseOnlySize(
 internal inline fun <reified T> lcsBaseWithElements(
     collection1: Collection<T>,
     collection2: Collection<T>,
-    crossinline equals: (T, T) -> Boolean = { a, b -> a == b }
+    equals: (T, T) -> Boolean = { a, b -> a == b }
 ): List<Pair<T, T>> {
     val calculatedLengths = calculateLCSLength(collection1, collection2, equals)
     return findCommonElements(collection1, collection2, calculatedLengths)
