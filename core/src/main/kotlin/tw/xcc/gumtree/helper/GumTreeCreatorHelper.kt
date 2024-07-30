@@ -48,7 +48,7 @@ internal fun gumTree(
     label: String = "",
     pos: Int = -1,
     length: Int = -1,
-    block: GumTreeBuilder.() -> Unit
+    block: GumTreeBuilder.() -> Unit = {}
 ): GumTree {
     contract {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)
