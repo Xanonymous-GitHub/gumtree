@@ -11,10 +11,15 @@ internal annotation class GumTreeMarker
 
 @OptIn(ExperimentalContracts::class)
 @GumTreeMarker
-internal class GumTreeBuilder(grammarName: String, label: String, pos: Int, length: Int) {
+internal class GumTreeBuilder(
+    grammarName: String,
+    label: String,
+    pos: Int,
+    length: Int
+) {
     private val root by lazy { GumTree(TreeType(grammarName), label, pos, length) }
 
-    inline fun child(
+    internal inline fun child(
         grammarName: String,
         label: String = "",
         pos: Int = -1,
@@ -25,24 +30,18 @@ internal class GumTreeBuilder(grammarName: String, label: String, pos: Int, leng
             callsInPlace(block, InvocationKind.EXACTLY_ONCE)
         }
 
-        val child = GumTreeBuilder(grammarName, label, pos, length)
-        child.block()
+        val builder = GumTreeBuilder(grammarName, label, pos, length)
+        builder.block()
 
-        val childTree = child.build()
-        root.addChild(childTree)
-        return childTree
+        return builder.build().also { root.addChild(it) }
     }
 
-    fun child(
+    internal fun child(
         grammarName: String,
         label: String = "",
         pos: Int = -1,
         length: Int = -1
-    ): GumTree {
-        val childTree = GumTree(TreeType(grammarName), label, pos, length)
-        root.addChild(childTree)
-        return childTree
-    }
+    ): GumTree = GumTree(TreeType(grammarName), label, pos, length).also { root.addChild(it) }
 
     internal fun build(): GumTree = root
 }
