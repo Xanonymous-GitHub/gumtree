@@ -1,9 +1,9 @@
+import helpers.gumTree
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 import tw.xcc.gumtree.helper.createHashMemoOf
 import tw.xcc.gumtree.helper.crossProductOf
-import tw.xcc.gumtree.helper.gumTree
 import tw.xcc.gumtree.matchers.HashSimilarityOrganizer
 import kotlin.test.BeforeTest
 import kotlin.test.Test

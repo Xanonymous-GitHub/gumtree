@@ -1,14 +1,17 @@
-package tw.xcc.gumtree.helper
+package helpers
 
+import org.jetbrains.annotations.TestOnly
 import tw.xcc.gumtree.model.GumTree
 import tw.xcc.gumtree.model.TreeType
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
+@TestOnly
 @DslMarker
 internal annotation class GumTreeMarker
 
+@TestOnly
 @OptIn(ExperimentalContracts::class)
 @GumTreeMarker
 internal class GumTreeBuilder(
@@ -19,6 +22,7 @@ internal class GumTreeBuilder(
 ) {
     private val root by lazy { GumTree(TreeType(grammarName), label, pos, length) }
 
+    @TestOnly
     internal inline fun child(
         grammarName: String,
         label: String = "",
@@ -36,6 +40,7 @@ internal class GumTreeBuilder(
         return builder.build().also { root.addChild(it) }
     }
 
+    @TestOnly
     internal fun child(
         grammarName: String,
         label: String = "",
@@ -46,6 +51,7 @@ internal class GumTreeBuilder(
     internal fun build(): GumTree = root
 }
 
+@TestOnly
 @OptIn(ExperimentalContracts::class)
 internal inline fun gumTree(
     grammarName: String,

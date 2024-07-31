@@ -1,7 +1,7 @@
+import helpers.gumTree
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
-import tw.xcc.gumtree.helper.gumTree
 import tw.xcc.gumtree.model.BasicTree
 import java.util.UUID
 import kotlin.test.BeforeTest

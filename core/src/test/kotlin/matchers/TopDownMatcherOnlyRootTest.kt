@@ -1,9 +1,9 @@
 package matchers
 
+import helpers.gumTree
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
-import tw.xcc.gumtree.helper.gumTree
 import tw.xcc.gumtree.matchers.GreedyTopDownMatcher
 import tw.xcc.gumtree.model.MappingStorage
 import kotlin.test.BeforeTest
