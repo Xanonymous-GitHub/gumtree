@@ -2,6 +2,18 @@ package matchers
 
 import tw.xcc.gumtree.helper.gumTree
 
+/**
+ * The real-world tree 1.
+ * (Mentioned in GumTree paper Figure 1)
+ * It is equivalent to the following Java code:
+ * ```java
+ * public class Test {
+ *   public String foo(int i) {
+ *     if (i == 0) return "Foo!";
+ *   }
+ * }
+ * ```
+ * */
 private val realTree1L =
     gumTree("CompilationUnit") {
         child("TypeDeclaration") {
@@ -32,6 +44,19 @@ private val realTree1L =
         }
     }
 
+/**
+ * The real-world tree 1.
+ * (Mentioned in GumTree paper Figure 1)
+ * It is equivalent to the following Java code:
+ * ```java
+ * public class Test {
+ *   public String foo(int i) {
+ *     if (i == 0) return "Bar";
+ *     else if (i == -1) return "Foo!";
+ *   }
+ * }
+ * ```
+ */
 private val realTree1R =
     gumTree("CompilationUnit") {
         child("TypeDeclaration") {
@@ -73,4 +98,8 @@ private val realTree1R =
         }
     }
 
+/**
+ * @see realTree1L
+ * @see realTree1R
+ * */
 internal val realTree1 = realTree1L to realTree1R
