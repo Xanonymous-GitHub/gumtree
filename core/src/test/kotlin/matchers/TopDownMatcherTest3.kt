@@ -3,7 +3,6 @@ package matchers
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
-import tw.xcc.gumtree.helper.gumTree
 import tw.xcc.gumtree.matchers.GreedyTopDownMatcher
 import tw.xcc.gumtree.model.MappingStorage
 import kotlin.test.BeforeTest
@@ -23,77 +22,9 @@ internal class TopDownMatcherTest3 {
     }
 
     @Test
-    fun `test match with real-world tree`() {
-        val tree1 =
-            gumTree("CompilationUnit") {
-                child("TypeDeclaration") {
-                    child("Modifier", "public")
-                    child("SimpleName", "Test")
-                    child("MethodDeclaration") {
-                        child("Modifier", "public")
-                        child("SimpleType", "String") {
-                            child("SimpleName", "String")
-                        }
-                        child("SimpleName", "foo")
-                        child("SingleVariableDeclaration") {
-                            child("PrimitiveType", "int")
-                            child("SimpleName", "i")
-                        }
-                        child("Block") {
-                            child("IfStatement") {
-                                child("InfixExpression", "==") {
-                                    child("SimpleName", "i")
-                                    child("NumberLiteral", "0")
-                                }
-                                child("ReturnStatement") {
-                                    child("StringLiteral", "Foo!")
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-        val tree2 =
-            gumTree("CompilationUnit") {
-                child("TypeDeclaration") {
-                    child("Modifier", "public")
-                    child("SimpleName", "Test")
-                    child("MethodDeclaration") {
-                        child("Modifier", "public")
-                        child("SimpleType", "String") {
-                            child("SimpleName", "String")
-                        }
-                        child("SimpleName", "foo")
-                        child("SingleVariableDeclaration") {
-                            child("PrimitiveType", "int")
-                            child("SimpleName", "i")
-                        }
-                        child("Block") {
-                            child("IfStatement") {
-                                child("InfixExpression", "==") {
-                                    child("SimpleName", "i")
-                                    child("NumberLiteral", "0")
-                                }
-                                child("ReturnStatement") {
-                                    child("StringLiteral", "Bar")
-                                }
-                                child("IfStatement") {
-                                    child("InfixExpression", "==") {
-                                        child("SimpleName", "i")
-                                        child("PrefixExpression", "-") {
-                                            child("NumberLiteral", "1")
-                                        }
-                                    }
-                                    child("ReturnStatement") {
-                                        child("StringLiteral", "Foo!")
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+    fun `test match with real-world tree 1`() {
+        val tree1 = realTree1.first
+        val tree2 = realTree1.second
 
         val expectMappedDescendents =
             setOf(
