@@ -49,6 +49,10 @@ class GumTreeView private constructor(target: GumTree) : GumTree(target) {
         throw NoSuchMethodException("calling this method in GumTreeView is not allowed")
     }
 
+    override fun leaveParent(): Boolean {
+        throw NoSuchMethodException("calling this method in GumTreeView is not allowed")
+    }
+
     override fun inOrdered(): List<GumTree> = throw NotImplementedError()
 
     companion object {

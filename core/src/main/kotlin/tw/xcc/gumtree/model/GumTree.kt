@@ -87,6 +87,12 @@ open class GumTree(
             return true
         }
 
+    open fun leaveParent(): Boolean =
+        synchronized(this) {
+            val theParent = parent.get() ?: return false
+            return theParent.tryRemoveChild(self)
+        }
+
     open fun toNewFrozen(): GumTreeView =
         synchronized(this) {
             val children = childrenList.get()
@@ -134,6 +140,8 @@ open class GumTree(
             )
         return hashCodes.fold(0) { acc, i -> 31 * acc + i }
     }
+
+    override fun toString(): String = "GumTree($type, $label, pos=$pos, length=$length, ${id.subSequence(0, 8)})"
 
     companion object {
         private const val EMPTY_LABEL = ""
