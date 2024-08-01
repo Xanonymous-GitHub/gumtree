@@ -127,7 +127,7 @@ class ChawatheScriptGenerator(
         referencedRightNode: GumTree
     ) {
         val destinationPosition = findInsertionPosFrom(referencedRightNode)
-        check(leftParentOfMove.tryRemoveChild(leftNode)) { "The left node should be correctly removed from its parent" }
+        check(leftNode.leaveParent()) { "The left node should be correctly removed from its parent" }
         leftParentOfMove.insertChildAt(destinationPosition, leftNode)
         actions.add(TreeMoveAction(leftNode, leftParentOfMove, destinationPosition))
     }
@@ -232,7 +232,7 @@ class ChawatheScriptGenerator(
 
                         val parentOfLeftTarget = leftTarget.getParent()
                         if (parentOfLeftTarget != null && partnerOfParentOfRightTarget != parentOfLeftTarget) {
-                            performMoveActionFor(leftTarget, parentOfLeftTarget, rightTarget)
+                            performMoveActionFor(leftTarget, partnerOfParentOfRightTarget, rightTarget)
                         }
                     }
                 }
