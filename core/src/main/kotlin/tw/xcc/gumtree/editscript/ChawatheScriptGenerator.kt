@@ -216,6 +216,7 @@ class ChawatheScriptGenerator(
 
                 if (!storage.isRightMapped(rightTarget)) {
                     leftTarget = generateNewEmptyNode()
+                    rightTarget.copyPropertiesTo(leftTarget)
                     performInsertActionFor(leftTarget, partnerOfParentOfRightTarget, rightTarget)
                 } else {
                     leftTarget =
@@ -252,6 +253,9 @@ class ChawatheScriptGenerator(
             }
             return@coroutineScope actions
         }
-}
 
-\ No newline at end of file
+    private fun GumTree.copyPropertiesTo(other: GumTree) {
+        other.type = this.type
+        other.label = this.label
+    }
+}
