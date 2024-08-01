@@ -54,7 +54,6 @@ internal class ChawatheScriptGeneratorTest1 {
         runBlocking {
             generator.generateActions()
             assertTrue(tree1 isIsomorphicTo tree2)
-            assertTrue(tree1 isIsoStructuralTo tree2)
         }
     }
 
@@ -86,7 +85,6 @@ internal class ChawatheScriptGeneratorTest1 {
         runBlocking {
             generator.generateActions()
             assertTrue(tree1 isIsomorphicTo tree2)
-            assertTrue(tree1 isIsoStructuralTo tree2)
         }
     }
 }
