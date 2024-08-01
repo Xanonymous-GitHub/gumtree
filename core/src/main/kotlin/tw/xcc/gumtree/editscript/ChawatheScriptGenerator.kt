@@ -136,8 +136,7 @@ class ChawatheScriptGenerator(
      * Performs a real delete operation on [leftNode], and pushes a [SingleDeleteAction] to [actions].
      * */
     private fun performDeleteActionOf(leftNode: GumTree) {
-        val parentOfLeftNode = requireNotNull(leftNode.getParent())
-        check(parentOfLeftNode.tryRemoveChild(leftNode)) { "The leftNode should be correctly removed from its parent" }
+        check(leftNode.leaveParent()) { "The leftNode should be correctly removed from its parent" }
         actions.add(SingleDeleteAction(leftNode))
     }
 
