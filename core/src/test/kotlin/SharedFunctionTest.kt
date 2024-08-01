@@ -1,6 +1,7 @@
 import helpers.gumTree
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
+import shared.FakeTinnyTree
 import tw.xcc.gumtree.matchers.comparator.calculateDiceValue
 import tw.xcc.gumtree.matchers.comparator.hasSameParent
 import tw.xcc.gumtree.matchers.comparator.numOfMappedDescendents

@@ -1,6 +1,7 @@
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
+import shared.FakeTinnyTree
 import tw.xcc.gumtree.helper.bfsOrderOf
 import tw.xcc.gumtree.helper.postOrderOf
 import tw.xcc.gumtree.helper.preOrderOf
