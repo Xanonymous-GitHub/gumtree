@@ -24,7 +24,7 @@ open class GumTree(
 ) : BasicTree<GumTree>(), Comparable<GumTree> {
     constructor(other: GumTree) : this(other.type, other.label, other.pos, other.length) {
         val otherChildren = other.childrenList.get()
-        this.setChildrenToImpl(otherChildren)
+        this.setChildrenToImpl(otherChildren.map { GumTree(it) })
         idRef.set(other.idRef.get())
         parent.set(other.parent.get())
     }

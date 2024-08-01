@@ -58,6 +58,6 @@ class GumTreeView private constructor(target: GumTree) : GumTree(target) {
     companion object {
         fun from(gumTree: GumTree): GumTreeView = GumTreeView(gumTree)
 
-        fun frozeEntireTreeFrom(gumTree: GumTree): GumTreeView = gumTree.toNewFrozen()
+        fun frozeEntireTreeFrom(gumTree: GumTree): GumTreeView = GumTree(gumTree).toNewFrozen()
     }
 }
