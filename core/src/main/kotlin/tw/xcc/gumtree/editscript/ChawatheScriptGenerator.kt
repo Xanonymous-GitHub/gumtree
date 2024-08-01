@@ -157,13 +157,13 @@ class ChawatheScriptGenerator(
             val mappedLChildrenToRJob =
                 async {
                     childrenOfLeft.filter {
-                        storage.isLeftMapped(it) && childrenOfRight.contains(it)
+                        childrenOfRight.contains(storage.getMappingOfLeft(it))
                     }
                 }
             val mappedRChildrenToLJob =
                 async {
                     childrenOfRight.filter {
-                        storage.isRightMapped(it) && childrenOfLeft.contains(it)
+                        childrenOfLeft.contains(storage.getMappingOfRight(it))
                     }
                 }
 
