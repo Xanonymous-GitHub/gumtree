@@ -172,4 +172,19 @@ internal class GumTreeTest {
         val actualResult = givenTree.tryRemoveChild(child)
         assertFalse(actualResult)
     }
+
+    @Test
+    fun `test leaveParent`() {
+        val parent = GumTree(TreeType.empty(), "parent")
+        parent.addChild(givenTree)
+        val actualResult = givenTree.leaveParent()
+        assertTrue(actualResult)
+        assertEquals(0, parent.childCount())
+    }
+
+    @Test
+    fun `test leaveParent with no parent`() {
+        val actualResult = givenTree.leaveParent()
+        assertFalse(actualResult)
+    }
 }
