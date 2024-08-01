@@ -23,10 +23,8 @@ open class GumTree(
     val length: Int = -1
 ) : BasicTree<GumTree>(), Comparable<GumTree> {
     constructor(other: GumTree) : this(other.type, other.label, other.pos, other.length) {
-        val otherChildren = other.childrenMap.get()
-        otherChildren.forEach { (pos, child) ->
-            insertChildAtImpl(pos, GumTree(child))
-        }
+        val otherChildren = other.childrenList.get()
+        this.setChildrenToImpl(otherChildren)
         idRef.set(other.idRef.get())
         parent.set(other.parent.get())
     }
@@ -53,21 +51,16 @@ open class GumTree(
         child: GumTree
     ) {
         synchronized(this) {
-            if (pos < 0) {
-                throw IndexOutOfBoundsException("The position $pos should be non-negative.")
-            }
+            val newChildrenList = childrenList.get()
 
-            if (childrenMap.get().containsKey(pos)) {
-                throw IllegalArgumentException("The position $pos is already occupied.")
-            }
-
-            val newChildrenMap = childrenMap.get()
-            newChildrenMap[pos] =
+            newChildrenList.add(
+                pos,
                 child.also {
                     it.setParentTo(this)
                     it._positionOfParent.set(pos)
                 }
-            childrenMap.set(newChildrenMap)
+            )
+            childrenList.set(newChildrenList)
         }
     }
 
@@ -79,25 +72,26 @@ open class GumTree(
     open fun tryRemoveChild(child: GumTree): Boolean =
         synchronized(this) {
             val pos = child.positionOfParent
-            if (pos == -1) {
+            val children = childrenList.get()
+
+            if (pos !in children.indices) {
                 return false
             }
 
-            val children = childrenMap.get()
-            val removedChild = children.remove(pos) ?: return false
+            val removedChild = children.removeAt(pos)
 
             removedChild.setParentTo(null)
             removedChild._positionOfParent.set(-1)
-            childrenMap.set(children)
+            childrenList.set(children)
 
             return true
         }
 
     open fun toNewFrozen(): GumTreeView =
         synchronized(this) {
-            val children = childrenMap.get()
-            children.replaceAll { _, v -> v.toNewFrozen() }
-            childrenMap.set(children)
+            val children = childrenList.get()
+            children.replaceAll { it.toNewFrozen() }
+            childrenList.set(children)
             return GumTreeView.from(this)
         }
 

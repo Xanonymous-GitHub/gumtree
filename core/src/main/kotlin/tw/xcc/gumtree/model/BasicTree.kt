@@ -4,6 +4,7 @@ import tw.xcc.gumtree.api.tree.Traversable
 import tw.xcc.gumtree.api.tree.Tree
 import tw.xcc.gumtree.helper.postOrderOf
 import tw.xcc.gumtree.helper.preOrderOf
+import java.util.LinkedList
 import java.util.UUID
 import java.util.concurrent.atomic.AtomicReference
 
@@ -15,7 +16,7 @@ abstract class BasicTree<T> : Tree, Traversable<T> where T : BasicTree<T> {
 
     protected val parent = AtomicReference<T?>()
 
-    protected val childrenMap = AtomicReference(sortedMapOf<Int, T>())
+    protected val childrenList = AtomicReference(LinkedList<T>())
 
     protected val idRef = AtomicReference(UUID.randomUUID().toString())
     override val id: String
@@ -68,24 +69,26 @@ abstract class BasicTree<T> : Tree, Traversable<T> where T : BasicTree<T> {
             }
         }
 
+    protected fun setChildrenToImpl(children: List<T>) =
+        with(childrenList) {
+            synchronized(this) {
+                val newChildrenList = LinkedList<T>()
+                newChildrenList.addAll(children)
+                this.set(newChildrenList)
+            }
+        }
+
     open fun addChild(child: T) {
         synchronized(this) {
-            val newChildrenMap = childrenMap.get()
-            newChildrenMap[newChildrenMap.size] = child.also { it.setParentTo(self) }
-            childrenMap.set(newChildrenMap)
+            val newChildrenList = childrenList.get()
+            newChildrenList.add(
+                child.also { it.setParentTo(self) }
+            )
+            childrenList.set(newChildrenList)
         }
     }
 
-    open fun setChildrenTo(children: List<T>) =
-        with(childrenMap) {
-            synchronized(this) {
-                val newChildrenMap = sortedMapOf<Int, T>()
-                children.forEachIndexed { i, child ->
-                    newChildrenMap[i] = child.also { it.setParentTo(self) }
-                }
-                this.set(newChildrenMap)
-            }
-        }
+    open fun setChildrenTo(children: List<T>) = setChildrenToImpl(children)
 
     open fun setParentTo(parent: T?) {
         synchronized(this) {
@@ -107,15 +110,15 @@ abstract class BasicTree<T> : Tree, Traversable<T> where T : BasicTree<T> {
 
     final override fun getParent(): T? = synchronized(this) { parent.get() }
 
-    final override fun getChildren(): List<T> = synchronized(this) { childrenMap.get().values.toList() }
+    final override fun getChildren(): List<T> = synchronized(this) { childrenList.get() }
 
-    final override fun childAt(i: Int): T? = synchronized(this) { childrenMap.get()[i] }
+    final override fun childAt(i: Int): T? = synchronized(this) { childrenList.get().getOrNull(i) }
 
-    final override fun childCount(): Int = synchronized(this) { childrenMap.get().size }
+    final override fun childCount(): Int = synchronized(this) { childrenList.get().size }
 
     final override fun isRoot(): Boolean = synchronized(this) { parent.get() == null }
 
-    final override fun isLeaf(): Boolean = synchronized(this) { childrenMap.get().isEmpty() }
+    final override fun isLeaf(): Boolean = synchronized(this) { childrenList.get().isEmpty() }
 
     abstract fun similarityProperties(): String
 

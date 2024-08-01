@@ -1,4 +1,5 @@
 import helpers.gumTree
+import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 import tw.xcc.gumtree.model.GumTree
@@ -93,11 +94,22 @@ internal class GumTreeTest {
     fun `test insertChildAt`() {
         val childTreeType = TreeType("childType")
         val childTreeLabel = "childLabel"
-        val childTree = GumTree(childTreeType, childTreeLabel)
-        val givenInsertPos = 9487
-        givenTree.insertChildAt(givenInsertPos, childTree)
-        val actualChildTree = givenTree.childAt(givenInsertPos)
-        assertEquals(childTree, actualChildTree, "Child tree should be equal")
+
+        for (insertPos in 0..5) {
+            val childTree = GumTree(childTreeType, childTreeLabel)
+            givenTree.insertChildAt(insertPos, childTree)
+            val actualChildTree = givenTree.childAt(insertPos)
+            assertEquals(childTree, actualChildTree, "Child tree should be equal")
+        }
+
+        val childTree2 = GumTree(childTreeType, childTreeLabel)
+        givenTree.insertChildAt(3, childTree2)
+        val actualChildTree2 = givenTree.childAt(3)
+        assertEquals(childTree2, actualChildTree2, "Child tree should be equal")
+
+        assertThrows<IndexOutOfBoundsException> {
+            givenTree.insertChildAt(878787878, childTree2)
+        }
     }
 
     @Test
@@ -118,11 +130,13 @@ internal class GumTreeTest {
 
     @Test
     fun `test positionOfParent`() {
-        val givenPositionOfParent = 9487
         val parent = GumTree(TreeType("parentType"))
-        parent.insertChildAt(givenPositionOfParent, givenTree)
-        val actualPositionOfParent = givenTree.positionOfParent
-        assertEquals(givenPositionOfParent, actualPositionOfParent)
+
+        for (givenPositionOfParent in 0..3) {
+            parent.insertChildAt(givenPositionOfParent, givenTree)
+            val actualPositionOfParent = givenTree.positionOfParent
+            assertEquals(givenPositionOfParent, actualPositionOfParent)
+        }
     }
 
     @Test
