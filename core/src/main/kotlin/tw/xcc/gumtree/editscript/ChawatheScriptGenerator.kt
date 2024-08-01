@@ -8,7 +8,6 @@ import tw.xcc.gumtree.api.EditScriptGenerator
 import tw.xcc.gumtree.api.tree.TreeMappingStorage
 import tw.xcc.gumtree.helper.bfsOrderOf
 import tw.xcc.gumtree.helper.crossProductOf
-import tw.xcc.gumtree.helper.postOrderOf
 import tw.xcc.gumtree.model.GumTree
 import tw.xcc.gumtree.model.TreeType
 import tw.xcc.gumtree.model.operations.Action
@@ -245,7 +244,8 @@ class ChawatheScriptGenerator(
             // It finds nodes that are on the left side but not on the right side.
             // After finishing prior steps, the remaining nodes compared to the tree on the right
             // are considered to be transformed to the right only through "deletion".
-            postOrderOf(tree1) { nodeOnLeft ->
+            val postOrderedTree1Nodes = tree1.postOrdered()
+            postOrderedTree1Nodes.forEach { nodeOnLeft ->
                 if (!storage.isLeftMapped(nodeOnLeft)) {
                     performDeleteActionOf(nodeOnLeft)
                 }
@@ -253,3 +253,5 @@ class ChawatheScriptGenerator(
             return@coroutineScope actions
         }
 }
+
+\ No newline at end of file
