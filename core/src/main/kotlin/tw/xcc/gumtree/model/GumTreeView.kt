@@ -8,6 +8,7 @@ class GumTreeView private constructor(target: GumTree) : GumTree(target) {
     private val frozenAncestors by lazy { super.ancestors.toList() }
     private val frozenHeight by lazy { super.height }
     private val frozenDepth by lazy { super.depth }
+    private val frozenPosOfParent by lazy { super.positionOfParent }
 
     override val descendents: List<GumTree>
         get() = frozenDescendents
@@ -19,6 +20,8 @@ class GumTreeView private constructor(target: GumTree) : GumTree(target) {
         get() = frozenHeight
     override val depth: Int
         get() = frozenDepth
+    override val positionOfParent: Int
+        get() = frozenPosOfParent
 
     override fun postOrdered(): List<GumTree> = frozenPostOrdered
 

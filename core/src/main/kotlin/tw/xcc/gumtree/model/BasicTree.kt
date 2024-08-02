@@ -74,6 +74,7 @@ abstract class BasicTree<T> : Tree, Traversable<T> where T : BasicTree<T> {
             synchronized(this) {
                 val newChildrenList = LinkedList<T>()
                 newChildrenList.addAll(children)
+                newChildrenList.forEach { it.setParentTo(self) }
                 this.set(newChildrenList)
             }
         }

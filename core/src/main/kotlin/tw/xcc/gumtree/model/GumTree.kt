@@ -3,7 +3,6 @@ package tw.xcc.gumtree.model
 import tw.xcc.gumtree.api.tree.Comparable
 import tw.xcc.gumtree.helper.isIsoStructuralTo
 import tw.xcc.gumtree.helper.isIsomorphicTo
-import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.atomic.AtomicReference
 
 open class GumTree(
@@ -38,9 +37,8 @@ open class GumTree(
         get() = _type.get()
         set(value) = _type.set(value)
 
-    private val _positionOfParent = AtomicInteger(-1)
-    val positionOfParent: Int
-        get() = _positionOfParent.get()
+    open val positionOfParent: Int
+        get() = calculatePosOfParent()
 
     init {
         _type.set(type)
@@ -55,14 +53,18 @@ open class GumTree(
 
             newChildrenList.add(
                 pos,
-                child.also {
-                    it.setParentTo(this)
-                    it._positionOfParent.set(pos)
-                }
+                child.also { it.setParentTo(this) }
             )
             childrenList.set(newChildrenList)
         }
     }
+
+    private fun calculatePosOfParent(): Int =
+        synchronized(this) {
+            val theParent = parent.get() ?: return -1
+            val children = theParent.childrenList.get()
+            return children.lastIndexOf(self)
+        }
 
     open fun insertChildAt(
         pos: Int,
@@ -81,7 +83,6 @@ open class GumTree(
             val removedChild = children.removeAt(pos)
 
             removedChild.setParentTo(null)
-            removedChild._positionOfParent.set(-1)
             childrenList.set(children)
 
             return true
@@ -104,11 +105,6 @@ open class GumTree(
     infix fun hasSameTypeAs(other: GumTree): Boolean = type == other.type
 
     infix fun hasSameLabelAs(other: GumTree): Boolean = label == other.label
-
-    override fun addChild(child: GumTree) {
-        super.addChild(child)
-        child._positionOfParent.set(childCount() - 1)
-    }
 
     final override suspend infix fun isIsomorphicTo(other: GumTree): Boolean = isIsomorphicTo(this, other)
 
