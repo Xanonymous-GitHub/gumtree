@@ -70,5 +70,5 @@ private val sampleTree2R =
         }
     }
 
-val sampleTree1 = sampleTree1L to sampleTree1R
-val sampleTree2 = sampleTree2L to sampleTree2R
+internal val sampleTree1 = sampleTree1L to sampleTree1R
+internal val sampleTree2 = sampleTree2L to sampleTree2R
