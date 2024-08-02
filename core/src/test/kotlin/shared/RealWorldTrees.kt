@@ -66,7 +66,7 @@ private val realTree1R: GumTree
                 child("Modifier", "public")
                 child("SimpleName", "Test")
                 child("MethodDeclaration") {
-                    child("Modifier", "public")
+                    child("Modifier", "private")
                     child("SimpleType", "String") {
                         child("SimpleName", "String")
                     }
