@@ -1,6 +1,5 @@
 package tw.xcc.gumtree.editscript
 
-import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
@@ -73,32 +72,22 @@ class SimplifiedEditScriptGenerator(
                     .map { Optional.of(it) }
                     .toMutableList()
 
-            val simplifiableActions =
-                actions
-                    .flatMapIndexed { originIdx, action ->
-                        when (action.get()) {
-                            is SingleInsertAction -> listOf(originIdx to action)
-                            is SingleDeleteAction -> listOf(originIdx to action)
-                            else -> emptyList()
-                        }
-                    }
+            val nodeToIndexedSingleInsertActions = mutableMapOf<GumTree, Pair<Int, SingleInsertAction>>()
+            val nodeToIndexedSingleDeleteActions = mutableMapOf<GumTree, Pair<Int, SingleDeleteAction>>()
 
-            val nodeToIndexedSingleInsertActionJob =
-                async {
-                    simplifiableActions
-                        .filterIsInstance<Pair<Int, SingleInsertAction>>()
-                        .associateBy { it.second.node }
+            actions.forEachIndexed { idx, it ->
+                when (val action = it.get()) {
+                    is SingleInsertAction -> {
+                        nodeToIndexedSingleInsertActions[action.node] = idx to action
+                    }
+                    is SingleDeleteAction -> {
+                        nodeToIndexedSingleDeleteActions[action.node] = idx to action
+                    }
                 }
-            val nodeToIndexedSingleDeleteActionJob =
-                async {
-                    simplifiableActions
-                        .filterIsInstance<Pair<Int, SingleDeleteAction>>()
-                        .associateBy { it.second.node }
-                }
+            }
 
             val insertionSimplifyJob =
                 launch {
-                    val nodeToIndexedSingleInsertActions = nodeToIndexedSingleInsertActionJob.await()
                     simplifyWith(actions, nodeToIndexedSingleInsertActions) { originAction ->
                         TreeInsertAction(originAction.node, originAction.parent, originAction.pos)
                     }
@@ -106,7 +95,6 @@ class SimplifiedEditScriptGenerator(
 
             val deletionSimplifyJob =
                 launch {
-                    val nodeToIndexedSingleDeleteActions = nodeToIndexedSingleDeleteActionJob.await()
                     simplifyWith(actions, nodeToIndexedSingleDeleteActions) { originAction ->
                         TreeDeleteAction(originAction.node)
                     }
