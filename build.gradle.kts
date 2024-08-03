@@ -35,6 +35,10 @@ allprojects {
         options.release.set(toolChainVersionValue)
     }
 
+    tasks.withType(Test::class) {
+        useJUnitPlatform()
+    }
+
     ktlint {
         filter {
             exclude("**/buildSrc/**")
