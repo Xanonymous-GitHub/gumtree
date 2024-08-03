@@ -4,7 +4,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     alias(libs.plugins.kotlinJvm)
     alias(libs.plugins.gradleKtlint)
-    `maven-publish`
 }
 
 internal val kotlinJvmPluginId = libs.plugins.kotlinJvm.get().pluginId
@@ -47,14 +46,6 @@ allprojects {
             exclude("**/generated-src/**")
             include("**/kotlin/**")
             include("**/*.kts")
-        }
-    }
-}
-
-publishing {
-    publications {
-        create<MavenPublication>("mavenJava") {
-            from(components["java"])
         }
     }
 }
