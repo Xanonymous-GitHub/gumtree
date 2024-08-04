@@ -19,7 +19,7 @@ private fun File.isFileTypeAllowed(allowedExtensions: Set<String>): Boolean {
     return fileExtension in allowedExtensions
 }
 
-internal fun File.isValidToRead(
+fun File.isValidToRead(
     maxSizeInBytes: Long,
     allowedDirectory: String,
     allowedExtensions: Set<String>
