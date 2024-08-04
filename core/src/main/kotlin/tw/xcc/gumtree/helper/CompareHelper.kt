@@ -20,7 +20,7 @@ suspend fun isIsoStructuralTo(
 private suspend fun compareTrees(
     self: GumTree,
     other: GumTree,
-    shouldCheckLabel: Boolean
+    shouldCheckText: Boolean
 ): Boolean =
     coroutineScope {
         val selfChildCount = self.childCount()
@@ -28,7 +28,7 @@ private suspend fun compareTrees(
             return@coroutineScope false
         }
 
-        if (shouldCheckLabel && !(self hasSameLabelAs other)) {
+        if (shouldCheckText && !(self hasSameTextAs other)) {
             return@coroutineScope false
         }
 
@@ -44,7 +44,7 @@ private suspend fun compareTrees(
             val job =
                 async(Dispatchers.Default) {
                     ensureActive()
-                    compareTrees(selfChild, otherChild, shouldCheckLabel)
+                    compareTrees(selfChild, otherChild, shouldCheckText)
                 }
             jobs.add(job)
         }

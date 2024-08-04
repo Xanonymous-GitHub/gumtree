@@ -9,6 +9,7 @@ class GumTreeView private constructor(target: GumTree) : GumTree(target) {
     private val frozenHeight by lazy { super.height }
     private val frozenDepth by lazy { super.depth }
     private val frozenPosOfParent by lazy { super.positionOfParent }
+    private val frozenInfo by lazy { super.info }
 
     override val descendents: List<GumTree>
         get() = frozenDescendents
@@ -22,6 +23,8 @@ class GumTreeView private constructor(target: GumTree) : GumTree(target) {
         get() = frozenDepth
     override val positionOfParent: Int
         get() = frozenPosOfParent
+    override var info: Info = frozenInfo
+        set(_) = throw NoSuchMethodException("calling this method in GumTreeView is not allowed")
 
     override fun postOrdered(): List<GumTree> = frozenPostOrdered
 

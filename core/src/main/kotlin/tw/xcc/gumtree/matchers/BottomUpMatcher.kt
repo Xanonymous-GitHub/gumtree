@@ -63,11 +63,11 @@ class BottomUpMatcher : TreeMatcher<GumTree> {
     ) = coroutineScope {
         val histogramOfLeftJob =
             async {
-                tree1.getChildren().filter { !storage.isLeftMapped(it) }.groupBy { it.type }
+                tree1.getChildren().filter { !storage.isLeftMapped(it) }.groupBy { it.info.type }
             }
         val histogramOfRightJob =
             async {
-                tree2.getChildren().filter { !storage.isRightMapped(it) }.groupBy { it.type }
+                tree2.getChildren().filter { !storage.isRightMapped(it) }.groupBy { it.info.type }
             }
 
         val histogramOfLeft = histogramOfLeftJob.await()
@@ -125,7 +125,7 @@ class BottomUpMatcher : TreeMatcher<GumTree> {
                 }
 
                 visited.add(parent)
-                if (parent.type == left.type && !storage.isRightMapped(parent) && !parent.isRoot()) {
+                if (parent.info.type == left.info.type && !storage.isRightMapped(parent) && !parent.isRoot()) {
                     candidates.add(parent)
                 }
 

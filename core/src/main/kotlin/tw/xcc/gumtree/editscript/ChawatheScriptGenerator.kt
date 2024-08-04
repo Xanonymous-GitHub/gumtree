@@ -28,14 +28,14 @@ class ChawatheScriptGenerator(
     private val actions = mutableListOf<Action>()
     private val leftReadyNodes = mutableSetOf<GumTree>()
     private val rightReadyNodes = mutableSetOf<GumTree>()
-    private val fakeTreeLabelPattern by lazy { "_FAKED(${hashCode()})*" }
+    private val fakeTreeTextPattern by lazy { "_FAKED(${hashCode()})*" }
 
     /**
      * To generate a fake [GumTree] node.
-     * The used [fakeTreeLabelPattern] is a string that will directly be converted to [Regex] for validation.
+     * The used [fakeTreeTextPattern] is a string that will directly be converted to [Regex] for validation.
      * @see ensureTreeNotUsed
      * */
-    private fun generateNewEmptyNode() = GumTree(TreeType.empty(), fakeTreeLabelPattern)
+    private fun generateNewEmptyNode() = GumTree(GumTree.Info.of(text = fakeTreeTextPattern))
 
     /**
      * To make sure the root of both given left ([tree1]) and right ([tree2]) haven't been
@@ -44,10 +44,10 @@ class ChawatheScriptGenerator(
      * which can potentially lead to a wrong result.
      * */
     private fun ensureTreeNotUsed() {
-        val pattern = fakeTreeLabelPattern.toRegex()
+        val pattern = fakeTreeTextPattern.toRegex()
         require(
             arrayOf(tree1, tree2).all {
-                !it.label.matches(pattern)
+                !it.info.text.matches(pattern)
             }
         ) { "Trees can not be reused for generating edit scripts" }
     }
@@ -107,11 +107,10 @@ class ChawatheScriptGenerator(
     private fun performUpdateActionFor(
         leftNode: GumTree,
         newType: TreeType,
-        newLabel: String
+        newText: String
     ) {
-        leftNode.type = newType
-        leftNode.label = newLabel
-        actions.add(SingleUpdateAction(leftNode, newType, newLabel))
+        leftNode.info = leftNode.info.copy(type = newType, text = newText)
+        actions.add(SingleUpdateAction(leftNode, newType, newText))
     }
 
     /**
@@ -128,7 +127,15 @@ class ChawatheScriptGenerator(
         val destinationPosition = findInsertionPosFrom(referencedRightNode)
         check(leftNode.leaveParent()) { "The left node should be correctly removed from its parent" }
         leftParentOfMove.insertChildAt(destinationPosition, leftNode)
-        actions.add(TreeMoveAction(leftNode, leftParentOfMove, destinationPosition))
+        actions.add(
+            TreeMoveAction(
+                leftNode,
+                leftParentOfMove,
+                destinationPosition,
+                referencedRightNode.info.line,
+                referencedRightNode.info.posOfLine
+            )
+        )
     }
 
     /**
@@ -216,7 +223,11 @@ class ChawatheScriptGenerator(
 
                 if (!storage.isRightMapped(rightTarget)) {
                     leftTarget = generateNewEmptyNode()
-                    rightTarget.copyPropertiesTo(leftTarget)
+                    leftTarget.info =
+                        leftTarget.info.copy(
+                            type = rightTarget.info.type,
+                            text = rightTarget.info.text
+                        )
                     performInsertActionFor(leftTarget, partnerOfParentOfRightTarget, rightTarget)
                 } else {
                     leftTarget =
@@ -225,8 +236,11 @@ class ChawatheScriptGenerator(
                         }
 
                     if (rightTarget != tree2) {
-                        if (leftTarget.label != rightTarget.label || leftTarget.type != rightTarget.type) {
-                            performUpdateActionFor(leftTarget, rightTarget.type, rightTarget.label)
+                        if (
+                            leftTarget.info.text != rightTarget.info.text ||
+                            leftTarget.info.type != rightTarget.info.type
+                        ) {
+                            performUpdateActionFor(leftTarget, rightTarget.info.type, rightTarget.info.text)
                         }
 
                         val parentOfLeftTarget = leftTarget.getParent()
@@ -253,9 +267,4 @@ class ChawatheScriptGenerator(
             }
             return@coroutineScope actions
         }
-
-    private fun GumTree.copyPropertiesTo(other: GumTree) {
-        other.type = this.type
-        other.label = this.label
-    }
 }

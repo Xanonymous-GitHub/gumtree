@@ -7,7 +7,13 @@ internal class TextualPositionDistanceComparator : Comparator<Pair<GumTree, GumT
     private fun calculateTexturalPositionDistanceOf(
         t1: GumTree,
         t2: GumTree
-    ): Int = abs(t1.pos - t2.pos) + abs((t1.pos + t1.length) - (t2.pos + t2.length))
+    ): Int =
+        abs(
+            t1.info.posOfLine - t2.info.posOfLine
+        ) +
+            abs(
+                (t1.info.posOfLine + t1.info.text.length) - (t2.info.posOfLine + t2.info.text.length)
+            )
 
     override fun compare(
         m1: Pair<GumTree, GumTree>,

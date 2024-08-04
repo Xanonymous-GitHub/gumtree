@@ -13,20 +13,26 @@ import kotlin.test.assertTrue
 @Execution(ExecutionMode.CONCURRENT)
 internal class GumTreeTest {
     private val givenTreeType = TreeType("testType")
-    private val givenTreeLabel = "testLabel"
+    private val givenTreeText = "testLabel"
     private lateinit var givenTree: GumTree
 
     @BeforeTest
     fun setUp() {
-        givenTree = GumTree(givenTreeType, givenTreeLabel)
+        givenTree =
+            GumTree(
+                GumTree.Info.of(
+                    type = givenTreeType,
+                    text = givenTreeText
+                )
+            )
     }
 
     @Test
     fun `test default constructor`() {
-        val actualTreeType = givenTree.type
-        val actualTreeLabel = givenTree.label
+        val actualTreeType = givenTree.info.type
+        val actualTreeLabel = givenTree.info.text
         assertEquals(givenTreeType, actualTreeType, "TreeType should be equal")
-        assertEquals(givenTreeLabel, actualTreeLabel, "TreeLabel should be equal")
+        assertEquals(givenTreeText, actualTreeLabel, "TreeLabel should be equal")
     }
 
     @Test
@@ -43,10 +49,7 @@ internal class GumTreeTest {
                 }
             }
         val copiedTree = GumTree(sourceTree)
-        assertEquals(sourceTree.type, copiedTree.type)
-        assertEquals(sourceTree.label, copiedTree.label)
-        assertEquals(sourceTree.pos, copiedTree.pos)
-        assertEquals(sourceTree.length, copiedTree.length)
+        assertEquals(sourceTree.info, copiedTree.info)
         assertEquals(sourceTree.id, copiedTree.id)
         assertEquals(sourceTree.descendents.size, copiedTree.descendents.size)
         assertEquals(sourceTree.ancestors.size, copiedTree.ancestors.size)
@@ -57,10 +60,7 @@ internal class GumTreeTest {
         for (i in 0 until sourceTree.childCount()) {
             val sourceChild = sourceTree.childAt(i)
             val copiedChild = copiedTree.childAt(i)
-            assertEquals(sourceChild?.type, copiedChild?.type)
-            assertEquals(sourceChild?.label, copiedChild?.label)
-            assertEquals(sourceChild?.pos, copiedChild?.pos)
-            assertEquals(sourceChild?.length, copiedChild?.length)
+            assertEquals(sourceChild?.info, copiedChild?.info)
             assertEquals(sourceChild?.id, copiedChild?.id)
             assertEquals(sourceChild?.descendents?.size, copiedChild?.descendents?.size)
             assertEquals(sourceChild?.ancestors?.size, copiedChild?.ancestors?.size)
@@ -71,22 +71,22 @@ internal class GumTreeTest {
     }
 
     @Test
-    fun `test tree pos`() {
-        val actualTreePos = givenTree.pos
+    fun `test tree posOfLine`() {
+        val actualTreePos = givenTree.info.posOfLine
         assertEquals(-1, actualTreePos)
         val givenNewTreePos = 9487
-        val treeWithCustomPos = GumTree(TreeType.empty(), "label", givenNewTreePos)
-        val newActualTreePos = treeWithCustomPos.pos
+        val treeWithCustomPos = GumTree(GumTree.Info.of(posOfLine = givenNewTreePos))
+        val newActualTreePos = treeWithCustomPos.info.posOfLine
         assertEquals(givenNewTreePos, newActualTreePos)
     }
 
     @Test
-    fun `test tree length`() {
-        val actualTreeLength = givenTree.length
-        assertEquals(-1, actualTreeLength)
-        val givenNewTreeLength = 9487
-        val treeWithCustomLength = GumTree(TreeType.empty(), "label", -1, givenNewTreeLength)
-        val newActualTreeLength = treeWithCustomLength.length
+    fun `test tree text length`() {
+        val actualTreeLength = givenTree.info.text.length
+        assertEquals(9, actualTreeLength)
+        val givenNewTreeLength = 7
+        val treeWithCustomLength = GumTree(GumTree.Info.of(text = "1234567"))
+        val newActualTreeLength = treeWithCustomLength.info.text.length
         assertEquals(givenNewTreeLength, newActualTreeLength)
     }
 
@@ -96,13 +96,25 @@ internal class GumTreeTest {
         val childTreeLabel = "childLabel"
 
         for (insertPos in 0..5) {
-            val childTree = GumTree(childTreeType, childTreeLabel)
+            val childTree =
+                GumTree(
+                    GumTree.Info.of(
+                        type = childTreeType,
+                        text = childTreeLabel
+                    )
+                )
             givenTree.insertChildAt(insertPos, childTree)
             val actualChildTree = givenTree.childAt(insertPos)
             assertEquals(childTree, actualChildTree, "Child tree should be equal")
         }
 
-        val childTree2 = GumTree(childTreeType, childTreeLabel)
+        val childTree2 =
+            GumTree(
+                GumTree.Info.of(
+                    type = childTreeType,
+                    text = childTreeLabel
+                )
+            )
         givenTree.insertChildAt(3, childTree2)
         val actualChildTree2 = givenTree.childAt(3)
         assertEquals(childTree2, actualChildTree2, "Child tree should be equal")
@@ -115,22 +127,34 @@ internal class GumTreeTest {
     @Test
     fun `test hasSameTypeAs`() {
         val otherTreeType = TreeType("otherType")
-        val otherTree = GumTree(otherTreeType, givenTreeLabel)
+        val otherTree =
+            GumTree(
+                GumTree.Info.of(
+                    type = otherTreeType,
+                    text = givenTreeText
+                )
+            )
         val actualResult = givenTree hasSameTypeAs otherTree
         assertFalse(actualResult, "TreeType should not be equal")
     }
 
     @Test
-    fun `test hasSameLabelAs`() {
-        val otherTreeLabel = "otherLabel"
-        val otherTree = GumTree(givenTreeType, otherTreeLabel)
-        val actualResult = givenTree hasSameLabelAs otherTree
+    fun `test hasSameTextAs`() {
+        val otherTreeText = "otherLabel"
+        val otherTree =
+            GumTree(
+                GumTree.Info.of(
+                    type = givenTreeType,
+                    text = otherTreeText
+                )
+            )
+        val actualResult = givenTree hasSameTextAs otherTree
         assertFalse(actualResult, "TreeLabel should not be equal")
     }
 
     @Test
     fun `test positionOfParent`() {
-        val parent = GumTree(TreeType("parentType"))
+        val parent = GumTree()
 
         for (givenPositionOfParent in 0..3) {
             parent.insertChildAt(givenPositionOfParent, givenTree)
@@ -142,13 +166,13 @@ internal class GumTreeTest {
     @Test
     fun `test similarityProperties`() {
         val actualSimilarityProperties = givenTree.similarityProperties()
-        val expectedSimilarityProperties = "<$givenTreeLabel>[$givenTreeType]<"
+        val expectedSimilarityProperties = "<$givenTreeText>[$givenTreeType]<"
         assertEquals(expectedSimilarityProperties, actualSimilarityProperties)
     }
 
     @Test
     fun `test toNewFrozen`() {
-        val child = GumTree(TreeType.empty(), "child")
+        val child = GumTree()
         givenTree.addChild(child)
         val frozen = givenTree.toNewFrozen()
         assertEquals(givenTree.id, frozen.id)
@@ -159,7 +183,7 @@ internal class GumTreeTest {
 
     @Test
     fun `test tryRemoveChild`() {
-        val child = GumTree(TreeType.empty(), "child")
+        val child = GumTree()
         givenTree.addChild(child)
         val actualResult = givenTree.tryRemoveChild(child)
         assertTrue(actualResult)
@@ -168,14 +192,14 @@ internal class GumTreeTest {
 
     @Test
     fun `test tryRemoveChild with non-child`() {
-        val child = GumTree(TreeType.empty(), "child")
+        val child = GumTree()
         val actualResult = givenTree.tryRemoveChild(child)
         assertFalse(actualResult)
     }
 
     @Test
     fun `test leaveParent`() {
-        val parent = GumTree(TreeType.empty(), "parent")
+        val parent = GumTree()
         parent.addChild(givenTree)
         val actualResult = givenTree.leaveParent()
         assertTrue(actualResult)

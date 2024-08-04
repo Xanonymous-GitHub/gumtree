@@ -1,9 +1,9 @@
+import helpers.gumTree
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 import tw.xcc.gumtree.helper.createHashMemoOf
 import tw.xcc.gumtree.model.GumTree
-import tw.xcc.gumtree.model.TreeType
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -16,14 +16,14 @@ internal class HashMemoHelperTest {
     private fun create10Children(lv: Int): List<GumTree> {
         val result = mutableListOf<GumTree>()
         repeat(10) { idx ->
-            result.add(GumTree(TreeType("lv$lv-$idx"), "lv$lv-$idx"))
+            result.add(gumTree("lv$lv-$idx", "lv$lv-$idx"))
         }
         return result
     }
 
     @BeforeTest
     fun setUp() {
-        givenRoot = GumTree(TreeType.empty())
+        givenRoot = GumTree()
         val level = 5 // will cause 111,111 nodes
         val needChildrens = mutableListOf<GumTree>()
         needChildrens.add(givenRoot)
@@ -41,7 +41,7 @@ internal class HashMemoHelperTest {
     @Test
     fun `test createHashMemo for a single node`() =
         runBlocking {
-            val hashMemo = createHashMemoOf(GumTree(TreeType.empty()))
+            val hashMemo = createHashMemoOf(GumTree())
             assertEquals(1, hashMemo.size)
         }
 

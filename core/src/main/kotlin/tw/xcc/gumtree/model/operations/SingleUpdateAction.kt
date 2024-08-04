@@ -5,6 +5,13 @@ import tw.xcc.gumtree.model.TreeType
 
 data class SingleUpdateAction(
     override val node: GumTree,
-    val type: TreeType,
-    val label: String
-) : Action(node, "UPDATE")
+    private val oldType: TreeType,
+    private val oldText: String
+) : Action(node, "UPDATE") {
+    override val oldInfo: GumTree.Info =
+        node.info.copy(
+            type = oldType,
+            text = oldText
+        )
+    override val newInfo: GumTree.Info = node.info
+}

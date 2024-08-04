@@ -1,9 +1,9 @@
+import helpers.gumTree
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 import tw.xcc.gumtree.helper.createHashMemoOf
 import tw.xcc.gumtree.model.GumTree
-import tw.xcc.gumtree.model.TreeType
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -17,32 +17,44 @@ internal class CompareHelperTest {
 
     @BeforeTest
     fun setUp() {
-        givenRoot1 = GumTree(TreeType("same"))
-        givenRoot2 = GumTree(TreeType("same"))
-
-        listOf(givenRoot1, givenRoot2).forEach { root ->
-            val l1Child1 = GumTree(TreeType("same"))
-            val l1Child2 = GumTree(TreeType("same"))
-            val l1Child3 = GumTree(TreeType("same"))
-            val l1Child4 = GumTree(TreeType("same"))
-
-            val l2Child1 = GumTree(TreeType("same"))
-            val l2Child2 = GumTree(TreeType("same"))
-            val l2Child3 = GumTree(TreeType("same"))
-            val l2Child4 = GumTree(TreeType("same"))
-            val l2Child5 = GumTree(TreeType("same"))
-
-            val l3Child1 = GumTree(TreeType("same"))
-            val l3Child2 = GumTree(TreeType("same"))
-            val l3Child3 = GumTree(TreeType("same"))
-
-            root.setChildrenTo(listOf(l1Child1, l1Child2, l1Child3, l1Child4))
-            l1Child1.setChildrenTo(listOf(l2Child1, l2Child2))
-            l1Child2.setChildrenTo(listOf(l2Child3))
-            l1Child3.setChildrenTo(listOf(l2Child4, l2Child5))
-            l2Child2.setChildrenTo(listOf(l3Child1, l3Child2))
-            l2Child4.setChildrenTo(listOf(l3Child3))
-        }
+        givenRoot1 =
+            gumTree("same") {
+                child("same") {
+                    child("same")
+                    child("same") {
+                        child("same")
+                        child("same")
+                    }
+                }
+                child("same") {
+                    child("same")
+                }
+                child("same") {
+                    child("same") {
+                        child("same")
+                    }
+                    child("same")
+                }
+            }
+        givenRoot2 =
+            gumTree("same") {
+                child("same") {
+                    child("same")
+                    child("same") {
+                        child("same")
+                        child("same")
+                    }
+                }
+                child("same") {
+                    child("same")
+                }
+                child("same") {
+                    child("same") {
+                        child("same")
+                    }
+                    child("same")
+                }
+            }
     }
 
     @Test
@@ -74,10 +86,10 @@ internal class CompareHelperTest {
         }
 
     @Test
-    fun `test isIsomorphic negative with different label`() =
+    fun `test isIsomorphic negative with different text`() =
         runBlocking {
-            val diffLabelChild1 = GumTree(TreeType("same"), "different1")
-            val diffLabelChild2 = GumTree(TreeType("same"), "different2")
+            val diffLabelChild1 = gumTree("same", "different1")
+            val diffLabelChild2 = gumTree("same", "different2")
             givenRoot1.addChild(diffLabelChild1)
             givenRoot2.addChild(diffLabelChild2)
             val actual = givenRoot1 isIsomorphicTo givenRoot2
@@ -87,8 +99,8 @@ internal class CompareHelperTest {
     @Test
     fun `test isIsoStructural positive with different label`() =
         runBlocking {
-            val diffLabelChild1 = GumTree(TreeType("same"), "different1")
-            val diffLabelChild2 = GumTree(TreeType("same"), "different2")
+            val diffLabelChild1 = gumTree("same", "different1")
+            val diffLabelChild2 = gumTree("same", "different1")
             givenRoot1.addChild(diffLabelChild1)
             givenRoot2.addChild(diffLabelChild2)
             val actual = givenRoot1 isIsoStructuralTo givenRoot2

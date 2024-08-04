@@ -59,7 +59,12 @@ class HashSimilarityOrganizerTest {
         val actual =
             givenOrganizer.uniqueIsomorphicMappings.toList()
                 .map {
-                    it.first.map { tree -> tree.type.name }.toSet() to it.second.map { tree -> tree.type.name }.toSet()
+                    it.first.map { tree ->
+                        tree.info.type.name
+                    }.toSet() to
+                        it.second.map { tree ->
+                            tree.info.type.name
+                        }.toSet()
                 }.toSet()
         val expected =
             setOf(
@@ -75,7 +80,12 @@ class HashSimilarityOrganizerTest {
         val actual =
             givenOrganizer.nonUniqueIsomorphicMappings.toList()
                 .map {
-                    it.first.map { tree -> tree.type.name }.toSet() to it.second.map { tree -> tree.type.name }.toSet()
+                    it.first.map { tree ->
+                        tree.info.type.name
+                    }.toSet() to
+                        it.second.map { tree ->
+                            tree.info.type.name
+                        }.toSet()
                 }.toSet()
         val expected =
             setOf(
@@ -91,7 +101,12 @@ class HashSimilarityOrganizerTest {
         val actual =
             givenOrganizer.nonIsomorphicMappings.toList()
                 .map {
-                    it.first.map { tree -> tree.type.name }.toSet() to it.second.map { tree -> tree.type.name }.toSet()
+                    it.first.map { tree ->
+                        tree.info.type.name
+                    }.toSet() to
+                        it.second.map { tree ->
+                            tree.info.type.name
+                        }.toSet()
                 }.toSet()
         val expected =
             setOf(

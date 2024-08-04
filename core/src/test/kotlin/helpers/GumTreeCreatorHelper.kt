@@ -16,25 +16,34 @@ internal annotation class GumTreeMarker
 @GumTreeMarker
 internal class GumTreeBuilder(
     grammarName: String,
-    label: String,
-    pos: Int,
-    length: Int
+    text: String,
+    line: Int,
+    posOfLine: Int
 ) {
-    private val root by lazy { GumTree(TreeType(grammarName), label, pos, length) }
+    private val root by lazy {
+        GumTree(
+            GumTree.Info(
+                type = TreeType(grammarName),
+                text = text,
+                line = line,
+                posOfLine = posOfLine
+            )
+        )
+    }
 
     @TestOnly
     internal inline fun child(
         grammarName: String,
-        label: String = "",
-        pos: Int = -1,
-        length: Int = -1,
+        text: String = "",
+        line: Int = -1,
+        posOfLine: Int = -1,
         block: GumTreeBuilder.() -> Unit
     ): GumTree {
         contract {
             callsInPlace(block, InvocationKind.EXACTLY_ONCE)
         }
 
-        val builder = GumTreeBuilder(grammarName, label, pos, length)
+        val builder = GumTreeBuilder(grammarName, text, line, posOfLine)
         builder.block()
 
         return builder.build().also { root.addChild(it) }
@@ -43,10 +52,18 @@ internal class GumTreeBuilder(
     @TestOnly
     internal fun child(
         grammarName: String,
-        label: String = "",
-        pos: Int = -1,
-        length: Int = -1
-    ): GumTree = GumTree(TreeType(grammarName), label, pos, length).also { root.addChild(it) }
+        text: String = "",
+        line: Int = -1,
+        posOfLine: Int = -1
+    ): GumTree =
+        GumTree(
+            GumTree.Info(
+                type = TreeType(grammarName),
+                line = line,
+                posOfLine = posOfLine,
+                text = text
+            )
+        ).also { root.addChild(it) }
 
     internal fun build(): GumTree = root
 }
@@ -55,16 +72,16 @@ internal class GumTreeBuilder(
 @OptIn(ExperimentalContracts::class)
 internal inline fun gumTree(
     grammarName: String,
-    label: String = "",
-    pos: Int = -1,
-    length: Int = -1,
+    text: String = "",
+    line: Int = -1,
+    posOfLine: Int = -1,
     block: GumTreeBuilder.() -> Unit = {}
 ): GumTree {
     contract {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)
     }
 
-    val builder = GumTreeBuilder(grammarName, label, pos, length)
+    val builder = GumTreeBuilder(grammarName, text, line, posOfLine)
     builder.block()
     return builder.build()
 }

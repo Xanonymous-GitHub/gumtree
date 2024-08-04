@@ -164,11 +164,11 @@ internal class BasicTreeTest {
                 child("notAncestor")
             }
 
-        val mostDescendent = tree.descendents.find { it.type.name == "3" }
+        val mostDescendent = tree.descendents.find { it.info.type.name == "3" }
         assertNotNull(mostDescendent)
 
         val itsAncestors = mostDescendent.ancestors
-        val ancestorNames = itsAncestors.map { it.type.name }
+        val ancestorNames = itsAncestors.map { it.info.type.name }
 
         assertContentEquals(listOf("2", "1", "0"), ancestorNames)
 
@@ -179,7 +179,7 @@ internal class BasicTreeTest {
         tree.setParentTo(newRoot)
 
         val newAncestors = mostDescendent.ancestors
-        val newAncestorNames = newAncestors.map { it.type.name }
+        val newAncestorNames = newAncestors.map { it.info.type.name }
 
         assertContentEquals(listOf("2", "1", "0", "newRoot"), newAncestorNames)
     }

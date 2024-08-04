@@ -3,46 +3,22 @@ package tw.xcc.gumtree.model
 import tw.xcc.gumtree.api.tree.Comparable
 import tw.xcc.gumtree.helper.isIsoStructuralTo
 import tw.xcc.gumtree.helper.isIsomorphicTo
-import java.util.concurrent.atomic.AtomicReference
 
 open class GumTree(
-    type: TreeType,
     /**
-     * The Label corresponds to the actual tokens in the code.
+     * [info] contains the information of the source code token represented by the tree node.
      * */
-    var label: String = EMPTY_LABEL,
-    /**
-     * pos is the position of the node in the source code.
-     * */
-    val pos: Int = -1,
-    /**
-     * length is the length of the node in the source code.
-     * for example, the length of a token is the length of the token itself.
-     * */
-    val length: Int = -1
+    open var info: Info = Info.empty()
 ) : BasicTree<GumTree>(), Comparable<GumTree> {
-    constructor(other: GumTree) : this(other.type, other.label, other.pos, other.length) {
+    constructor(other: GumTree) : this(other.info) {
         val otherChildren = other.childrenList.get()
         this.setChildrenToImpl(otherChildren.map { GumTree(it) })
         idRef.set(other.idRef.get())
         parent.set(other.parent.get())
     }
 
-    private val _type = AtomicReference(TreeType.empty())
-
-    /**
-     * The Type corresponds to the name of their production rule in the grammar.
-     * */
-    var type: TreeType
-        get() = _type.get()
-        set(value) = _type.set(value)
-
     open val positionOfParent: Int
         get() = calculatePosOfParent()
-
-    init {
-        _type.set(type)
-    }
 
     private fun insertChildAtImpl(
         pos: Int,
@@ -102,15 +78,15 @@ open class GumTree(
             return GumTreeView.from(this)
         }
 
-    infix fun hasSameTypeAs(other: GumTree): Boolean = type == other.type
+    infix fun hasSameTypeAs(other: GumTree): Boolean = info.type == other.info.type
 
-    infix fun hasSameLabelAs(other: GumTree): Boolean = label == other.label
+    infix fun hasSameTextAs(other: GumTree): Boolean = info.text == other.info.text
 
     final override suspend infix fun isIsomorphicTo(other: GumTree): Boolean = isIsomorphicTo(this, other)
 
     final override suspend infix fun isIsoStructuralTo(other: GumTree): Boolean = isIsoStructuralTo(this, other)
 
-    final override fun similarityProperties(): String = "<$label>[$type]<"
+    final override fun similarityProperties(): String = "<${info.text}>[${info.type}]<"
 
     final override val self: GumTree
         get() = this
@@ -118,28 +94,53 @@ open class GumTree(
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is GumTree) return false
-        if (label != other.label) return false
-        if (pos != other.pos) return false
-        if (length != other.length) return false
-        if (type != other.type) return false
+        if (info != other.info) return false
         return super.equals(other)
     }
 
     override fun hashCode(): Int {
         val hashCodes =
             arrayOf(
-                label.hashCode(),
-                pos.hashCode(),
-                length.hashCode(),
-                type.hashCode(),
+                info.hashCode(),
                 super.hashCode()
             )
         return hashCodes.fold(0) { acc, i -> 31 * acc + i }
     }
 
-    override fun toString(): String = "GumTree($type, $label, pos=$pos, length=$length, ${id.subSequence(0, 8)})"
+    override fun toString(): String = "GumTree($info, ${id.subSequence(0, 8)})"
 
-    companion object {
-        private const val EMPTY_LABEL = ""
+    /**
+     * Info is a data class that contains the information of a tree node.
+     * */
+    data class Info(
+        /**
+         * See [TreeType].
+         * */
+        val type: TreeType,
+        /**
+         * [text] corresponds to the actual tokens in the code.
+         * */
+        val text: String = EMPTY_LABEL,
+        /**
+         * [line] corresponds to the line number of the token in the source code file.
+         * */
+        val line: Int,
+        /**
+         * [posOfLine] corresponds to the first char start position of the token in the line.
+         * */
+        val posOfLine: Int
+    ) {
+        companion object {
+            private const val EMPTY_LABEL = ""
+
+            fun of(
+                type: TreeType = TreeType.empty(),
+                text: String = EMPTY_LABEL,
+                line: Int = -1,
+                posOfLine: Int = -1
+            ) = Info(type, text, line, posOfLine)
+
+            fun empty() = of()
+        }
     }
 }

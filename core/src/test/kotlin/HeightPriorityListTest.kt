@@ -1,9 +1,9 @@
+import helpers.gumTree
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 import tw.xcc.gumtree.model.GumTree
 import tw.xcc.gumtree.model.HeightPriorityList
-import tw.xcc.gumtree.model.TreeType
 import java.util.NoSuchElementException
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -25,18 +25,18 @@ internal class HeightPriorityListTest {
     fun setUp() {
         givenList = HeightPriorityList()
 
-        node5 = GumTree(TreeType("node5"))
-        node4 =
-            GumTree(TreeType("node4"))
-                .also { it.addChild(node5) }
-        node3 = GumTree(TreeType("node3"))
-        node2 = GumTree(TreeType("node2"))
-        node1 =
-            GumTree(TreeType("node1"))
-                .also { it.setChildrenTo(listOf(node3, node4)) }
         node0 =
-            GumTree(TreeType("node0"))
-                .also { it.setChildrenTo(listOf(node1, node2)) }
+            gumTree("node0") {
+                node1 =
+                    child("node1") {
+                        node3 = child("node3")
+                        node4 =
+                            child("node4") {
+                                node5 = child("node5")
+                            }
+                    }
+                node2 = child("node2")
+            }
     }
 
     @Test
