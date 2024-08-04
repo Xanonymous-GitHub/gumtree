@@ -2,7 +2,7 @@ package tw.xcc.gumtree.matchers.comparator
 
 import tw.xcc.gumtree.matchers.PairOfIsomorphicSet
 
-class SubtreeSizeComparator : Comparator<PairOfIsomorphicSet> {
+internal class SubtreeSizeComparator : Comparator<PairOfIsomorphicSet> {
     override fun compare(
         pairOfSet1: PairOfIsomorphicSet,
         pairOfSet2: PairOfIsomorphicSet

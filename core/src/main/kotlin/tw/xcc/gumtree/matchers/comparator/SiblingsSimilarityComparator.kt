@@ -3,7 +3,7 @@ package tw.xcc.gumtree.matchers.comparator
 import tw.xcc.gumtree.api.tree.TreeMappingStorage
 import tw.xcc.gumtree.model.GumTree
 
-class SiblingsSimilarityComparator(
+internal class SiblingsSimilarityComparator(
     private val storage: TreeMappingStorage<GumTree>
 ) : Comparator<Pair<GumTree, GumTree>> {
     private fun sizeOfCommonDescendentsOf(

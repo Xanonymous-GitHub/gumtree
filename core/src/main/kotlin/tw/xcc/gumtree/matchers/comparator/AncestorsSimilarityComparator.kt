@@ -3,7 +3,7 @@ package tw.xcc.gumtree.matchers.comparator
 import tw.xcc.gumtree.algorithms.lcsBaseOnlySize
 import tw.xcc.gumtree.model.GumTree
 
-class AncestorsSimilarityComparator : Comparator<Pair<GumTree, GumTree>> {
+internal class AncestorsSimilarityComparator : Comparator<Pair<GumTree, GumTree>> {
     private fun findLCSOfTreeLists(
         trees1: List<GumTree>,
         trees2: List<GumTree>

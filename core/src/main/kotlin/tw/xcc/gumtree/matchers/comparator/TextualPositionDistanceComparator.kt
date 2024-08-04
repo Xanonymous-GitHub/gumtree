@@ -3,7 +3,7 @@ package tw.xcc.gumtree.matchers.comparator
 import tw.xcc.gumtree.model.GumTree
 import kotlin.math.abs
 
-class TextualPositionDistanceComparator : Comparator<Pair<GumTree, GumTree>> {
+internal class TextualPositionDistanceComparator : Comparator<Pair<GumTree, GumTree>> {
     private fun calculateTexturalPositionDistanceOf(
         t1: GumTree,
         t2: GumTree

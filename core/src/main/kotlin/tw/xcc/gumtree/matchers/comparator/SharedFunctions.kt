@@ -15,7 +15,7 @@ import kotlin.math.max
  * And if both [left] and [right] are 0, the function returns 1.
  * Because the two sets are the same (empty).
  * */
-fun calculateDiceValue(
+internal fun calculateDiceValue(
     common: Long,
     left: Long,
     right: Long
@@ -40,7 +40,7 @@ fun calculateDiceValue(
 /**
  * @see [calculateDiceValue]
  * */
-fun calculateDiceValue(
+internal fun calculateDiceValue(
     common: Int,
     left: Int,
     right: Int
@@ -51,7 +51,7 @@ fun calculateDiceValue(
  * When the first elements of the pairs have the same parent and the second elements of the pairs have the same parent,
  * the function returns true.
  * */
-inline fun <reified T : Tree> hasSameParent(
+internal inline fun <reified T : Tree> hasSameParent(
     m1: Pair<T, T>,
     m2: Pair<T, T>
 ): Boolean = (m1.first.getParent() == m2.first.getParent()) && (m1.second.getParent() == m2.second.getParent())
@@ -60,7 +60,7 @@ inline fun <reified T : Tree> hasSameParent(
  * To calculate the number of mapped descendents in [tree1] and [tree2].
  * The descendents of [tree1] should be saved in the Left part of [storage].
  * */
-inline fun <reified T : BasicTree<T>> numOfMappedDescendents(
+internal inline fun <reified T : BasicTree<T>> numOfMappedDescendents(
     tree1: T,
     tree2: T,
     storage: TreeMappingStorage<T>

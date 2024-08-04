@@ -3,7 +3,7 @@ package tw.xcc.gumtree.matchers.comparator
 import tw.xcc.gumtree.model.GumTree
 import kotlin.math.sqrt
 
-class PositionOfAncestorsSimilarityComparator : Comparator<Pair<GumTree, GumTree>> {
+internal class PositionOfAncestorsSimilarityComparator : Comparator<Pair<GumTree, GumTree>> {
     private fun collectPositionsOfAncestorsFrom(tree: GumTree): List<Int> {
         val positions = mutableListOf<Int>()
         positions.add(tree.positionOfParent)

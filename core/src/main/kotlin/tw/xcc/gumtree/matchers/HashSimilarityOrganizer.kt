@@ -3,10 +3,10 @@ package tw.xcc.gumtree.matchers
 import tw.xcc.gumtree.model.GumTree
 
 private typealias PairOfIsomorphicSetInternal = Pair<MutableSet<GumTree>, MutableSet<GumTree>>
-typealias PairOfIsomorphicSet = Pair<Set<GumTree>, Set<GumTree>>
-typealias PairsOfMappedTree = List<Pair<GumTree, GumTree>>
+internal typealias PairOfIsomorphicSet = Pair<Set<GumTree>, Set<GumTree>>
+internal typealias PairsOfMappedTree = List<Pair<GumTree, GumTree>>
 
-class HashSimilarityOrganizer(
+internal class HashSimilarityOrganizer(
     memo1: Map<String, Long>,
     memo2: Map<String, Long>,
     mappings: PairsOfMappedTree
