@@ -18,20 +18,32 @@ import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
-class GumTreeConverter(private val vocabulary: Vocabulary) {
-    private fun createSingleGumTreeNodeFrom(token: Token): GumTree =
+class GumTreeConverter(private val vocabulary: Vocabulary, private val ruleNames: List<String>) {
+    private fun createSingleGumTreeNodeOfTokenFrom(token: Token): GumTree =
         GumTree(
             GumTree.Info(
-                type = TreeType(vocabulary.getSymbolicName(token.type) ?: "<UNKNOWN[${token.type}]>"),
+                type = TreeType(vocabulary.getSymbolicName(token.type) ?: "<TOKEN[${token.type}]>"),
                 text = token.text,
                 line = token.line,
                 posOfLine = token.charPositionInLine
             )
         )
 
-    private suspend fun buildWholeGumTreeFrom(antlrTree: Tree): List<GumTree?> =
+    private fun createSingleGumTreeNodeOfContextFrom(context: ParserRuleContext): GumTree =
+        GumTree(
+            GumTree.Info.of(
+                type = TreeType(ruleNames.getOrNull(context.ruleIndex) ?: "<RULE[${context.ruleIndex}]>")
+            )
+        )
+
+    private suspend fun buildWholeGumTreeFrom(antlrTree: Tree): List<GumTree> =
         coroutineScope {
-            val self = (antlrTree.payload as? Token)?.let { createSingleGumTreeNodeFrom(it) }
+            val self =
+                when (val payload = antlrTree.payload) {
+                    is Token -> createSingleGumTreeNodeOfTokenFrom(payload)
+                    is ParserRuleContext -> createSingleGumTreeNodeOfContextFrom(payload)
+                    else -> null
+                }
 
             return@coroutineScope with(antlrTree) {
                 if (self == null && childCount == 0) {
@@ -42,7 +54,6 @@ class GumTreeConverter(private val vocabulary: Vocabulary) {
                             .map { childIdx -> async { buildWholeGumTreeFrom(getChild(childIdx)) } }
                             .awaitAll()
                             .flatten()
-                            .filterNotNull()
 
                     self?.apply { setChildrenTo(nodesFromChildren) }
                         ?.let { listOf(it) }
@@ -69,7 +80,7 @@ class GumTreeConverter(private val vocabulary: Vocabulary) {
             val firstGrammarEntry = parseTreeCreation(charStream)
             GumTree().also {
                 it.setChildrenTo(
-                    buildWholeGumTreeFrom(firstGrammarEntry).filterNotNull()
+                    buildWholeGumTreeFrom(firstGrammarEntry)
                 )
             }
         }
