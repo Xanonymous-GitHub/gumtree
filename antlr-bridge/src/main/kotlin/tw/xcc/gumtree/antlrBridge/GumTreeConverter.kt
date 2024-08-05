@@ -1,6 +1,5 @@
 package tw.xcc.gumtree.antlrBridge
 
-import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -24,40 +23,39 @@ class GumTreeConverter(private val vocabulary: Vocabulary) {
         GumTree(
             GumTree.Info(
                 type = TreeType(vocabulary.getSymbolicName(token.type) ?: "<UNKNOWN[${token.type}]>"),
-                text = token.toString(),
+                text = token.text,
                 line = token.line,
                 posOfLine = token.charPositionInLine
             )
         )
 
-    private suspend fun buildWholeGumTreeFrom(antlrTree: Tree): GumTree? =
+    private suspend fun buildWholeGumTreeFrom(antlrTree: Tree): List<GumTree?> =
         coroutineScope {
-            val self =
-                when {
-                    antlrTree is Token -> createSingleGumTreeNodeFrom(antlrTree)
-                    else -> null
-                } ?: return@coroutineScope null
+            val self = (antlrTree.payload as? Token)?.let { createSingleGumTreeNodeFrom(it) }
 
-            with(antlrTree) {
-                val buildChildJobs = mutableListOf<Deferred<GumTree?>>()
-                for (childIdx in 0 until childCount) {
-                    buildChildJobs.add(
-                        async { buildWholeGumTreeFrom(getChild(childIdx)) }
-                    )
+            return@coroutineScope with(antlrTree) {
+                if (self == null && childCount == 0) {
+                    emptyList()
+                } else {
+                    val nodesFromChildren =
+                        (0 until childCount)
+                            .map { childIdx -> async { buildWholeGumTreeFrom(getChild(childIdx)) } }
+                            .awaitAll()
+                            .flatten()
+                            .filterNotNull()
+
+                    self?.apply { setChildrenTo(nodesFromChildren) }
+                        ?.let { listOf(it) }
+                        ?: nodesFromChildren
                 }
-                self.setChildrenTo(
-                    buildChildJobs.awaitAll().filterNotNull()
-                )
             }
-
-            return@coroutineScope self
         }
 
     @OptIn(ExperimentalContracts::class)
     suspend fun convertFrom(
         inputStream: InputStream,
         parseTreeCreation: (CharStream) -> ParserRuleContext
-    ): GumTree? {
+    ): GumTree {
         contract {
             callsInPlace(parseTreeCreation, InvocationKind.AT_MOST_ONCE)
         }
@@ -69,7 +67,11 @@ class GumTreeConverter(private val vocabulary: Vocabulary) {
                 }
 
             val firstGrammarEntry = parseTreeCreation(charStream)
-            buildWholeGumTreeFrom(firstGrammarEntry)
+            GumTree().also {
+                it.setChildrenTo(
+                    buildWholeGumTreeFrom(firstGrammarEntry).filterNotNull()
+                )
+            }
         }
     }
 }
