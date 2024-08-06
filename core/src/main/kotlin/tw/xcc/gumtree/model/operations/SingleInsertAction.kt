@@ -8,5 +8,5 @@ data class SingleInsertAction(
     override val pos: Int
 ) : AdditionAction(node, parent, pos, "INSERT") {
     override val oldInfo: GumTree.Info? = null
-    override val newInfo: GumTree.Info = node.info
+    override val newInfo: GumTree.Info = node.info.copy()
 }

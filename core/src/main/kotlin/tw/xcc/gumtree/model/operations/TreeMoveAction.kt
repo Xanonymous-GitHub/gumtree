@@ -9,7 +9,7 @@ data class TreeMoveAction(
     private val newLine: Int,
     private val newPosOfLine: Int
 ) : TreeAdditionAction(node, parent, pos, "TREE-MOVE") {
-    override val oldInfo: GumTree.Info = node.info
+    override val oldInfo: GumTree.Info = node.info.copy()
     override val newInfo: GumTree.Info =
         node.info.copy(
             line = newLine,

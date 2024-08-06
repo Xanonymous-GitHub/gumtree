@@ -13,5 +13,5 @@ data class SingleUpdateAction(
             type = oldType,
             text = oldText
         )
-    override val newInfo: GumTree.Info = node.info
+    override val newInfo: GumTree.Info = node.info.copy()
 }
