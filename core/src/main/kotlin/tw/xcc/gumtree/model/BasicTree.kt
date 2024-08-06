@@ -4,6 +4,7 @@ import tw.xcc.gumtree.api.tree.Traversable
 import tw.xcc.gumtree.api.tree.Tree
 import tw.xcc.gumtree.helper.postOrderOf
 import tw.xcc.gumtree.helper.preOrderOf
+import java.io.Serializable
 import java.util.LinkedList
 import java.util.UUID
 import java.util.concurrent.atomic.AtomicReference
@@ -11,7 +12,7 @@ import java.util.concurrent.atomic.AtomicReference
 /**
  * The general thread-safe implementation of a tree structure.
  * */
-abstract class BasicTree<T> : Tree, Traversable<T> where T : BasicTree<T> {
+abstract class BasicTree<T> : Serializable, Tree, Traversable<T> where T : BasicTree<T> {
     protected abstract val self: T
 
     protected val parent = AtomicReference<T?>()

@@ -3,6 +3,7 @@ package tw.xcc.gumtree.model
 import tw.xcc.gumtree.api.tree.Comparable
 import tw.xcc.gumtree.helper.isIsoStructuralTo
 import tw.xcc.gumtree.helper.isIsomorphicTo
+import java.io.Serializable
 
 open class GumTree(
     /**
@@ -129,7 +130,7 @@ open class GumTree(
          * [posOfLine] corresponds to the first char start position of the token in the line.
          * */
         val posOfLine: Int
-    ) {
+    ) : Serializable {
         companion object {
             private const val EMPTY_LABEL = ""
 
