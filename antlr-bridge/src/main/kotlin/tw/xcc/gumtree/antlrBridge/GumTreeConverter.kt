@@ -12,6 +12,7 @@ import org.antlr.v4.runtime.Lexer
 import org.antlr.v4.runtime.Parser
 import org.antlr.v4.runtime.ParserRuleContext
 import org.antlr.v4.runtime.Token
+import org.antlr.v4.runtime.TokenStream
 import org.antlr.v4.runtime.Vocabulary
 import org.antlr.v4.runtime.tree.Tree
 import tw.xcc.gumtree.model.GumTree
@@ -20,7 +21,6 @@ import java.io.InputStream
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
-import kotlin.reflect.full.primaryConstructor
 
 class GumTreeConverter(private val vocabulary: Vocabulary, private val ruleNames: List<String>) {
     private fun createSingleGumTreeNodeOfTokenFrom(token: Token): GumTree =
@@ -94,8 +94,9 @@ class GumTreeConverter(private val vocabulary: Vocabulary, private val ruleNames
                 val lexer = lexerFactory(charStream)
                 val tokenStream = CommonTokenStream(lexer)
                 val parser =
-                    P::class.primaryConstructor?.call(tokenStream)
-                        ?: error("Provided Parser should have primary constructor")
+                    P::class.constructors.find {
+                        it.parameters.size == 1 && it.parameters.first().type.classifier == TokenStream::class
+                    }?.call(tokenStream) ?: error("Provided Parser should have primary constructor")
 
                 val firstGrammarEntry = parser.firstGrammarParseFunction()
                 val converter = GumTreeConverter(parser.vocabulary, parser.ruleNames.toList())
