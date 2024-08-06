@@ -7,6 +7,9 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
 import org.antlr.v4.runtime.CharStream
 import org.antlr.v4.runtime.CharStreams
+import org.antlr.v4.runtime.CommonTokenStream
+import org.antlr.v4.runtime.Lexer
+import org.antlr.v4.runtime.Parser
 import org.antlr.v4.runtime.ParserRuleContext
 import org.antlr.v4.runtime.Token
 import org.antlr.v4.runtime.Vocabulary
@@ -17,6 +20,7 @@ import java.io.InputStream
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
+import kotlin.reflect.full.primaryConstructor
 
 class GumTreeConverter(private val vocabulary: Vocabulary, private val ruleNames: List<String>) {
     private fun createSingleGumTreeNodeOfTokenFrom(token: Token): GumTree =
@@ -36,7 +40,7 @@ class GumTreeConverter(private val vocabulary: Vocabulary, private val ruleNames
             )
         )
 
-    private suspend fun buildWholeGumTreeFrom(antlrTree: Tree): List<GumTree> =
+    private suspend fun buildDenseGumTreeChildrenFrom(antlrTree: Tree): List<GumTree> =
         coroutineScope {
             val self =
                 when (val payload = antlrTree.payload) {
@@ -51,7 +55,7 @@ class GumTreeConverter(private val vocabulary: Vocabulary, private val ruleNames
                 } else {
                     val nodesFromChildren =
                         (0 until childCount)
-                            .map { childIdx -> async { buildWholeGumTreeFrom(getChild(childIdx)) } }
+                            .map { childIdx -> async { buildDenseGumTreeChildrenFrom(getChild(childIdx)) } }
                             .awaitAll()
                             .flatten()
 
@@ -62,26 +66,41 @@ class GumTreeConverter(private val vocabulary: Vocabulary, private val ruleNames
             }
         }
 
-    @OptIn(ExperimentalContracts::class)
-    suspend fun convertFrom(
-        inputStream: InputStream,
-        parseTreeCreation: (CharStream) -> ParserRuleContext
-    ): GumTree {
-        contract {
-            callsInPlace(parseTreeCreation, InvocationKind.AT_MOST_ONCE)
+    suspend fun buildWholeGumTreeFrom(firstGrammarEntry: ParserRuleContext): GumTree =
+        GumTree().also {
+            it.setChildrenTo(
+                buildDenseGumTreeChildrenFrom(firstGrammarEntry)
+            )
         }
 
-        return coroutineScope {
-            val charStream =
-                withContext(Dispatchers.IO) {
-                    CharStreams.fromStream(inputStream)
-                }
+    companion object {
+        @OptIn(ExperimentalContracts::class)
+        suspend inline fun <reified L : Lexer, reified P : Parser> convertFrom(
+            inputStream: InputStream,
+            crossinline lexerFactory: (CharStream) -> L,
+            crossinline firstGrammarParseFunction: P.() -> ParserRuleContext
+        ): GumTree {
+            contract {
+                callsInPlace(lexerFactory, InvocationKind.AT_MOST_ONCE)
+                callsInPlace(firstGrammarParseFunction, InvocationKind.AT_MOST_ONCE)
+            }
 
-            val firstGrammarEntry = parseTreeCreation(charStream)
-            GumTree().also {
-                it.setChildrenTo(
-                    buildWholeGumTreeFrom(firstGrammarEntry)
-                )
+            return coroutineScope {
+                val charStream =
+                    withContext(Dispatchers.IO) {
+                        CharStreams.fromStream(inputStream)
+                    }
+
+                val lexer = lexerFactory(charStream)
+                val tokenStream = CommonTokenStream(lexer)
+                val parser =
+                    P::class.primaryConstructor?.call(tokenStream)
+                        ?: error("Provided Parser should have primary constructor")
+
+                val firstGrammarEntry = parser.firstGrammarParseFunction()
+                val converter = GumTreeConverter(parser.vocabulary, parser.ruleNames.toList())
+
+                converter.buildWholeGumTreeFrom(firstGrammarEntry)
             }
         }
     }
