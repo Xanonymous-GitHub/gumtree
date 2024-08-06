@@ -78,6 +78,7 @@ class GumTreeConverter(private val vocabulary: Vocabulary, private val ruleNames
         suspend inline fun <reified L : Lexer, reified P : Parser> convertFrom(
             inputStream: InputStream,
             crossinline lexerFactory: (CharStream) -> L,
+            crossinline parserFactory: (TokenStream) -> P,
             crossinline firstGrammarParseFunction: P.() -> ParserRuleContext
         ): GumTree {
             contract {
@@ -93,10 +94,7 @@ class GumTreeConverter(private val vocabulary: Vocabulary, private val ruleNames
 
                 val lexer = lexerFactory(charStream)
                 val tokenStream = CommonTokenStream(lexer)
-                val parser =
-                    P::class.constructors.find {
-                        it.parameters.size == 1 && it.parameters.first().type.classifier == TokenStream::class
-                    }?.call(tokenStream) ?: error("Provided Parser should have primary constructor")
+                val parser = parserFactory(tokenStream)
 
                 val firstGrammarEntry = parser.firstGrammarParseFunction()
                 val converter = GumTreeConverter(parser.vocabulary, parser.ruleNames.toList())
