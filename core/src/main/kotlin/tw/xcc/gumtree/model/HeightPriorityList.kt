@@ -42,7 +42,7 @@ internal class HeightPriorityList(private val minHeight: Int = 1) : PriorityTree
 
     override fun peekMax(): Int =
         synchronized(this) {
-            return trees.keys.maxOrNull()
+            return trees.sequencedKeySet().lastOrNull()
                 ?: throw NoSuchElementException("The list is empty, so there is no maximum value.")
         }
 
