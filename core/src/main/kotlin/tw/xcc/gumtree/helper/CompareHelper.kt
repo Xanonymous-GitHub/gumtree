@@ -1,7 +1,6 @@
 package tw.xcc.gumtree.helper
 
 import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.ensureActive
@@ -42,7 +41,7 @@ private suspend fun compareTrees(
         val jobs = mutableListOf<Deferred<Boolean>>()
         selfChildren.zip(otherChildren).forEach { (selfChild, otherChild) ->
             val job =
-                async(Dispatchers.Default) {
+                async {
                     ensureActive()
                     compareTrees(selfChild, otherChild, shouldCheckText)
                 }
