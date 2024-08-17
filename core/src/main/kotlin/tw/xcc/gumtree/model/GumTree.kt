@@ -73,10 +73,10 @@ open class GumTree(
 
     open fun toNewFrozen(): GumTreeView =
         synchronized(this) {
-            val children = childrenList.get()
-            children.replaceAll { it.toNewFrozen() }
-            childrenList.set(children)
-            return GumTreeView.from(this)
+            val frozen = GumTreeView.from(this)
+            val children = getChildren()
+            frozen.setChildrenToImpl(children.map { it.toNewFrozen() })
+            return frozen
         }
 
     infix fun hasSameTypeAs(other: GumTree): Boolean = info.type == other.info.type

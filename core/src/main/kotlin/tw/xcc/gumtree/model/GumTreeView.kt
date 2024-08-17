@@ -1,6 +1,10 @@
 package tw.xcc.gumtree.model
 
-class GumTreeView private constructor(target: GumTree) : GumTree(target) {
+class GumTreeView private constructor(target: GumTree) : GumTree(target.info.copy()) {
+    init {
+        super.idRef.set(target.id)
+    }
+
     private val frozenPreOrdered by lazy { super.preOrdered() }
     private val frozenPostOrdered by lazy { super.postOrdered() }
     private val frozenDescendents by lazy { frozenPreOrdered.drop(1) }
@@ -64,6 +68,6 @@ class GumTreeView private constructor(target: GumTree) : GumTree(target) {
     companion object {
         fun from(gumTree: GumTree): GumTreeView = GumTreeView(gumTree)
 
-        fun frozeEntireTreeFrom(gumTree: GumTree): GumTreeView = GumTree(gumTree).toNewFrozen()
+        fun frozeEntireTreeFrom(gumTree: GumTree): GumTreeView = gumTree.toNewFrozen()
     }
 }

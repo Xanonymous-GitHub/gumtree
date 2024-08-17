@@ -74,7 +74,7 @@ abstract class BasicTree<T> : Serializable, Tree, Traversable<T> where T : Basic
             synchronized(this) {
                 val newChildrenList = mutableListOf<T>()
                 newChildrenList.addAll(children)
-                newChildrenList.forEach { it.setParentTo(self) }
+                newChildrenList.forEach { it.parent.set(self) }
                 this.set(newChildrenList)
             }
         }
