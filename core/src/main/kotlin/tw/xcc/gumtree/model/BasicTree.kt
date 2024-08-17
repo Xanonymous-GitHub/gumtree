@@ -5,7 +5,6 @@ import tw.xcc.gumtree.api.tree.Tree
 import tw.xcc.gumtree.helper.postOrderOf
 import tw.xcc.gumtree.helper.preOrderOf
 import java.io.Serializable
-import java.util.LinkedList
 import java.util.UUID
 import java.util.concurrent.atomic.AtomicReference
 
@@ -17,7 +16,7 @@ abstract class BasicTree<T> : Serializable, Tree, Traversable<T> where T : Basic
 
     protected val parent = AtomicReference<T?>()
 
-    protected val childrenList = AtomicReference(LinkedList<T>())
+    protected val childrenList = AtomicReference(mutableListOf<T>())
 
     protected val idRef = AtomicReference(UUID.randomUUID().toString())
     override val id: String
@@ -73,7 +72,7 @@ abstract class BasicTree<T> : Serializable, Tree, Traversable<T> where T : Basic
     protected fun setChildrenToImpl(children: List<T>) =
         with(childrenList) {
             synchronized(this) {
-                val newChildrenList = LinkedList<T>()
+                val newChildrenList = mutableListOf<T>()
                 newChildrenList.addAll(children)
                 newChildrenList.forEach { it.setParentTo(self) }
                 this.set(newChildrenList)
