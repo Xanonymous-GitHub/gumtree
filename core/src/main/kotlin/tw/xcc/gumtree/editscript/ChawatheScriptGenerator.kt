@@ -140,10 +140,16 @@ class ChawatheScriptGenerator(
 
     /**
      * Performs a real delete operation on [leftNode], and pushes a [SingleDeleteAction] to [actions].
+     * We expect to put a cloned node of [leftNode] into [actions],
+     * because the deleted node lost its relationship with the original tree, that causes
+     * the tree-delete action cannot be recognized.
      * */
-    private fun performDeleteActionOf(leftNode: GumTree) {
+    private fun performDeleteActionOf(
+        leftNode: GumTree,
+        leftNodeFromClonedTree: GumTree
+    ) {
         check(leftNode.leaveParent()) { "The leftNode should be correctly removed from its parent" }
-        actions.add(SingleDeleteAction(leftNode))
+        actions.add(SingleDeleteAction(leftNodeFromClonedTree))
     }
 
     /**
@@ -259,12 +265,14 @@ class ChawatheScriptGenerator(
             // It finds nodes that are on the left side but not on the right side.
             // After finishing prior steps, the remaining nodes compared to the tree on the right
             // are considered to be transformed to the right only through "deletion".
-            val postOrderedTree1Nodes = tree1.postOrdered()
-            postOrderedTree1Nodes.forEach { nodeOnLeft ->
-                if (!storage.isLeftMapped(nodeOnLeft)) {
-                    performDeleteActionOf(nodeOnLeft)
+            val postOrderedClonedTree1Nodes = async { GumTree(tree1).postOrdered() }
+            val postOrderedTree1Nodes = async { tree1.postOrdered() }
+            postOrderedTree1Nodes.await().zip(postOrderedClonedTree1Nodes.await())
+                .forEach { (nodeOnLeft, cloned) ->
+                    if (!storage.isLeftMapped(nodeOnLeft)) {
+                        performDeleteActionOf(nodeOnLeft, cloned)
+                    }
                 }
-            }
             return@coroutineScope actions
         }
 }
