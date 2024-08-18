@@ -16,25 +16,13 @@ class BottomUpMatcher : TreeMatcher<GumTree> {
     private val realTreePool = NonFrozenGumTreeCachePool
 
     private suspend fun lcsFinalMatching(
-        tree1: GumTree,
-        tree2: GumTree,
+        tree1UnMappedChildren: List<GumTree>,
+        tree2UnMappedChildren: List<GumTree>,
         storage: TreeMappingStorage<GumTree>,
         equalFunc: suspend (GumTree, GumTree) -> Boolean
     ) = coroutineScope {
-        val unMappedChildrenOfLeftJob =
-            async {
-                tree1.getChildren().filter { !storage.isLeftMapped(it) }
-            }
-        val unMappedChildrenOfRightJob =
-            async {
-                tree2.getChildren().filter { !storage.isRightMapped(it) }
-            }
-
-        val unMappedChildrenOfLeft = unMappedChildrenOfLeftJob.await()
-        val unMappedChildrenOfRight = unMappedChildrenOfRightJob.await()
-
         val lcsOfUnMapped =
-            lcsBaseWithElements(unMappedChildrenOfLeft, unMappedChildrenOfRight) {
+            lcsBaseWithElements(tree1UnMappedChildren, tree2UnMappedChildren) {
                     left, right ->
                 equalFunc(left, right)
             }
@@ -57,21 +45,12 @@ class BottomUpMatcher : TreeMatcher<GumTree> {
     }
 
     private suspend fun histogramMatching(
-        tree1: GumTree,
-        tree2: GumTree,
+        tree1UnMappedChildren: List<GumTree>,
+        tree2UnMappedChildren: List<GumTree>,
         storage: TreeMappingStorage<GumTree>
     ) = coroutineScope {
-        val histogramOfLeftJob =
-            async {
-                tree1.getChildren().filter { !storage.isLeftMapped(it) }.groupBy { it.info.type }
-            }
-        val histogramOfRightJob =
-            async {
-                tree2.getChildren().filter { !storage.isRightMapped(it) }.groupBy { it.info.type }
-            }
-
-        val histogramOfLeft = histogramOfLeftJob.await()
-        val histogramOfRight = histogramOfRightJob.await()
+        val histogramOfLeft = tree1UnMappedChildren.groupBy { it.info.type }
+        val histogramOfRight = tree2UnMappedChildren.groupBy { it.info.type }
 
         (histogramOfLeft.keys intersect histogramOfRight.keys).forEach { key ->
             val leftNodes = histogramOfLeft[key]
@@ -93,15 +72,27 @@ class BottomUpMatcher : TreeMatcher<GumTree> {
         storage: TreeMappingStorage<GumTree>
     ) {
         coroutineScope {
-            lcsFinalMatching(tree1, tree2, storage) { left, right ->
+            val unMappedChildrenOfLeftJob =
+                async {
+                    tree1.getChildren().filter { !storage.isLeftMapped(it) }
+                }
+            val unMappedChildrenOfRightJob =
+                async {
+                    tree2.getChildren().filter { !storage.isRightMapped(it) }
+                }
+
+            val unMappedChildrenOfLeft = unMappedChildrenOfLeftJob.await()
+            val unMappedChildrenOfRight = unMappedChildrenOfRightJob.await()
+
+            lcsFinalMatching(unMappedChildrenOfLeft, unMappedChildrenOfRight, storage) { left, right ->
                 left isIsomorphicTo right
             }
 
-            lcsFinalMatching(tree1, tree2, storage) { left, right ->
+            lcsFinalMatching(unMappedChildrenOfLeft, unMappedChildrenOfRight, storage) { left, right ->
                 left isIsoStructuralTo right
             }
 
-            histogramMatching(tree1, tree2, storage)
+            histogramMatching(unMappedChildrenOfLeft, unMappedChildrenOfRight, storage)
         }
     }
 
