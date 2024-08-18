@@ -58,6 +58,11 @@ class BottomUpMatcher : TreeMatcher<GumTree> {
             if ((leftNodes != null && rightNodes != null) && (leftNodes.size == 1 && rightNodes.size == 1)) {
                 val left = leftNodes.single()
                 val right = rightNodes.single()
+
+                if (storage.isLeftMapped(left) || storage.isRightMapped(right)) {
+                    return@forEach
+                }
+
                 storage.addMappingOf(
                     realTreePool.tryExtractRealOf(left to right)
                 )
