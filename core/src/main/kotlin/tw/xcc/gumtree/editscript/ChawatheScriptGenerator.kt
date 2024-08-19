@@ -231,7 +231,7 @@ class ChawatheScriptGenerator(
                     leftTarget = generateNewEmptyNode()
                     leftTarget.info =
                         leftTarget.info.copy(
-                            type = rightTarget.info.type,
+                            type = rightTarget.info.type.copy(),
                             text = rightTarget.info.text
                         )
                     performInsertActionFor(leftTarget, partnerOfParentOfRightTarget, rightTarget)
@@ -246,7 +246,7 @@ class ChawatheScriptGenerator(
                             leftTarget.info.text != rightTarget.info.text ||
                             leftTarget.info.type != rightTarget.info.type
                         ) {
-                            performUpdateActionFor(leftTarget, rightTarget.info.type, rightTarget.info.text)
+                            performUpdateActionFor(leftTarget, rightTarget.info.type.copy(), rightTarget.info.text)
                         }
 
                         val parentOfLeftTarget = leftTarget.getParent()
