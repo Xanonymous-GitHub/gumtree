@@ -221,11 +221,13 @@ class ChawatheScriptGenerator(
 
             bfsOrderOf(tree2) continuable@{ rightTarget ->
                 val parentOfRightTarget = requireNotNull(rightTarget.getParent()) { "Parent node should always exist" }
-                val partnerOfParentOfRightTarget = storage.getMappingOfRight(parentOfRightTarget)
+                val partnerOfParentOfRightTarget =
+                    storage.getMappingOfRight(parentOfRightTarget)
+                        ?: return@continuable
 
                 val leftTarget: GumTree
 
-                if (!storage.isRightMapped(rightTarget) && partnerOfParentOfRightTarget != null) {
+                if (!storage.isRightMapped(rightTarget)) {
                     leftTarget = generateNewEmptyNode()
                     leftTarget.info =
                         leftTarget.info.copy(
@@ -248,11 +250,7 @@ class ChawatheScriptGenerator(
                         }
 
                         val parentOfLeftTarget = leftTarget.getParent()
-                        if (
-                            parentOfLeftTarget != null &&
-                            partnerOfParentOfRightTarget != null &&
-                            partnerOfParentOfRightTarget != parentOfLeftTarget
-                        ) {
+                        if (parentOfLeftTarget != null && partnerOfParentOfRightTarget != parentOfLeftTarget) {
                             performMoveActionFor(leftTarget, partnerOfParentOfRightTarget, rightTarget)
                         }
                     }
