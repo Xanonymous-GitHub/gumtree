@@ -56,7 +56,7 @@ class SimplifiedEditScriptGenerator(
                 lock.withLock {
                     flatActions[indexInOriginActions] = Optional.empty()
                 }
-            } else if (node.childCount() > 0 && nodeAsKeys.containsAll(descendentsOf(node))) {
+            } else if (!node.isLeaf() && nodeAsKeys.containsAll(descendentsOf(node))) {
                 val treeAction = createTreeActionFrom(originAction)
                 lock.withLock {
                     flatActions[indexInOriginActions] = Optional.of(treeAction)
