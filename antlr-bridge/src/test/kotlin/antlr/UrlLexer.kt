@@ -34,7 +34,7 @@ class UrlLexer(input: CharStream?) : Lexer(input) {
 
     override fun getModeNames(): Array<String> = UrlLexer.modeNames
 
-    override fun getATN(): ATN = atn
+    override fun getATN(): ATN = theAtn
 
     companion object {
         const val T__0: Int = 1
@@ -108,8 +108,8 @@ class UrlLexer(input: CharStream?) : Lexer(input) {
                 "\u0000RP\u0001\u0000\u0000\u0000RS\u0001\u0000\u0000\u0000S\u001e\u0001" +
                 "\u0000\u0000\u0000\u0007\u0000;BFJLR\u0000"
 
-        private val atn: ATN = ATNDeserializer().deserialize(SERIALIZED_ATN.toCharArray())
-        val decisionToDFA: Array<DFA?> = arrayOfNulls(atn.numberOfDecisions)
+        private val theAtn: ATN = ATNDeserializer().deserialize(SERIALIZED_ATN.toCharArray())
+        val decisionToDFA: Array<DFA?> = arrayOfNulls(theAtn.numberOfDecisions)
         val sharedContextCache: PredictionContextCache = PredictionContextCache()
         private val _LITERAL_NAMES = makeLiteralNames()
         private val _SYMBOLIC_NAMES = makeSymbolicNames()
@@ -125,8 +125,8 @@ class UrlLexer(input: CharStream?) : Lexer(input) {
         }
 
         init {
-            for (i in 0 until atn.numberOfDecisions) {
-                decisionToDFA[i] = DFA(atn.getDecisionState(i), i)
+            for (i in 0 until theAtn.numberOfDecisions) {
+                decisionToDFA[i] = DFA(theAtn.getDecisionState(i), i)
             }
         }
 
