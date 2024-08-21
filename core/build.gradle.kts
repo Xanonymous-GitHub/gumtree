@@ -19,6 +19,16 @@ dependencies {
     testImplementation(libs.kotlin.test.junit5)
 }
 
+kover {
+    reports {
+        filters {
+            excludes {
+                classes("tw.xcc.gumtree.api.*")
+            }
+        }
+    }
+}
+
 tasks.test {
     finalizedBy(tasks.koverXmlReport)
     finalizedBy(tasks.koverHtmlReport)
