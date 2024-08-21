@@ -71,4 +71,27 @@ class AdvancedDiceComparatorTest {
                 gumTree("m1.2") to gumTree("m2.2")
             )
     }
+
+    @Test
+    fun `test dice comparator with different parent but one of them is null`() {
+        val sameParentTree =
+            gumTree("sameParent") {
+                child("m1.1")
+                child("m1.2")
+            }
+
+        diceComparatorCompareFunc
+            .call(
+                diceComparator,
+                gumTree("m2.1") to sameParentTree.getChildren().first(),
+                sameParentTree.getChildren().last() to gumTree("m2.2")
+            )
+
+        diceComparatorCompareFunc
+            .call(
+                diceComparator,
+                sameParentTree.getChildren().last() to gumTree("m2.2"),
+                gumTree("m2.1") to sameParentTree.getChildren().first()
+            )
+    }
 }
