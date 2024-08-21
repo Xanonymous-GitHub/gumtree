@@ -1,4 +1,5 @@
 import helpers.gumTree
+import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 import shared.FakeTinnyTree
@@ -58,6 +59,50 @@ internal class SharedFunctionTest {
         val actualDice = calculateDiceValue(theirIntersectionSize, sizeA, sizeB)
 
         assertEquals(expectDice, actualDice, 0.0001)
+    }
+
+    @Test
+    fun `test dice function with negative left value`() {
+        val sizeA = -298347
+        val sizeB = 182764
+        val theirIntersectionSize = 67323
+
+        assertThrows<IllegalArgumentException> {
+            calculateDiceValue(theirIntersectionSize, sizeA, sizeB)
+        }
+    }
+
+    @Test
+    fun `test dice function with negative right value`() {
+        val sizeA = 298347
+        val sizeB = -182764
+        val theirIntersectionSize = 67323
+
+        assertThrows<IllegalArgumentException> {
+            calculateDiceValue(theirIntersectionSize, sizeA, sizeB)
+        }
+    }
+
+    @Test
+    fun `test dice function with negative intersection value`() {
+        val sizeA = 298347
+        val sizeB = 182764
+        val theirIntersectionSize = -67323
+
+        assertThrows<IllegalArgumentException> {
+            calculateDiceValue(theirIntersectionSize, sizeA, sizeB)
+        }
+    }
+
+    @Test
+    fun `test dice function with impossible intersection`() {
+        val sizeA = 1
+        val sizeB = 1
+        val theirIntersectionSize = 67323
+
+        assertThrows<IllegalArgumentException> {
+            calculateDiceValue(theirIntersectionSize, sizeA, sizeB)
+        }
     }
 
     @Test
