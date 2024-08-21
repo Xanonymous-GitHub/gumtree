@@ -21,5 +21,5 @@ internal interface Traversable<out E> where E : Tree, E : Any {
      * For example, a binary tree has a meaningful in-order traversal, but a general tree does not.
      * So the default implementation is to return an empty list.
      * */
-    fun inOrdered(): List<E> = emptyList()
+    // fun inOrdered(): List<E> = emptyList()
 }
