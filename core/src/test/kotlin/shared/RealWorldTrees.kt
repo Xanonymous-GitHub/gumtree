@@ -40,6 +40,12 @@ private val realTree1L: GumTree
                             child("ReturnStatement") {
                                 child("StringLiteral", "Foo!")
                             }
+                            child("should Be Deleted1")
+                            child("should Be Deleted2") {
+                                child("should Be Deleted3") {
+                                    child("should be Deleted4")
+                                }
+                            }
                         }
                     }
                 }

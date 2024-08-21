@@ -11,6 +11,7 @@ import tw.xcc.gumtree.model.GumTree
 import tw.xcc.gumtree.model.MappingStorage
 import kotlin.test.BeforeTest
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 @Execution(ExecutionMode.CONCURRENT)
@@ -34,7 +35,7 @@ internal class SimplifiedScriptGeneratorTest {
             generator = SimplifiedEditScriptGenerator(tree1, tree2, storage)
             val actions = generator.generateActions()
             assertTrue(tree1 isIsomorphicTo tree2)
-            assertTrue(actions.size == 5)
+            assertEquals(7, actions.size)
         }
     }
 }

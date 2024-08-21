@@ -27,6 +27,7 @@ internal class UniversalMatcherTest {
         val tree1 = realTree1.first
         val tree2 = realTree1.second
 
+        val expectNonMappedDescendentsInTree1 = setOf(19..22).flatten()
         val expectNonMappedDescendentsInTree2 = setOf(17..23).flatten()
 
         runBlocking {
@@ -39,7 +40,9 @@ internal class UniversalMatcherTest {
 
             for (tree1Idx in tree1Nodes.indices) {
                 val tree1Node = tree1Nodes[tree1Idx]
-                assertTrue(storage.isLeftMapped(tree1Node))
+                if (tree1Idx !in expectNonMappedDescendentsInTree1) {
+                    assertTrue(storage.isLeftMapped(tree1Node))
+                }
             }
 
             for (tree2Idx in tree2Nodes.indices) {
