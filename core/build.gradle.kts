@@ -1,25 +1,27 @@
 plugins {
-    jacoco
+    alias(libs.plugins.kotlinSerialization)
+    alias(libs.plugins.kotlinxAtomicfu)
+    alias(libs.plugins.kotlinxKover)
+    alias(libs.plugins.kotlinxBenchmark)
 }
 
 dependencies {
     implementation(libs.kotlin.stdlib)
+    implementation(libs.kotlinx.serialization)
+    implementation(libs.kotlinx.immutable)
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.core.jvm)
+    implementation(libs.kotlinx.benchmark)
     implementation(libs.cryptoHash)
+
+    testImplementation(libs.kotlin.reflection)
     testImplementation(libs.kotlin.test)
     testImplementation(libs.kotlin.test.junit5)
 }
 
-tasks.jacocoTestReport {
-    dependsOn(tasks.test)
-    reports {
-        xml.required = true
-        csv.required = true
-        html.required = true
-    }
-}
-
 tasks.test {
-    finalizedBy(tasks.jacocoTestReport)
+    finalizedBy(tasks.koverXmlReport)
+    finalizedBy(tasks.koverHtmlReport)
+    finalizedBy(tasks.koverBinaryReport)
+    finalizedBy(tasks.koverPrintCoverage)
 }
