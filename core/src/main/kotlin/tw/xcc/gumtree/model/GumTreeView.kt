@@ -66,6 +66,13 @@ class GumTreeView private constructor(target: GumTree) : GumTree(target.info.cop
     companion object {
         fun from(gumTree: GumTree): GumTreeView = GumTreeView(gumTree)
 
-        fun frozeEntireTreeFrom(gumTree: GumTree): GumTreeView = gumTree.toNewFrozen()
+        /**
+         * Convert the whole tree of the subtree [gumTree] to a new frozen tree.
+         * Note that the returned tree is the root of the entire tree, not the [gumTree]'s view.
+         * */
+        fun frozeEntireTreeFrom(gumTree: GumTree): GumTreeView {
+            val root = gumTree.ancestors.lastOrNull() ?: gumTree.toNewFrozen()
+            return root.toNewFrozen()
+        }
     }
 }
