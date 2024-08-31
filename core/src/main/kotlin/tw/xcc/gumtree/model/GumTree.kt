@@ -4,7 +4,9 @@ import tw.xcc.gumtree.api.tree.Comparable
 import tw.xcc.gumtree.helper.isIsoStructuralTo
 import tw.xcc.gumtree.helper.isIsomorphicTo
 import java.io.Serializable
+import kotlin.uuid.ExperimentalUuidApi
 
+@OptIn(ExperimentalUuidApi::class)
 open class GumTree(
     /**
      * [info] contains the information of the source code token represented by the tree node.
@@ -12,10 +14,9 @@ open class GumTree(
     open var info: Info = Info.empty()
 ) : BasicTree<GumTree>(), Comparable<GumTree> {
     constructor(other: GumTree) : this(other.info.copy()) {
-        val otherChildren = other.childrenList.get()
-        this.setChildrenToImpl(otherChildren.map { GumTree(it) })
-        idRef.set(other.idRef.get())
-        parent.set(other.parent.get())
+        this.setChildrenToImpl(other.childrenList.map { GumTree(it) })
+        idRef = other.idRef
+        parentRef = other.parentRef
     }
 
     open val positionOfParent: Int
@@ -26,20 +27,17 @@ open class GumTree(
         child: GumTree
     ) {
         synchronized(this) {
-            val newChildrenList = childrenList.get()
-
-            newChildrenList.add(
+            childrenList.add(
                 pos,
                 child.also { it.setParentTo(this) }
             )
-            childrenList.set(newChildrenList)
         }
     }
 
     private fun calculatePosOfParent(): Int =
         synchronized(this) {
-            val theParent = parent.get() ?: return -1
-            val children = theParent.childrenList.get()
+            val theParent = parentRef ?: return -1
+            val children = theParent.childrenList
             return children.lastIndexOf(self)
         }
 
@@ -51,23 +49,20 @@ open class GumTree(
     open fun tryRemoveChild(child: GumTree): Boolean =
         synchronized(this) {
             val pos = child.positionOfParent
-            val children = childrenList.get()
 
-            if (pos !in children.indices) {
+            if (pos !in childrenList.indices) {
                 return false
             }
 
-            val removedChild = children.removeAt(pos)
-
+            val removedChild = childrenList.removeAt(pos)
             removedChild.setParentTo(null)
-            childrenList.set(children)
 
             return true
         }
 
     open fun leaveParent(): Boolean =
         synchronized(this) {
-            val theParent = parent.get() ?: return false
+            val theParent = parentRef ?: return false
             return theParent.tryRemoveChild(self)
         }
 

@@ -5,22 +5,23 @@ import tw.xcc.gumtree.api.tree.Tree
 import tw.xcc.gumtree.helper.postOrderOf
 import tw.xcc.gumtree.helper.preOrderOf
 import java.io.Serializable
-import java.util.UUID
-import java.util.concurrent.atomic.AtomicReference
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
 /**
  * The general thread-safe implementation of a tree structure.
  * */
+@OptIn(ExperimentalUuidApi::class)
 abstract class BasicTree<T> : Serializable, Tree, Traversable<T> where T : BasicTree<T> {
     protected abstract val self: T
 
-    protected val parent = AtomicReference<T?>()
+    protected var parentRef: T? = null
 
-    protected val childrenList = AtomicReference(mutableListOf<T>())
+    protected val childrenList = mutableListOf<T>()
 
-    protected val idRef = AtomicReference(UUID.randomUUID().toString())
+    protected var idRef = Uuid.random()
     override val id: String
-        get() = idRef.get()
+        get() = idRef.toHexString()
 
     open val height: Int
         get() = calculateHeight()
@@ -41,7 +42,7 @@ abstract class BasicTree<T> : Serializable, Tree, Traversable<T> where T : Basic
                 if (isRoot()) {
                     emptyList()
                 } else {
-                    val parent = parent.get()
+                    val parent = parentRef
                     assert(parent != null)
                     listOf(parent!!) + parent.ancestors
                 }
@@ -72,20 +73,17 @@ abstract class BasicTree<T> : Serializable, Tree, Traversable<T> where T : Basic
     protected fun setChildrenToImpl(children: List<T>) =
         with(childrenList) {
             synchronized(this) {
-                val newChildrenList = mutableListOf<T>()
-                newChildrenList.addAll(children)
-                newChildrenList.forEach { it.parent.set(self) }
-                this.set(newChildrenList)
+                clear()
+                addAll(children)
+                forEach { it.parentRef = self }
             }
         }
 
     open fun addChild(child: T) {
         synchronized(this) {
-            val newChildrenList = childrenList.get()
-            newChildrenList.add(
+            childrenList.add(
                 child.also { it.setParentTo(self) }
             )
-            childrenList.set(newChildrenList)
         }
     }
 
@@ -93,7 +91,7 @@ abstract class BasicTree<T> : Serializable, Tree, Traversable<T> where T : Basic
 
     open fun setParentTo(parent: T?) {
         synchronized(this) {
-            this.parent.set(parent)
+            this.parentRef = parent
         }
     }
 
@@ -109,17 +107,17 @@ abstract class BasicTree<T> : Serializable, Tree, Traversable<T> where T : Basic
         return result
     }
 
-    final override fun getParent(): T? = synchronized(this) { parent.get() }
+    final override fun getParent(): T? = synchronized(this) { parentRef }
 
-    final override fun getChildren(): List<T> = synchronized(this) { childrenList.get() }
+    final override fun getChildren(): List<T> = synchronized(this) { childrenList }
 
-    final override fun childAt(i: Int): T? = synchronized(this) { childrenList.get().getOrNull(i) }
+    final override fun childAt(i: Int): T? = synchronized(this) { childrenList.getOrNull(i) }
 
-    final override fun childCount(): Int = synchronized(this) { childrenList.get().size }
+    final override fun childCount(): Int = synchronized(this) { childrenList.size }
 
-    final override fun isRoot(): Boolean = synchronized(this) { parent.get() == null }
+    final override fun isRoot(): Boolean = synchronized(this) { parentRef == null }
 
-    final override fun isLeaf(): Boolean = synchronized(this) { childrenList.get().isEmpty() }
+    final override fun isLeaf(): Boolean = synchronized(this) { childrenList.isEmpty() }
 
     abstract fun similarityProperties(): String
 
@@ -130,9 +128,9 @@ abstract class BasicTree<T> : Serializable, Tree, Traversable<T> where T : Basic
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is BasicTree<*>) return false
-        if (idRef.get() != other.idRef.get()) return false
+        if (idRef != other.idRef) return false
         return true
     }
 
-    override fun hashCode(): Int = idRef.get().hashCode()
+    override fun hashCode(): Int = idRef.hashCode()
 }

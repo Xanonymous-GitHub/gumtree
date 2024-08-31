@@ -4,7 +4,6 @@ import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 import shared.FakeTinnyTree
 import tw.xcc.gumtree.model.BasicTree
-import java.util.UUID
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
@@ -12,6 +11,8 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
 @Execution(ExecutionMode.CONCURRENT)
 internal class BasicTreeTest {
@@ -146,10 +147,11 @@ internal class BasicTreeTest {
         assertEquals(1, actualDepth)
     }
 
+    @OptIn(ExperimentalUuidApi::class)
     @Test
     fun `test tree id`() {
         val actualTreeId = givenTree.id
-        assertDoesNotThrow { UUID.fromString(actualTreeId) }
+        assertDoesNotThrow { Uuid.parseHex(actualTreeId) }
     }
 
     @Test

@@ -1,8 +1,12 @@
 package tw.xcc.gumtree.model
 
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
+
+@OptIn(ExperimentalUuidApi::class)
 class GumTreeView private constructor(target: GumTree) : GumTree(target.info.copy()) {
     init {
-        super.idRef.set(target.id)
+        super.idRef = Uuid.parseHex(target.id)
     }
 
     private val frozenPreOrdered by lazy { super.preOrdered() }
