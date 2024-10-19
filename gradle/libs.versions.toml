@@ -6,7 +6,7 @@ antlr = "4.13.2"
 crypto-hash = "1.0.2"
 kover = "0.8.3"
 benchmark = "0.4.12"
-atomicfu = "0.25.0"
+atomicfu = "0.26.0"
 immutable = "0.3.8"
 serialization = "1.7.2"
 
