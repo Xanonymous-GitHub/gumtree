@@ -1,6 +1,6 @@
 [versions]
 kotlin = "2.0.21"
-coroutines = "1.9.0"
+coroutines = "1.10.1"
 gradle-ktlint = "12.1.1"
 antlr = "4.13.2"
 crypto-hash = "1.0.2"
