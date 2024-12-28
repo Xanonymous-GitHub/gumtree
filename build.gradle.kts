@@ -9,7 +9,7 @@ plugins {
 internal val kotlinJvmPluginId = libs.plugins.kotlinJvm.get().pluginId
 internal val gradleKtLintPluginId = libs.plugins.gradleKtlint.get().pluginId
 
-internal val localJavaVersion = JavaVersion.VERSION_21.majorVersion
+internal val localJavaVersion = JavaVersion.VERSION_23.majorVersion
 internal val toolChainVersionValue = localJavaVersion.toInt()
 
 allprojects {
