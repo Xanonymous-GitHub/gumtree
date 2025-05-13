@@ -1,5 +1,5 @@
 [versions]
-kotlin = "2.1.20"
+kotlin = "2.1.21"
 coroutines = "1.10.2"
 gradle-ktlint = "12.2.0"
 antlr = "4.13.2"
