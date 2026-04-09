@@ -8,7 +8,7 @@ kover = "0.9.1"
 benchmark = "0.4.13"
 atomicfu = "0.27.0"
 immutable = "0.3.8"
-serialization = "1.8.1"
+serialization = "1.11.0"
 
 [libraries]
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
